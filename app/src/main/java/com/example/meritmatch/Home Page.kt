@@ -3,6 +3,7 @@ package com.example.meritmatch
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -65,7 +66,6 @@ fun HomePage(
             }
         }
     ) {
-
     }
 
     Box(
@@ -73,14 +73,8 @@ fun HomePage(
         contentAlignment = Alignment.Center
     ) {
         Column {
-            Text(
-                text = "Welcome, Username",
-                style = MaterialTheme.typography.headlineLarge,
-                fontWeight = FontWeight.Bold,
-                fontSize = 30.sp,
-                modifier = Modifier.padding(start = 16.dp, top = 16.dp),
-                color = MaterialTheme.colorScheme.primary
-            )
+            
+            Headline(modifier = Modifier.padding(top = 24.dp, bottom = 8.dp), text = "Welcome Username")
 
             Text(
                 text = "What would you like to do today?",
@@ -90,18 +84,13 @@ fun HomePage(
                 color = MaterialTheme.colorScheme.primary
             )
 
-            Canvas(
+            HorizontalLine(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(20.dp)
-            ) {
-                drawLine(
-                    color = color.primaryContainer,
-                    start = Offset(size.width * 0.05f, size.height / 2),
-                    end = Offset(size.width * 0.95f, size.height / 2),
-                    strokeWidth = 4f
-                )
-            }
+                    .height(20.dp),
+                start = 0.05f,
+                end = 0.95f
+            )
         }
     }
 }

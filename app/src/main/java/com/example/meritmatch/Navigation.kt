@@ -42,6 +42,7 @@ fun Navigation(modifier : Modifier){
             )
         }
 
+        // Bottom Navigation
         composable (
             route = "home_page"
         ) {
