@@ -35,6 +35,9 @@ fun Navigation(modifier : Modifier){
                 modifier = modifier,
                 onSignUp = {
                     navController.navigate("login_page")
+                },
+                goToLogin = {
+                    navController.navigate("login_page")
                 }
             )
         }

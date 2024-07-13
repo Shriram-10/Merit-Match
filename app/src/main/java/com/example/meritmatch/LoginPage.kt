@@ -82,7 +82,7 @@ fun LoginPage(
                 onClick = { onLogin() },
                 modifier = Modifier
                     .height(42.dp)
-                    .width(84.dp),
+                    .width(96.dp),
                 shape = RoundedCornerShape(50),
             ) {
                 Text(
