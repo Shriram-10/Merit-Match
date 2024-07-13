@@ -14,7 +14,7 @@ fun Navigation(modifier : Modifier){
         navController = navController,
         startDestination = "login_page"
     ) {
-        composable(
+        composable (
             route = "login_page"
         ) {
             LoginPage(
@@ -28,7 +28,7 @@ fun Navigation(modifier : Modifier){
             )
         }
 
-        composable(
+        composable (
             route = "sign_up_page"
         ) {
             SignUpPage(
@@ -42,10 +42,33 @@ fun Navigation(modifier : Modifier){
             )
         }
 
-        composable(
+        composable (
             route = "home_page"
         ) {
-            HomePage(modifier = modifier){
+            HomePage(
+                modifier = modifier,
+                navController = navController
+            ) {
+                navController.navigate("login_page")
+            }
+        }
+
+        composable (
+            route = "search_page"
+        ) {
+            SearchPage(
+                modifier = modifier,
+                navController = navController
+            )
+        }
+
+        composable (
+            route = "settings_page"
+        ) {
+            SettingsPage(
+                modifier = modifier,
+                navController = navController
+            ) {
                 navController.navigate("login_page")
             }
         }
