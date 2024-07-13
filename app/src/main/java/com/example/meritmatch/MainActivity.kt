@@ -14,11 +14,14 @@ import com.example.meritmatch.ui.theme.MeritMatchTheme
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        actionBar?.hide()
         enableEdgeToEdge()
         installSplashScreen()
         setContent {
             MeritMatchTheme {
-                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
+                Scaffold(
+                    modifier = Modifier.fillMaxSize()
+                ) { innerPadding ->
                     Navigation(modifier = Modifier.padding(innerPadding))
                 }
             }
