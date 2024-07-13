@@ -36,23 +36,9 @@ class MainActivity : ComponentActivity() {
         setContent {
             MeritMatchTheme {
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    MainScreen(modifier = Modifier.padding(innerPadding))
+                    Navigation(modifier = Modifier.padding(innerPadding))
                 }
             }
         }
-    }
-}
-
-@Composable
-fun MainScreen(modifier : Modifier) {
-    Box {
-        ContentScreen(modifier = modifier.alpha(1f))
-    }
-}
-
-@Composable
-fun ContentScreen(modifier : Modifier) {
-    Column(modifier.fillMaxSize()){
-        Text(text = "Hello World")
     }
 }
