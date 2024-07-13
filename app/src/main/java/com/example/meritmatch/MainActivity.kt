@@ -20,6 +20,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import com.example.meritmatch.ui.theme.MeritMatchTheme
 
 enum class SplashState {
@@ -31,6 +32,7 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
+        installSplashScreen()
         setContent {
             MeritMatchTheme {
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
@@ -43,36 +45,8 @@ class MainActivity : ComponentActivity() {
 
 @Composable
 fun MainScreen(modifier : Modifier) {
-
-    val transitionState = remember {
-        MutableTransitionState(SplashState.Shown)
-    }
-
-    val transition = updateTransition(
-        transitionState = transitionState,
-        label = "splashTransition"
-    )
-
-    val splashAlpha by transition.animateFloat(
-        label = "splashAlpha",
-        transitionSpec = { tween(durationMillis = 100) }
-    ) { state ->
-        if (state == SplashState.Shown) 1f else 0f
-    }
-
-    val contentAlpha by transition.animateFloat(
-        label = "contentAlpha",
-        transitionSpec = { tween(durationMillis = 100) }
-    ) { state ->
-        if (state == SplashState.Shown) 0f else 1f
-    }
-
     Box {
-        LandingPage(modifier = modifier.alpha(splashAlpha)){
-            transitionState.targetState = SplashState.Completed
-        }
-
-        ContentScreen(modifier = modifier.alpha(contentAlpha))
+        ContentScreen(modifier = modifier.alpha(1f))
     }
 }
 
