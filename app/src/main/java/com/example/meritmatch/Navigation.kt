@@ -16,10 +16,27 @@ fun Navigation(modifier : Modifier){
     ) {
         composable(
             route = "login_page"
-        ){
-            LoginPage(modifier = modifier){
-                navController.navigate("home_page")
-            }
+        ) {
+            LoginPage(
+                modifier = modifier,
+                onLogin = {
+                    navController.navigate("home_page")
+                },
+                goToSignUp = {
+                    navController.navigate("sign_up_page")
+                }
+            )
+        }
+
+        composable(
+            route = "sign_up_page"
+        ) {
+            SignUpPage(
+                modifier = modifier,
+                onSignUp = {
+                    navController.navigate("login_page")
+                }
+            )
         }
 
         composable(
