@@ -91,6 +91,8 @@ fun HomePage(
                 start = 0.05f,
                 end = 0.95f
             )
+
+            BalanceKP(modifier = Modifier.padding(16.dp), balance = 350.00)
         }
     }
 }
