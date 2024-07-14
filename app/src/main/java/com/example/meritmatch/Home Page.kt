@@ -93,6 +93,13 @@ fun HomePage(
             )
 
             BalanceKP(modifier = Modifier.padding(16.dp), balance = 350.00)
+
+            TaskView(
+                modifier = Modifier
+                    .padding(top = 16.dp, start = 16.dp, )
+                    .fillMaxWidth(0.95f)
+                    .height(225.dp)
+            )
         }
     }
 }
