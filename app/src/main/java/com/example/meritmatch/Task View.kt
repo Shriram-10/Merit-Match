@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
@@ -21,6 +22,7 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -28,7 +30,9 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 
 @Composable
 fun TaskView (
@@ -46,7 +50,7 @@ fun TaskView (
     Box (
         modifier = Modifier
             .fillMaxWidth()
-            .height(265.dp),
+            .height(245.dp),
     ) {
         Box {
             Column(
@@ -125,5 +129,26 @@ fun TaskView (
                     .scale(1.5f)
             )
         }
+    }
+}
+
+@Composable
+fun LabeledTaskView (
+    modifier: Modifier,
+    label: String
+) {
+    Column {
+        Text(
+            text = label,
+            style = MaterialTheme.typography.headlineMedium,
+            fontSize = 18.sp,
+            fontWeight = FontWeight.Bold,
+            modifier = Modifier.padding(top = 16.dp, start = 24.dp, bottom = 8.dp),
+            color = MaterialTheme.colorScheme.primary
+        )
+
+        TaskView(
+            modifier = modifier
+        )
     }
 }

@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
@@ -65,41 +66,58 @@ fun HomePage(
                 }
             }
         }
-    ) {
-    }
+    ) { innerPadding ->
+        Box(
+            modifier = modifier.padding(bottom = innerPadding.calculateBottomPadding()),
+            contentAlignment = Alignment.Center
+        ) {
+            LazyColumn {
+                item {
+                    Headline(modifier = Modifier.padding(top = 24.dp, bottom = 8.dp), text = "Welcome Username")
 
-    Box(
-        modifier = modifier,
-        contentAlignment = Alignment.Center
-    ) {
-        Column {
-            
-            Headline(modifier = Modifier.padding(top = 24.dp, bottom = 8.dp), text = "Welcome Username")
+                    Text(
+                        text = "What would you like to do today?",
+                        style = MaterialTheme.typography.headlineMedium,
+                        fontSize = 18.sp,
+                        modifier = Modifier.padding(start = 16.dp),
+                        color = MaterialTheme.colorScheme.primary
+                    )
 
-            Text(
-                text = "What would you like to do today?",
-                style = MaterialTheme.typography.headlineMedium,
-                fontSize = 18.sp,
-                modifier = Modifier.padding(start = 16.dp),
-                color = MaterialTheme.colorScheme.primary
-            )
+                    HorizontalLine(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(20.dp),
+                        start = 0.05f,
+                        end = 0.95f
+                    )
 
-            HorizontalLine(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(20.dp),
-                start = 0.05f,
-                end = 0.95f
-            )
+                    BalanceKP(modifier = Modifier.padding(16.dp), balance = 350.00)
 
-            BalanceKP(modifier = Modifier.padding(16.dp), balance = 350.00)
+                    LabeledTaskView(
+                        modifier = Modifier
+                            .padding(start = 16.dp)
+                            .fillMaxWidth(0.95f)
+                            .height(225.dp),
+                        label = "Available Tasks"
+                    )
 
-            TaskView(
-                modifier = Modifier
-                    .padding(top = 16.dp, start = 16.dp, )
-                    .fillMaxWidth(0.95f)
-                    .height(225.dp)
-            )
+                    LabeledTaskView(
+                        modifier = Modifier
+                            .padding(start = 16.dp)
+                            .fillMaxWidth(0.95f)
+                            .height(225.dp),
+                        label = "Reserved Tasks"
+                    )
+
+                    LabeledTaskView(
+                        modifier = Modifier
+                            .padding(start = 16.dp)
+                            .fillMaxWidth(0.95f)
+                            .height(225.dp),
+                        label = "Posted Tasks"
+                    )
+                }
+            }
         }
     }
 }
