@@ -78,7 +78,7 @@ fun HomePage(
         ) {
             LazyColumn {
                 item {
-                    Headline(modifier = Modifier.padding(top = 24.dp, bottom = 8.dp), text = "Welcome Username")
+                    Headline(modifier = Modifier.padding(top = 24.dp, bottom = 8.dp), text = "Welcome, Username")
 
                     Text(
                         text = "What would you like to do today?",

@@ -62,26 +62,25 @@ fun SearchPage (
                 }
             }
         }
-    ) {
-    }
+    ) { innerPadding ->
+        Box(
+            modifier = modifier.padding(bottom = innerPadding.calculateBottomPadding()),
+            contentAlignment = Alignment.Center
+        ){
+            Column {
+                Headline(
+                    text = "Search",
+                    modifier = Modifier.padding(top = 24.dp, bottom = 16.dp)
+                )
 
-    Box(
-        modifier = modifier,
-        contentAlignment = Alignment.Center
-    ){
-        Column {
-            Headline(
-                text = "Search",
-                modifier = Modifier.padding(top = 24.dp, bottom = 16.dp)
-            )
-
-            HorizontalLine(
-                modifier = Modifier
-                    .fillMaxWidth().
-                    height(20.dp),
-                start = 0.05f,
-                end = 0.95f
-            )
+                HorizontalLine(
+                    modifier = Modifier
+                        .fillMaxWidth().
+                        height(20.dp),
+                    start = 0.05f,
+                    end = 0.95f
+                )
+            }
         }
     }
 }
