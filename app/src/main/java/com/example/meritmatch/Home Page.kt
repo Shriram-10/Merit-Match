@@ -23,15 +23,20 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
+import androidx.navigation.compose.rememberNavController
 
 @Composable
 fun HomePage(
     modifier: Modifier,
     navController: NavController,
-    onLogout: () -> Unit
+    onLogout: () -> Unit,
+    toAvailableTasks: () -> Unit,
+    toReservedTasks: () -> Unit,
+    toPostedTasks: () -> Unit
 ) {
-    val color = MaterialTheme.colorScheme
     val navBackStackEntry by navController.currentBackStackEntryAsState()
 
     Scaffold(
@@ -98,7 +103,8 @@ fun HomePage(
                             .padding(start = 16.dp)
                             .fillMaxWidth(0.95f)
                             .height(225.dp),
-                        label = "Available Tasks"
+                        label = "Available Tasks",
+                        onViewMore = toAvailableTasks
                     )
 
                     LabeledTaskView(
@@ -106,7 +112,8 @@ fun HomePage(
                             .padding(start = 16.dp)
                             .fillMaxWidth(0.95f)
                             .height(225.dp),
-                        label = "Reserved Tasks"
+                        label = "Reserved Tasks",
+                        onViewMore = toReservedTasks
                     )
 
                     LabeledTaskView(
@@ -114,7 +121,8 @@ fun HomePage(
                             .padding(start = 16.dp)
                             .fillMaxWidth(0.95f)
                             .height(225.dp),
-                        label = "Posted Tasks"
+                        label = "Posted Tasks",
+                        onViewMore = toPostedTasks
                     )
                 }
             }

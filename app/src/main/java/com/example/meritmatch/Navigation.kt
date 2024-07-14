@@ -5,73 +5,114 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navigation
 
 @Composable
-fun Navigation(modifier : Modifier){
+fun Navigation (modifier : Modifier) {
     val navController = rememberNavController()
 
-    NavHost(
+    NavHost (
         navController = navController,
-        startDestination = "login_page"
+        startDestination = Screen.Login.route
     ) {
+
         composable (
-            route = "login_page"
+            route = Screen.Login.route
         ) {
-            LoginPage(
+            LoginPage (
                 modifier = modifier,
                 onLogin = {
-                    navController.navigate("home_page")
+                    navController.navigate(Screen.Home.route)
                 },
                 goToSignUp = {
-                    navController.navigate("sign_up_page")
+                    navController.navigate(Screen.SignUp.route)
                 }
             )
         }
 
         composable (
-            route = "sign_up_page"
+            route = Screen.SignUp.route
         ) {
-            SignUpPage(
+            SignUpPage (
                 modifier = modifier,
                 onSignUp = {
-                    navController.navigate("login_page")
+                    navController.navigate(Screen.Login.route)
                 },
                 goToLogin = {
-                    navController.navigate("login_page")
+                    navController.navigate(Screen.Login.route)
                 }
             )
         }
 
-        // Bottom Navigation
-        composable (
-            route = "home_page"
+        navigation (
+            startDestination = Screen.Home.route,
+            route = Screen.Main.route
         ) {
-            HomePage(
-                modifier = modifier,
-                navController = navController
+            composable (
+                route = Screen.Home.route
             ) {
-                navController.navigate("login_page")
+                HomePage (
+                    modifier = modifier,
+                    navController = navController,
+                    onLogout = {
+                        navController.navigate(Screen.Login.route)
+                    },
+                    toAvailableTasks = {
+                        navController.navigate(Screen.AvailableTasks.route)
+                    },
+                    toReservedTasks = {
+                        navController.navigate(Screen.ReservedTasks.route)
+                    },
+                    toPostedTasks = {
+                        navController.navigate(Screen.PostedTasks.route)
+                    }
+                )
+            }
+
+            composable (
+                route = Screen.Search.route
+            ) {
+                SearchPage (
+                    modifier = modifier,
+                    navController = navController
+                )
+            }
+
+            composable (
+                route = Screen.Settings.route
+            ) {
+                SettingsPage (
+                    modifier = modifier,
+                    navController = navController
+                ) {
+                    navController.navigate(Screen.Login.route)
+                }
             }
         }
 
         composable (
-            route = "search_page"
+            route = Screen.AvailableTasks.route
         ) {
-            SearchPage(
-                modifier = modifier,
-                navController = navController
+            TaskListPage (
+                modifier = modifier
             )
         }
 
         composable (
-            route = "settings_page"
+            route = Screen.ReservedTasks.route
         ) {
-            SettingsPage(
-                modifier = modifier,
-                navController = navController
-            ) {
-                navController.navigate("login_page")
-            }
+            TaskListPage (
+                modifier = modifier
+            )
         }
+
+        composable (
+            route = Screen.PostedTasks.route
+        ) {
+            TaskListPage (
+                modifier = modifier
+            )
+        }
+
     }
 }

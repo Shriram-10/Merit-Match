@@ -36,11 +36,12 @@ import androidx.compose.ui.unit.sp
 
 @Composable
 fun TaskView (
-    modifier: Modifier
+    modifier: Modifier,
+    onViewMore: () -> Unit
 ) {
     val color = MaterialTheme.colorScheme
 
-    val fadeOutColors = listOf(
+    val fadeOutColors = listOf (
         Color.Black.copy(alpha = 0f),
         Color.Black.copy(alpha = 0.1f),
         Color.Black.copy(alpha = 0.2f),
@@ -53,7 +54,7 @@ fun TaskView (
             .height(245.dp),
     ) {
         Box {
-            Column(
+            Column (
                 modifier = modifier
                     .height(225.dp)
                     .clip(RoundedCornerShape(10))
@@ -61,7 +62,7 @@ fun TaskView (
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.Center
             ) {
-                LazyVerticalGrid(
+                LazyVerticalGrid (
                     columns = GridCells.Fixed(1),
                     modifier = Modifier
                         .fillMaxSize(),
@@ -69,8 +70,8 @@ fun TaskView (
                     verticalArrangement = Arrangement.spacedBy(16.dp),
                     contentPadding = PaddingValues(16.dp)
                 ) {
-                    items(10) { item ->
-                        Box(
+                    items (10) { item ->
+                        Box (
                             modifier = Modifier
                                 .size(100.dp)
                                 .clip(RoundedCornerShape(20))
@@ -85,7 +86,7 @@ fun TaskView (
                 }
             }
 
-            Box(
+            Box (
                 modifier = modifier
                     .clip(RoundedCornerShape(10))
                     .fillMaxSize()
@@ -95,15 +96,15 @@ fun TaskView (
             }
         }
 
-        Box(
+        Box (
             modifier = Modifier
                 .clip(RoundedCornerShape(100))
                 .size(40.dp)
                 .background(color.primaryContainer)
                 .align(Alignment.BottomCenter)
         ) {
-            Button(
-                onClick = { /*TODO*/ },
+            Button (
+                onClick = { onViewMore() },
                 modifier = Modifier
                     .fillMaxSize()
                     .align(Alignment.Center)
@@ -120,7 +121,7 @@ fun TaskView (
 
             }
 
-            Icon(
+            Icon (
                 imageVector = Icons.Default.ArrowDropDown,
                 contentDescription = null,
                 tint = color.primary,
@@ -135,10 +136,11 @@ fun TaskView (
 @Composable
 fun LabeledTaskView (
     modifier: Modifier,
+    onViewMore: () -> Unit,
     label: String
 ) {
     Column {
-        Text(
+        Text (
             text = label,
             style = MaterialTheme.typography.headlineMedium,
             fontSize = 18.sp,
@@ -147,8 +149,9 @@ fun LabeledTaskView (
             color = MaterialTheme.colorScheme.primary
         )
 
-        TaskView(
-            modifier = modifier
+        TaskView (
+            modifier = modifier,
+            onViewMore = onViewMore
         )
     }
 }
