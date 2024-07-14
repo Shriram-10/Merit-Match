@@ -44,49 +44,44 @@ fun Navigation (modifier : Modifier) {
             )
         }
 
-        navigation (
-            startDestination = Screen.Home.route,
-            route = Screen.Main.route
+        composable (
+            route = Screen.Home.route
         ) {
-            composable (
-                route = Screen.Home.route
-            ) {
-                HomePage (
-                    modifier = modifier,
-                    navController = navController,
-                    onLogout = {
-                        navController.navigate(Screen.Login.route)
-                    },
-                    toAvailableTasks = {
-                        navController.navigate(Screen.AvailableTasks.route)
-                    },
-                    toReservedTasks = {
-                        navController.navigate(Screen.ReservedTasks.route)
-                    },
-                    toPostedTasks = {
-                        navController.navigate(Screen.PostedTasks.route)
-                    }
-                )
-            }
-
-            composable (
-                route = Screen.Search.route
-            ) {
-                SearchPage (
-                    modifier = modifier,
-                    navController = navController
-                )
-            }
-
-            composable (
-                route = Screen.Settings.route
-            ) {
-                SettingsPage (
-                    modifier = modifier,
-                    navController = navController
-                ) {
+            HomePage (
+                modifier = modifier,
+                navController = navController,
+                onLogout = {
                     navController.navigate(Screen.Login.route)
+                },
+                toAvailableTasks = {
+                    navController.navigate(Screen.AvailableTasks.route)
+                },
+                toReservedTasks = {
+                    navController.navigate(Screen.ReservedTasks.route)
+                },
+                toPostedTasks = {
+                    navController.navigate(Screen.PostedTasks.route)
                 }
+            )
+        }
+
+        composable (
+            route = Screen.Search.route
+        ) {
+            SearchPage (
+                modifier = modifier,
+                navController = navController
+            )
+        }
+
+        composable (
+            route = Screen.Settings.route
+        ) {
+            SettingsPage (
+                modifier = modifier,
+                navController = navController
+            ) {
+                navController.navigate(Screen.Login.route)
             }
         }
 
