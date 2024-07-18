@@ -1,14 +1,11 @@
 package com.example.meritmatch
 
-import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.material.icons.Icons
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
@@ -19,15 +16,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
-import androidx.navigation.compose.NavHost
-import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
-import androidx.navigation.compose.rememberNavController
 
 @Composable
 fun HomePage(
@@ -41,6 +33,14 @@ fun HomePage(
     val navBackStackEntry by navController.currentBackStackEntryAsState()
 
     Scaffold(
+        topBar = @Composable {
+            CustomTopAppBar (
+                title = "Home",
+                navigate = onLogout,
+                endIcon = items[2].unselectedIcon,
+                startIcon =  items[1].unselectedIcon
+            )
+        },
         bottomBar = {
             NavigationBar {
                 items.forEach { item ->
@@ -74,12 +74,12 @@ fun HomePage(
         }
     ) { innerPadding ->
         Box(
-            modifier = modifier.padding(bottom = innerPadding.calculateBottomPadding()),
+            modifier = modifier.padding(bottom = innerPadding.calculateBottomPadding() * 0.65f, top = innerPadding.calculateTopPadding() * 0.60f),
             contentAlignment = Alignment.Center
         ) {
             LazyColumn {
                 item {
-                    Spacer(modifier = Modifier.height(30.dp))
+                    Spacer(modifier = Modifier)
                     Headline(modifier = Modifier.padding(top = 24.dp, bottom = 8.dp), text = "Welcome, Username")
 
                     Text(
@@ -129,12 +129,5 @@ fun HomePage(
                 }
             }
         }
-
-        CustomTopAppBar (
-            title = "Home",
-            navigate = onLogout,
-            endIcon = items[2].unselectedIcon,
-            startIcon =  items[1].unselectedIcon
-        )
     }
 }

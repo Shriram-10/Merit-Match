@@ -54,10 +54,10 @@ fun Navigation (modifier : Modifier) {
                     navController.navigate(Screen.Login.route)
                 },
                 toAvailableTasks = {
-                    navController.navigate(Screen.AvailableTasks.route)
+                    navController.navigate(Screen.Search.route)
                 },
                 toReservedTasks = {
-                    navController.navigate(Screen.ReservedTasks.route)
+                    navController.navigate(Screen.Settings.route)
                 },
                 toPostedTasks = {
                     navController.navigate(Screen.PostedTasks.route)
