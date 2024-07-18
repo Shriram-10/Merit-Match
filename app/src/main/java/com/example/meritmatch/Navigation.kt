@@ -22,7 +22,7 @@ fun Navigation (modifier : Modifier) {
             LoginPage (
                 modifier = modifier,
                 onLogin = {
-                    navController.navigate(Screen.Home.route)
+                    navController.navigate (Screen.Home.route)
                 },
                 goToSignUp = {
                     navController.navigate(Screen.SignUp.route)
@@ -54,10 +54,10 @@ fun Navigation (modifier : Modifier) {
                     navController.navigate(Screen.Login.route)
                 },
                 toAvailableTasks = {
-                    navController.navigate(Screen.Search.route)
+                    navController.navigate(Screen.AvailableTasks.route)
                 },
                 toReservedTasks = {
-                    navController.navigate(Screen.Settings.route)
+                    navController.navigate(Screen.ReservedTasks.route)
                 },
                 toPostedTasks = {
                     navController.navigate(Screen.PostedTasks.route)
@@ -89,7 +89,9 @@ fun Navigation (modifier : Modifier) {
             route = Screen.AvailableTasks.route
         ) {
             TaskListPage (
-                modifier = modifier
+                modifier = modifier,
+                navController = navController,
+                label = "Available Tasks"
             )
         }
 
@@ -97,7 +99,9 @@ fun Navigation (modifier : Modifier) {
             route = Screen.ReservedTasks.route
         ) {
             TaskListPage (
-                modifier = modifier
+                modifier = modifier,
+                navController = navController,
+                label = "Reserved Tasks"
             )
         }
 
@@ -105,7 +109,9 @@ fun Navigation (modifier : Modifier) {
             route = Screen.PostedTasks.route
         ) {
             TaskListPage (
-                modifier = modifier
+                modifier = modifier,
+                navController = navController,
+                label = "Posted Tasks"
             )
         }
 

@@ -27,42 +27,7 @@ fun SearchPage (
     modifier: Modifier,
     navController: NavController
 ) {
-    val color = MaterialTheme.colorScheme
-    val navBackStackEntry by navController.currentBackStackEntryAsState()
-
-    Scaffold(
-        bottomBar = {
-            NavigationBar {
-                items.forEach { item ->
-                    val selected = navBackStackEntry?.destination?.route === item.route
-                    NavigationBarItem(
-                        selected = selected,
-                        label = {
-                            Text(
-                                text = item.title
-                            )
-                        },
-                        icon = {
-                            Icon(
-                                imageVector = if (selected) item.selectedIcon else item.unselectedIcon,
-                                contentDescription = item.title,
-                                tint = MaterialTheme.colorScheme.primary
-                            )
-                        },
-                        onClick = {
-                            navController.navigate(item.route) {
-                                popUpTo(navController.graph.startDestinationId) {
-                                    saveState = true
-                                }
-                                launchSingleTop = true
-                                restoreState = true
-                            }
-                        }
-                    )
-                }
-            }
-        }
-    ) { innerPadding ->
+    Scaffold { innerPadding ->
         Box(
             modifier = modifier.padding(bottom = innerPadding.calculateBottomPadding()),
             contentAlignment = Alignment.Center

@@ -1,11 +1,15 @@
 package com.example.meritmatch
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.Search
+import androidx.compose.material.icons.outlined.Settings
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
@@ -32,13 +36,22 @@ fun HomePage(
 ) {
     val navBackStackEntry by navController.currentBackStackEntryAsState()
 
+    BackHandler {
+        android.os.Process.killProcess(android.os.Process.myPid())
+    }
+
     Scaffold(
         topBar = @Composable {
             CustomTopAppBar (
                 title = "Home",
-                navigate = onLogout,
-                endIcon = items[2].unselectedIcon,
-                startIcon =  items[1].unselectedIcon
+                searchNavigate = {
+                    navController.navigate(Screen.Search.route)
+                },
+                settingsNavigate = {
+                    navController.navigate(Screen.Settings.route)
+                },
+                endIcon = Icons.Outlined.Settings,
+                startIcon =  Icons.Outlined.Search
             )
         },
         bottomBar = {
@@ -74,15 +87,14 @@ fun HomePage(
         }
     ) { innerPadding ->
         Box(
-            modifier = modifier.padding(bottom = innerPadding.calculateBottomPadding() * 0.65f, top = innerPadding.calculateTopPadding() * 0.60f),
+            modifier = modifier.padding(bottom = innerPadding.calculateBottomPadding() * 0.69f, top = innerPadding.calculateTopPadding() * 0.60f),
             contentAlignment = Alignment.Center
         ) {
             LazyColumn {
                 item {
-                    Spacer(modifier = Modifier)
-                    Headline(modifier = Modifier.padding(top = 24.dp, bottom = 8.dp), text = "Welcome, Username")
+                    Headline (modifier = Modifier.padding(top = 24.dp, bottom = 8.dp), text = "Welcome, Username")
 
-                    Text(
+                    Text (
                         text = "What would you like to do today?",
                         style = MaterialTheme.typography.headlineMedium,
                         fontSize = 18.sp,
@@ -90,7 +102,7 @@ fun HomePage(
                         color = MaterialTheme.colorScheme.primary
                     )
 
-                    HorizontalLine(
+                    HorizontalLine (
                         modifier = Modifier
                             .fillMaxWidth()
                             .height(20.dp),
@@ -98,9 +110,9 @@ fun HomePage(
                         end = 0.95f
                     )
 
-                    BalanceKP(modifier = Modifier.padding(16.dp), balance = 350.00)
+                    BalanceKP (modifier = Modifier.padding(16.dp), balance = 350.00)
 
-                    LabeledTaskView(
+                    LabeledTaskView (
                         modifier = Modifier
                             .padding(start = 16.dp)
                             .fillMaxWidth(0.95f)
@@ -126,6 +138,8 @@ fun HomePage(
                         label = "Posted Tasks",
                         onViewMore = toPostedTasks
                     )
+
+                    Spacer(modifier = Modifier)
                 }
             }
         }

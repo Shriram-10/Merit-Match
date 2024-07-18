@@ -21,7 +21,8 @@ import androidx.compose.ui.unit.dp
 @Composable
 fun CustomTopAppBar (
    title : String,
-   navigate : () -> Unit,
+   searchNavigate : () -> Unit,
+   settingsNavigate : () -> Unit,
    startIcon: ImageVector,
    endIcon: ImageVector
 ) {
@@ -40,7 +41,7 @@ fun CustomTopAppBar (
       actions = {
          Row {
             IconButton(
-               onClick = navigate,
+               onClick = searchNavigate,
                modifier = Modifier.padding(start = 8.dp, end = 8.dp)
             ) {
                Icon(
@@ -50,7 +51,7 @@ fun CustomTopAppBar (
             }
 
             IconButton(
-               onClick = navigate,
+               onClick = settingsNavigate,
                modifier = Modifier.padding(end = 8.dp)
             ) {
                Icon(

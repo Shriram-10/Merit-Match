@@ -1,9 +1,15 @@
 package com.example.meritmatch
 
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.AllInclusive
+import androidx.compose.material.icons.filled.BookmarkAdded
+import androidx.compose.material.icons.filled.CreateNewFolder
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.Settings
+import androidx.compose.material.icons.outlined.AllInclusive
+import androidx.compose.material.icons.outlined.BookmarkAdded
+import androidx.compose.material.icons.outlined.CreateNewFolder
 import androidx.compose.material.icons.outlined.Home
 import androidx.compose.material.icons.outlined.Search
 import androidx.compose.material.icons.outlined.Settings
@@ -18,23 +24,23 @@ data class BottomNavigationItem(
 
 val items = listOf(
     BottomNavigationItem(
-        route = "home_page",
-        title = "Home",
-        unselectedIcon = Icons.Outlined.Home,
-        selectedIcon = Icons.Filled.Home
+        route = "available_tasks",
+        title = "Available Tasks",
+        unselectedIcon = Icons.Outlined.AllInclusive,
+        selectedIcon = Icons.Filled.AllInclusive
     ),
 
     BottomNavigationItem(
-        route = "search_page",
-        title = "Search",
-        unselectedIcon = Icons.Outlined.Search,
-        selectedIcon = Icons.Filled.Search
+        route = "reserved_tasks",
+        title = "Reserved Tasks",
+        unselectedIcon = Icons.Outlined.BookmarkAdded,
+        selectedIcon = Icons.Filled.BookmarkAdded
     ),
 
     BottomNavigationItem(
-        route = "settings_page",
-        title = "Settings",
-        unselectedIcon = Icons.Outlined.Settings,
-        selectedIcon = Icons.Filled.Settings
+        route = "posted_tasks",
+        title = "Posted Tasks",
+        unselectedIcon = Icons.Outlined.CreateNewFolder,
+        selectedIcon = Icons.Filled.CreateNewFolder
     )
 )
