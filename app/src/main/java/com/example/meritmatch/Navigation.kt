@@ -22,7 +22,9 @@ fun Navigation (modifier : Modifier) {
             LoginPage (
                 modifier = modifier,
                 onLogin = {
-                    navController.navigate (Screen.Home.route)
+                    navController.navigate(Screen.Home.route) {
+                        popUpTo(Screen.Login.route) { inclusive = true }
+                    }
                 },
                 goToSignUp = {
                     navController.navigate(Screen.SignUp.route)
