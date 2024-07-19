@@ -71,8 +71,8 @@ fun SignUpPage(
 
             Button (
                 onClick = {
-                    onSignUp()
                     dataViewModel.createNewUser(user.value.username, user.value.password)
+                    onSignUp()
                 },
                 modifier = Modifier
                     .height(42.dp)
@@ -132,7 +132,7 @@ fun SignUpPage(
             }
 
             Text(
-                text = "Already have an account?",
+                text = "Already have an account? ${dataViewModel.stateOfUserRetrieval.value.value.toString()}",
                 fontSize = 18.sp,
                 style = MaterialTheme.typography.bodyLarge,
                 color = MaterialTheme.colorScheme.primary
