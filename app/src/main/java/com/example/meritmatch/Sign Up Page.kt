@@ -16,6 +16,7 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
@@ -23,14 +24,17 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.ViewModel
 
 @Composable
 fun SignUpPage(
     modifier: Modifier,
     onSignUp: () -> Unit,
-    goToLogin: () -> Unit
+    goToLogin: () -> Unit,
+    dataViewModel: MainViewModel
 ) {
     val color = MaterialTheme.colorScheme
+
     Box(
         modifier = modifier.fillMaxSize(),
         contentAlignment = Alignment.Center
@@ -50,23 +54,26 @@ fun SignUpPage(
                 textAlign = TextAlign.Center
             )
 
-            InputField(
+            InputField (
                 modifier = Modifier.padding(24.dp),
                 label = "Create Username",
                 placeholder = "Enter your username"
             )
 
-            InputField(
+            InputField (
                 modifier = Modifier.padding(bottom = 0.dp),
                 label = "Password",
                 placeholder = "Create your password",
                 password = true
             )
 
-            Spacer(modifier = Modifier.height(50.dp))
+            Spacer (modifier = Modifier.height(50.dp))
 
-            Button(
-                onClick = { onSignUp() },
+            Button (
+                onClick = {
+                    onSignUp()
+                    dataViewModel.createNewUser(user.value.username, user.value.password)
+                },
                 modifier = Modifier
                     .height(42.dp)
                     .width(120.dp),
@@ -81,7 +88,7 @@ fun SignUpPage(
 
             Spacer(modifier = Modifier.height(50.dp))
 
-            Box(
+            Box (
                 contentAlignment = Alignment.Center
             ) {
                 Canvas(
@@ -146,3 +153,5 @@ fun SignUpPage(
         }
     }
 }
+
+val user = mutableStateOf(User("", ""))

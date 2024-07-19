@@ -23,7 +23,7 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 
 @Composable
-fun InputField(
+fun InputField (
     modifier: Modifier,
     label: String = "",
     placeholder: String = "",
@@ -37,7 +37,7 @@ fun InputField(
     }
 
     var passwordInvisibility by remember {
-        mutableStateOf(if (password) true else false)
+        mutableStateOf (if (password) true else false)
     }
 
     OutlinedTextField(
@@ -45,6 +45,11 @@ fun InputField(
         value = valueStr,
         onValueChange = {
             valueStr = it
+            if (!password) {
+                user.value.username = valueStr
+            } else {
+                user.value.password = valueStr
+            }
         },
         label = {
             Text(text = label)

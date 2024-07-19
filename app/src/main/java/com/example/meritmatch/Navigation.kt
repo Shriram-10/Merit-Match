@@ -2,6 +2,8 @@ package com.example.meritmatch
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
@@ -10,6 +12,7 @@ import androidx.navigation.navigation
 @Composable
 fun Navigation (modifier : Modifier) {
     val navController = rememberNavController()
+    val viewModel : MainViewModel = viewModel()
 
     NavHost (
         navController = navController,
@@ -42,7 +45,8 @@ fun Navigation (modifier : Modifier) {
                 },
                 goToLogin = {
                     navController.navigate(Screen.Login.route)
-                }
+                },
+                dataViewModel = viewModel
             )
         }
 
