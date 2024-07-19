@@ -28,7 +28,8 @@ import androidx.compose.ui.unit.sp
 fun LoginPage(
     modifier: Modifier,
     onLogin: () -> Unit,
-    goToSignUp: () -> Unit
+    goToSignUp: () -> Unit,
+    dataViewModel: MainViewModel
 ){
     val color = MaterialTheme.colorScheme
     Box(
@@ -53,7 +54,8 @@ fun LoginPage(
             InputField(
                 modifier = Modifier.padding(24.dp),
                 label = "Username",
-                placeholder = "Enter your username"
+                placeholder = "Enter your username",
+                dataViewModel = dataViewModel
             )
 
             Column {
@@ -61,7 +63,8 @@ fun LoginPage(
                     modifier = Modifier.padding(bottom = 0.dp),
                     label = "Password",
                     placeholder = "Enter your password",
-                    password = true
+                    password = true,
+                    dataViewModel = dataViewModel
                 )
 
                 Text(

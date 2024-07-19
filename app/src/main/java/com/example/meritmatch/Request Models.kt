@@ -8,3 +8,7 @@ data class User (
 data class Code (
     val code : Int
 )
+
+data class Message (
+    val code : String
+)

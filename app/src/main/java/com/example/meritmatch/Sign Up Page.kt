@@ -4,19 +4,21 @@ import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -25,8 +27,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.ViewModel
-import kotlinx.coroutines.delay
 
 val user = mutableStateOf(User("", ""))
 
@@ -61,15 +61,41 @@ fun SignUpPage(
             )
 
             InputField (
-                modifier = Modifier.padding(24.dp),
+                modifier = Modifier.padding(start = 24.dp, end = 24.dp, top = 24.dp, bottom = 8.dp),
                 label = "Create Username",
-                placeholder = "Enter your username"
+                placeholder = "Enter your username",
+                dataViewModel = dataViewModel
             )
+
+            Row (
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(start = 48.dp, bottom = 8.dp),
+            ) {
+                Text (
+                    text = "Username ${dataViewModel.stateOfCheckUsername.value.status}",
+                    fontSize = 14.sp,
+                    color = color.secondary.copy(alpha = if (user.value.username == "") 0f else 1f)
+                )
+
+                if (dataViewModel.stateOfCheckUsername.value.loading) {
+                    CircularProgressIndicator(
+                        modifier = Modifier
+                            .padding(start = 2.dp)
+                            .size(10.dp),
+                        color = color.primary,
+                        trackColor = color.primaryContainer,
+                        strokeWidth = 2.dp,
+                    )
+                }
+            }
+
 
             InputField (
                 modifier = Modifier.padding(bottom = 0.dp),
                 label = "Password",
                 placeholder = "Create your password",
+                dataViewModel = dataViewModel,
                 password = true
             )
 
@@ -80,7 +106,7 @@ fun SignUpPage(
                     dataViewModel.createNewUser(user.value.username, user.value.password)
                     if (dataViewModel.stateOfUserRetrieval.value.loading) {
                         goLoad()
-                    } else {
+                    } else if (dataViewModel.stateOfCheckUsername.value.status == "available") {
                         popLoad()
                         onSignUp()
                     }

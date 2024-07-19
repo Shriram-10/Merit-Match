@@ -21,12 +21,14 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.ViewModel
 
 @Composable
 fun InputField (
     modifier: Modifier,
     label: String = "",
     placeholder: String = "",
+    dataViewModel : MainViewModel,
     password: Boolean = false
 ){
 
@@ -45,6 +47,7 @@ fun InputField (
         value = valueStr,
         onValueChange = {
             valueStr = it
+            dataViewModel.checkUser(user.value.username)
             if (!password) {
                 user.value.username = valueStr
             } else {
