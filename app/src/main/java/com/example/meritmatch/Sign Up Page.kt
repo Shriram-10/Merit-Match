@@ -16,6 +16,7 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -25,12 +26,17 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.ViewModel
+import kotlinx.coroutines.delay
+
+val user = mutableStateOf(User("", ""))
 
 @Composable
 fun SignUpPage(
     modifier: Modifier,
     onSignUp: () -> Unit,
     goToLogin: () -> Unit,
+    goLoad: () -> Unit,
+    popLoad: () -> Unit,
     dataViewModel: MainViewModel
 ) {
     val color = MaterialTheme.colorScheme
@@ -72,7 +78,12 @@ fun SignUpPage(
             Button (
                 onClick = {
                     dataViewModel.createNewUser(user.value.username, user.value.password)
-                    onSignUp()
+                    if (dataViewModel.stateOfUserRetrieval.value.loading) {
+                        goLoad()
+                    } else {
+                        popLoad()
+                        onSignUp()
+                    }
                 },
                 modifier = Modifier
                     .height(42.dp)
@@ -132,7 +143,7 @@ fun SignUpPage(
             }
 
             Text(
-                text = "Already have an account? ${dataViewModel.stateOfUserRetrieval.value.value.toString()}",
+                text = "Already have an account?",
                 fontSize = 18.sp,
                 style = MaterialTheme.typography.bodyLarge,
                 color = MaterialTheme.colorScheme.primary
@@ -142,7 +153,7 @@ fun SignUpPage(
                 text = "Login",
                 modifier = Modifier
                     .padding(top = 8.dp)
-                    .clickable{
+                    .clickable {
                         goToLogin()
                     },
                 fontSize = 16.sp,
@@ -153,5 +164,3 @@ fun SignUpPage(
         }
     }
 }
-
-val user = mutableStateOf(User("", ""))

@@ -2,7 +2,7 @@ package com.example.meritmatch
 
 sealed class Screen (val route : String) {
     data object ViewTasks : Screen("view_tasks")
-    data object Main : Screen("main_route")
+    data object Load : Screen("loading_page")
     data object Login : Screen("login_page")
     data object SignUp : Screen("signup_page")
     data object Home : Screen("home_page")
