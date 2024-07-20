@@ -27,6 +27,7 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.currentBackStackEntryAsState
 
 var localUsername = mutableStateOf("")
+var user_id = mutableStateOf(0)
 @Composable
 fun HomePage (
     modifier: Modifier,

@@ -80,6 +80,7 @@ class MainViewModel : ViewModel() {
                 )
                 localUsername.value = response.username
                 karma_points.value = response.karma_points
+                user_id.value = response.id
             } catch (e : Exception) {
                 _stateOfCheckUsername.value = _stateOfCheckUsername.value.copy (
                     error = e.message,
