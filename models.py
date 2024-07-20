@@ -1,5 +1,6 @@
-from sqlalchemy import Integer, String, Column, Boolean, Double
+from sqlalchemy import Integer, String, Column, Boolean, Double, DateTime, Interval
 from database import Base
+from datetime import datetime
 
 class User(Base):
     __tablename__ = 'users'
@@ -16,5 +17,8 @@ class Post(Base):
     id = Column(Integer, primary_key=True, index=True)
     title = Column(String(100))
     description = Column(String(5000))
+    post_time = Column(String(20))
+    deadline = Column(String(20))
     kp_value = Column(Double)
     user_id = Column(Integer)
+    reserved = Column(Integer)

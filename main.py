@@ -22,6 +22,10 @@ class PostBase(BaseModel):
     title: str
     description: str
     user_id: int
+    post_time: str
+    deadline: str
+    kp_value: float
+    reserved: int
 
 
 class User(BaseModel):
@@ -50,7 +54,6 @@ async def create_user(user: User, db: db_dependency):
     if existing_user:
         return {"code" : -1}
     else:
-       print(new_user.password)
        new_user.password = password_hash(user.username)
        new_user.login = user.login
        db.add(new_user)
@@ -93,5 +96,24 @@ async def login_auth(user: User, db: db_dependency):
 async def create_post(user_id: int, post: PostBase, db: db_dependency):
     new_post = models.Post(**post.model_dump())
 
+    db.add(new_post)
+    db.commit()
+
+    return {"code" : 1}
+
+@app.get("/get_posted_tasks/{user_id}")
+async def get_sent_tasks(user_id: int, db: db_dependency):
+    posted_tasks = db.query(models.Post).filter(user_id == models.Post.user_id).all()
+
+    return {"tasks" : posted_tasks, "code" : 1}
     
-    
+@app.get("/get_reserved_tasks/{user_id}")
+async def get_sent_tasks(user_id: int, db: db_dependency):
+    reserved_tasks = db.query(models.Post).filter(user_id == models.Post.reserved).all()
+
+    return {"tasks" : reserved_tasks, "code" : 1}
+
+@app.get("/get_all_tasks/{user_id}")
+async def get_all_tasks(user_id: int, db: db_dependency):
+    all_tasks = db.query(models.Post).filter(user_id != models.Post.user_id).all()
+    return {"tasks" : all_tasks, "code" : 1}
