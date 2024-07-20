@@ -22,4 +22,16 @@ interface ApiService {
 
     @POST
     suspend fun loginUser(@Url fullUrl : String, @Body request : User) : LoginCode
+
+    @POST
+    suspend fun postTask(@Url fullUrl: String, @Body request : Task) : Code
+
+    @GET
+    suspend fun availableTasks(@Url fullUrl : String) : Tasks
+
+    @GET
+    suspend fun postedTasks(@Url fullUrl : String) : Tasks
+
+    @GET
+    suspend fun reservedTasks(@Url fullUrl : String) : Tasks
 }

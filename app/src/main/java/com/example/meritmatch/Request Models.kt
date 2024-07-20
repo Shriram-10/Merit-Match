@@ -21,3 +21,18 @@ data class LoginCode (
     val karma_points: Double,
     val id : Int
 )
+
+data class Task (
+    val title : String,
+    val description : String,
+    val kp_value : Double,
+    val user_id : Int,
+    val post_time : String,
+    val deadline : String,
+    val reserved : Int
+)
+
+data class Tasks (
+    val code: Int,
+    val tasks : List<Task>
+)

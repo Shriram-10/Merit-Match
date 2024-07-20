@@ -28,6 +28,18 @@ class MainViewModel : ViewModel() {
         val error : String? = null
     )
 
+    data class StateOfPost (
+        val loading: Boolean = false,
+        val status: Int = 0,
+        val error: String? = null
+    )
+
+    data class StateOfGettingPosts (
+        val loading: Boolean = false,
+        val status: Int = 0,
+        val error: String? = null
+    )
+
     fun createNewUser (username : String, password : String, login: Boolean) {
         viewModelScope.launch {
             try {
@@ -90,6 +102,74 @@ class MainViewModel : ViewModel() {
         }
     }
 
+    fun postTasks (userId: Int, post: Task) {
+        viewModelScope.launch {
+            try {
+                val response = dataService.postTask(fullUrl = "$baseUrl/create_posts/$userId", post)
+                _stateOfPost.value = _stateOfPost.value.copy (
+                    status = response.code,
+                    loading = false
+                )
+            } catch (e : Exception) {
+                _stateOfPost.value = _stateOfPost.value.copy (
+                    error = e.message,
+                    loading = false
+                )
+            }
+        }
+    }
+
+    fun getAvailableTasks (userId: Int) {
+        viewModelScope.launch {
+            try {
+                val response = dataService.availableTasks("$baseUrl/get_all_tasks/$userId")
+                _stateOfPost.value = _stateOfPost.value.copy (
+                    status = response.code,
+                    loading = false
+                )
+            } catch (e : Exception) {
+                _stateOfPost.value = _stateOfPost.value.copy (
+                    error = e.message,
+                    loading = false
+                )
+            }
+        }
+    }
+
+    fun getReservedTasks (userId: Int) {
+        viewModelScope.launch {
+            try {
+                val response = dataService.reservedTasks("$baseUrl/get_reserved_tasks/$userId")
+                _stateOfPost.value = _stateOfPost.value.copy (
+                    status = response.code,
+                    loading = false
+                )
+            } catch (e : Exception) {
+                _stateOfPost.value = _stateOfPost.value.copy (
+                    error = e.message,
+                    loading = false
+                )
+            }
+        }
+    }
+
+    fun getPostedTasks (userId: Int) {
+        viewModelScope.launch {
+            try {
+                val response = dataService.postedTasks("$baseUrl/get_posted_tasks/$userId")
+                _stateOfPost.value = _stateOfPost.value.copy (
+                    status = response.code,
+                    loading = false
+                )
+            } catch (e : Exception) {
+                _stateOfPost.value = _stateOfPost.value.copy (
+                    error = e.message,
+                    loading = false
+                )
+            }
+        }
+    }
+
     private val _stateOfUserRetrieval = mutableStateOf(StateOfUser())
     val stateOfUserRetrieval : State<StateOfUser> = _stateOfUserRetrieval
 
@@ -98,4 +178,16 @@ class MainViewModel : ViewModel() {
 
     private val _stateOfLogin = mutableStateOf(StateOfUserLogin())
     val stateOfLogin : State<StateOfUserLogin> = _stateOfLogin
+
+    private val _stateOfPost = mutableStateOf(StateOfPost())
+    val stateOfPost : State<StateOfPost> = _stateOfPost
+
+    private val _stateOfAllTasks = mutableStateOf(StateOfGettingPosts())
+    val stateOfAllTasks : State<StateOfGettingPosts> = _stateOfAllTasks
+
+    private val _stateOfReservedTasks = mutableStateOf(StateOfGettingPosts())
+    val stateOfReservedTasks : State<StateOfGettingPosts> = _stateOfReservedTasks
+
+    private val _stateOfPostedTasks = mutableStateOf(StateOfGettingPosts())
+    val stateOfPostedTasks : State<StateOfGettingPosts> = _stateOfPostedTasks
 }
