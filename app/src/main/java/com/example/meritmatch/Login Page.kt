@@ -16,6 +16,7 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
@@ -23,6 +24,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import kotlinx.coroutines.delay
 
 @Composable
 fun LoginPage (
@@ -68,7 +70,7 @@ fun LoginPage (
                 )
 
                 Text (
-                    text = "Forgot Password?${dataViewModel.stateOfLogin.value.status}",
+                    text = "Forgot Password?",
                     modifier = Modifier.padding(top = 8.dp),
                     style = MaterialTheme.typography.bodyLarge,
                     color = MaterialTheme.colorScheme.primary
@@ -160,4 +162,13 @@ fun LoginPage (
             )
         }
     }
+
+    /*LaunchedEffect (Unit) {
+        while (dataViewModel.stateOfLogin.value.status === null) {
+            delay(20)
+            if (dataViewModel.stateOfLogin.value.status == 1) {
+                onLogin()
+            }
+        }
+    }*/
 }

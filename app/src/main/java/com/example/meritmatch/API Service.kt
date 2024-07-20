@@ -5,10 +5,9 @@ import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.POST
-import retrofit2.http.Path
 import retrofit2.http.Url
 
-private val retrofit = Retrofit.Builder().baseUrl("http://192.168.4.89:8000/")
+private val retrofit = Retrofit.Builder().baseUrl("http://192.168.56.89:8000/")
     .addConverterFactory(GsonConverterFactory.create())
     .build()
 
