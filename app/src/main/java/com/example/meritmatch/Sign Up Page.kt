@@ -108,8 +108,8 @@ fun SignUpPage(
                         goLoad()
                     } else if (dataViewModel.stateOfCheckUsername.value.status === "available") {
                         popLoad()
-                        onSignUp()
                     }
+                    onSignUp()
                 },
                 modifier = Modifier
                     .height(42.dp)

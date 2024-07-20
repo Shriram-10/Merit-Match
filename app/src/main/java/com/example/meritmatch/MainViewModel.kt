@@ -22,6 +22,12 @@ class MainViewModel : ViewModel() {
         val error : String? = null
     )
 
+    data class StateOfUserLogin (
+        val loading : Boolean = false,
+        val status : Int? = null,
+        val error : String? = null
+    )
+
     fun createNewUser (username : String, password : String, login: Boolean) {
         viewModelScope.launch {
             try {
@@ -56,11 +62,11 @@ class MainViewModel : ViewModel() {
         }
     }
 
-    fun loginUser (username: String, password: String) {
+    fun loginUser (username: String) {
         viewModelScope.launch {
             try {
-                val response = dataService.checkUser("$baseUrl/users/$username")
-                _stateOfCheckUsername.value = _stateOfCheckUsername.value.copy (
+                val response = dataService.loginUser("$baseUrl/users/$username")
+                _stateOfLogin.value = _stateOfLogin.value.copy (
                     status = response.code,
                     loading = false
                 )
@@ -79,6 +85,6 @@ class MainViewModel : ViewModel() {
     private val _stateOfCheckUsername = mutableStateOf(UserAvailability())
     val stateOfCheckUsername : State<UserAvailability> = _stateOfCheckUsername
 
-    private val _stateOfLogin = mutableStateOf(UserAvailability())
-    val stateOfLogin : State<UserAvailability> = _stateOfLogin
+    private val _stateOfLogin = mutableStateOf(StateOfUserLogin())
+    val stateOfLogin : State<StateOfUserLogin> = _stateOfLogin
 }

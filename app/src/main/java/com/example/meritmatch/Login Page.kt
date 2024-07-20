@@ -68,7 +68,7 @@ fun LoginPage (
                 )
 
                 Text (
-                    text = "Forgot Password?",
+                    text = "Forgot Password?${dataViewModel.stateOfLogin.value.status}",
                     modifier = Modifier.padding(top = 8.dp),
                     style = MaterialTheme.typography.bodyLarge,
                     color = MaterialTheme.colorScheme.primary
@@ -79,9 +79,7 @@ fun LoginPage (
 
             Button (
                 onClick = {
-                    if (dataViewModel.stateOfCheckUsername.value.status == "available") {
-
-                    }
+                    dataViewModel.loginUser(user.value.username)
                     onLogin()
                 },
                 modifier = Modifier
