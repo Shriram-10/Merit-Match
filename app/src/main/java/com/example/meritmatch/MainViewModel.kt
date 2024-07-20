@@ -24,7 +24,7 @@ class MainViewModel : ViewModel() {
 
     data class StateOfUserLogin (
         val loading : Boolean = false,
-        val status : LoginCode? = null,
+        val status : LoginCode = LoginCode(code = 0, username = "", karma_points = 0.0, id = 0),
         val error : String? = null
     )
 
@@ -78,6 +78,8 @@ class MainViewModel : ViewModel() {
                     status = response,
                     loading = false
                 )
+                localUsername.value = response.username
+                karma_points.value = response.karma_points
             } catch (e : Exception) {
                 _stateOfCheckUsername.value = _stateOfCheckUsername.value.copy (
                     error = e.message,

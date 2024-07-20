@@ -18,6 +18,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
@@ -25,8 +26,9 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.compose.currentBackStackEntryAsState
 
+var localUsername = mutableStateOf("")
 @Composable
-fun HomePage(
+fun HomePage (
     modifier: Modifier,
     navController: NavController,
     onLogout: () -> Unit,
@@ -58,10 +60,10 @@ fun HomePage(
             NavigationBar {
                 items.forEach { item ->
                     val selected = navBackStackEntry?.destination?.route === item.route
-                    NavigationBarItem(
+                    NavigationBarItem (
                         selected = selected,
                         label = {
-                            Text(
+                            Text (
                                 text = item.title
                             )
                         },
@@ -86,13 +88,13 @@ fun HomePage(
             }
         }
     ) { innerPadding ->
-        Box(
+        Box (
             modifier = modifier.padding(bottom = innerPadding.calculateBottomPadding() * 0.69f, top = innerPadding.calculateTopPadding() * 0.60f),
             contentAlignment = Alignment.Center
         ) {
             LazyColumn {
                 item {
-                    Headline (modifier = Modifier.padding(top = 24.dp, bottom = 8.dp), text = "Welcome, Username")
+                    Headline (modifier = Modifier.padding(top = 24.dp, bottom = 8.dp), text = "Welcome, ${localUsername.value}")
 
                     Text (
                         text = "What would you like to do today?",
@@ -110,7 +112,7 @@ fun HomePage(
                         end = 0.95f
                     )
 
-                    BalanceKP (modifier = Modifier.padding(16.dp), balance = 350.00)
+                    BalanceKP (modifier = Modifier.padding(16.dp), balance = karma_points.value)
 
                     LabeledTaskView (
                         modifier = Modifier
@@ -121,7 +123,7 @@ fun HomePage(
                         onViewMore = toAvailableTasks
                     )
 
-                    LabeledTaskView(
+                    LabeledTaskView (
                         modifier = Modifier
                             .padding(start = 16.dp)
                             .fillMaxWidth(0.95f)
@@ -130,7 +132,7 @@ fun HomePage(
                         onViewMore = toReservedTasks
                     )
 
-                    LabeledTaskView(
+                    LabeledTaskView (
                         modifier = Modifier
                             .padding(start = 16.dp)
                             .fillMaxWidth(0.95f)
@@ -138,8 +140,6 @@ fun HomePage(
                         label = "Posted Tasks",
                         onViewMore = toPostedTasks
                     )
-
-                    Spacer(modifier = Modifier)
                 }
             }
         }
