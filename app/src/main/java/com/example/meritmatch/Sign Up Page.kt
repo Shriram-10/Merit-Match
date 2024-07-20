@@ -28,7 +28,8 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
-val user = mutableStateOf(User("", "", false))
+val karma_points = mutableStateOf(350.00)
+val user = mutableStateOf(User("", "", false, karma_points.value))
 
 @Composable
 fun SignUpPage(

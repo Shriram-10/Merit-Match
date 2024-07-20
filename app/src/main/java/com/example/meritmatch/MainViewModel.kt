@@ -8,7 +8,7 @@ import kotlinx.coroutines.launch
 
 class MainViewModel : ViewModel() {
 
-    private val baseUrl = "http://192.168.4.89:8000"
+    private val baseUrl = "http://192.168.56.89:8000"
 
     data class StateOfUser (
         val loading : Boolean = false,
@@ -24,14 +24,14 @@ class MainViewModel : ViewModel() {
 
     data class StateOfUserLogin (
         val loading : Boolean = false,
-        val status : Int? = null,
+        val status : LoginCode? = null,
         val error : String? = null
     )
 
     fun createNewUser (username : String, password : String, login: Boolean) {
         viewModelScope.launch {
             try {
-                val response = dataService.createUser(User(username, password, login))
+                val response = dataService.createUser(User(username, password, login, karma_points.value))
                 _stateOfUserRetrieval.value = StateOfUser (
                     value = response.code,
                     loading = false
@@ -62,12 +62,20 @@ class MainViewModel : ViewModel() {
         }
     }
 
-    fun loginUser (username: String) {
+    fun loginUser (username: String, password: String, kp : Double) {
         viewModelScope.launch {
             try {
-                val response = dataService.loginUser("$baseUrl/users/$username")
+                val response = dataService.loginUser(
+                    "$baseUrl/users/login/$username",
+                    User (
+                        username,
+                        password,
+                        karma_points = kp,
+                        login = true
+                    )
+                )
                 _stateOfLogin.value = _stateOfLogin.value.copy (
-                    status = response.code,
+                    status = response,
                     loading = false
                 )
             } catch (e : Exception) {

@@ -81,8 +81,8 @@ fun LoginPage (
 
             Button (
                 onClick = {
-                    dataViewModel.loginUser(user.value.username)
-                    onLogin()
+                    dataViewModel.loginUser(user.value.username, user.value.password, karma_points.value)
+                    /*onLogin()*/
                 },
                 modifier = Modifier
                     .height(42.dp)
@@ -142,7 +142,7 @@ fun LoginPage (
             }
 
             Text (
-                text = "Don't have an account?",
+                text = "Don't have an account?  ${dataViewModel.stateOfLogin.value.status?.code}",
                 fontSize = 18.sp,
                 style = MaterialTheme.typography.bodyLarge,
                 color = MaterialTheme.colorScheme.primary

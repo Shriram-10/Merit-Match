@@ -20,6 +20,6 @@ interface ApiService {
     @GET
     suspend fun checkUser(@Url fullUrl : String) : Message
 
-    @GET
-    suspend fun loginUser(@Url fullUrl : String) : Code
+    @POST
+    suspend fun loginUser(@Url fullUrl : String, @Body request : User) : LoginCode
 }
