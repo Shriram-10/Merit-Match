@@ -82,7 +82,9 @@ fun LoginPage (
             Button (
                 onClick = {
                     dataViewModel.loginUser(user.value.username, user.value.password, karma_points.value)
-                    /*onLogin()*/
+                    if (!dataViewModel.stateOfLogin.value.loading && dataViewModel.stateOfLogin.value.error == null) {
+                        onLogin()
+                    }
                 },
                 modifier = Modifier
                     .height(42.dp)
@@ -123,7 +125,7 @@ fun LoginPage (
                         modifier = Modifier
                             .height(50.dp)
                             .width(50.dp),
-                        colors = ButtonDefaults.buttonColors(
+                        colors = ButtonDefaults.buttonColors (
                             containerColor = color.primaryContainer,
                             contentColor = color.primary
                         ),
@@ -142,7 +144,7 @@ fun LoginPage (
             }
 
             Text (
-                text = "Don't have an account?  ${dataViewModel.stateOfLogin.value.status?.code}",
+                text = "Don't have an account?",
                 fontSize = 18.sp,
                 style = MaterialTheme.typography.bodyLarge,
                 color = MaterialTheme.colorScheme.primary
@@ -162,13 +164,4 @@ fun LoginPage (
             )
         }
     }
-
-    /*LaunchedEffect (Unit) {
-        while (dataViewModel.stateOfLogin.value.status === null) {
-            delay(20)
-            if (dataViewModel.stateOfLogin.value.status == 1) {
-                onLogin()
-            }
-        }
-    }*/
 }

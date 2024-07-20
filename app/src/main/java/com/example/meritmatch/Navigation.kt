@@ -46,10 +46,14 @@ fun Navigation (modifier : Modifier) {
             SignUpPage (
                 modifier = modifier,
                 onSignUp = {
-                    navController.navigate(Screen.Login.route)
+                    navController.navigate(Screen.Login.route) {
+                        popUpTo(Screen.SignUp.route) { inclusive = true }
+                    }
                 },
                 goToLogin = {
-                    navController.navigate(Screen.Login.route)
+                    navController.navigate(Screen.Login.route) {
+                        popUpTo(Screen.SignUp.route) { inclusive = true }
+                    }
                 },
                 goLoad = {
                     navController.navigate(Screen.Load.route)

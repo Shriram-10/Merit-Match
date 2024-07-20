@@ -46,8 +46,8 @@ fun InputField (
         modifier = modifier,
         value = valueStr,
         onValueChange = {
-            valueStr = it
             dataViewModel.checkUser(user.value.username)
+            valueStr = it
             if (!password) {
                 user.value.username = valueStr
             } else {

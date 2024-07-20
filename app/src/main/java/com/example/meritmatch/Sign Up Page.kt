@@ -105,12 +105,9 @@ fun SignUpPage (
             Button (
                 onClick = {
                     dataViewModel.createNewUser(user.value.username, user.value.password, user.value.login)
-                    if (dataViewModel.stateOfUserRetrieval.value.loading) {
-                        goLoad()
-                    } else if (dataViewModel.stateOfCheckUsername.value.status === "available") {
-                        popLoad()
+                    if (!dataViewModel.stateOfCheckUsername.value.loading && dataViewModel.stateOfCheckUsername.value.error != null) {
+                        onSignUp()
                     }
-                    onSignUp()
                 },
                 modifier = Modifier
                     .height(42.dp)
