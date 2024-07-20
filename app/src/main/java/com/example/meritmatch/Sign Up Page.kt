@@ -32,7 +32,7 @@ val karma_points = mutableStateOf(350.00)
 val user = mutableStateOf(User("", "", false, karma_points.value))
 
 @Composable
-fun SignUpPage(
+fun SignUpPage (
     modifier: Modifier,
     onSignUp: () -> Unit,
     goToLogin: () -> Unit,
@@ -42,15 +42,15 @@ fun SignUpPage(
 ) {
     val color = MaterialTheme.colorScheme
 
-    Box(
+    Box (
         modifier = modifier.fillMaxSize(),
         contentAlignment = Alignment.Center
     ) {
-        Column(
+        Column (
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
 
-            Text(
+            Text (
                 text = "Create Account",
                 modifier = Modifier.padding(24.dp),
                 style = MaterialTheme.typography.headlineLarge,
@@ -80,7 +80,7 @@ fun SignUpPage(
                 )
 
                 if (dataViewModel.stateOfCheckUsername.value.loading) {
-                    CircularProgressIndicator(
+                    CircularProgressIndicator (
                         modifier = Modifier
                             .padding(start = 2.dp)
                             .size(10.dp),
