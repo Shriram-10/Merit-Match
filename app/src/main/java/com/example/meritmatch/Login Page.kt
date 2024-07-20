@@ -25,22 +25,22 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
 @Composable
-fun LoginPage(
+fun LoginPage (
     modifier: Modifier,
     onLogin: () -> Unit,
     goToSignUp: () -> Unit,
     dataViewModel: MainViewModel
 ){
     val color = MaterialTheme.colorScheme
-    Box(
+    Box (
         modifier = modifier.fillMaxSize(),
         contentAlignment = Alignment.Center
     ) {
-        Column(
+        Column (
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
 
-            Text(
+            Text (
                 text = "Login",
                 modifier = Modifier.padding(24.dp),
                 style = MaterialTheme.typography.headlineLarge,
@@ -51,7 +51,7 @@ fun LoginPage(
                 textAlign = TextAlign.Center
             )
 
-            InputField(
+            InputField (
                 modifier = Modifier.padding(24.dp),
                 label = "Username",
                 placeholder = "Enter your username",
@@ -59,7 +59,7 @@ fun LoginPage(
             )
 
             Column {
-                InputField(
+                InputField (
                     modifier = Modifier.padding(bottom = 0.dp),
                     label = "Password",
                     placeholder = "Enter your password",
@@ -67,7 +67,7 @@ fun LoginPage(
                     dataViewModel = dataViewModel
                 )
 
-                Text(
+                Text (
                     text = "Forgot Password?",
                     modifier = Modifier.padding(top = 8.dp),
                     style = MaterialTheme.typography.bodyLarge,
@@ -75,28 +75,33 @@ fun LoginPage(
                 )
             }
 
-            Spacer(modifier = Modifier.height(50.dp))
+            Spacer (modifier = Modifier.height(50.dp))
 
-            Button(
-                onClick = { onLogin() },
+            Button (
+                onClick = {
+                    if (dataViewModel.stateOfCheckUsername.value.status == "available") {
+
+                    }
+                    onLogin()
+                },
                 modifier = Modifier
                     .height(42.dp)
                     .width(96.dp),
                 shape = RoundedCornerShape(50),
             ) {
-                Text(
+                Text (
                     text = "Login",
                     fontSize = 18.sp,
                     color = MaterialTheme.colorScheme.primaryContainer
                 )
             }
 
-            Spacer(modifier = Modifier.height(50.dp))
+            Spacer (modifier = Modifier.height(50.dp))
 
-            Box(
+            Box (
                 contentAlignment = Alignment.Center
             ) {
-                Canvas(
+                Canvas (
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(24.dp)
@@ -127,7 +132,7 @@ fun LoginPage(
 
                     }
 
-                    Text(
+                    Text (
                         text = "OR",
                         fontSize = 18.sp,
                         color = MaterialTheme.colorScheme.primary,
@@ -136,18 +141,18 @@ fun LoginPage(
                 }
             }
 
-            Text(
+            Text (
                 text = "Don't have an account?",
                 fontSize = 18.sp,
                 style = MaterialTheme.typography.bodyLarge,
                 color = MaterialTheme.colorScheme.primary
             )
 
-            Text(
+            Text (
                 text = "Sign Up",
                 modifier = Modifier
                     .padding(top = 8.dp)
-                    .clickable{
+                    .clickable {
                         goToSignUp()
                     },
                 fontSize = 16.sp,

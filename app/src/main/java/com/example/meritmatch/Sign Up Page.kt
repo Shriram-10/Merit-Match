@@ -28,7 +28,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
-val user = mutableStateOf(User("", ""))
+val user = mutableStateOf(User("", "", false))
 
 @Composable
 fun SignUpPage(
@@ -103,10 +103,10 @@ fun SignUpPage(
 
             Button (
                 onClick = {
-                    dataViewModel.createNewUser(user.value.username, user.value.password)
+                    dataViewModel.createNewUser(user.value.username, user.value.password, user.value.login)
                     if (dataViewModel.stateOfUserRetrieval.value.loading) {
                         goLoad()
-                    } else if (dataViewModel.stateOfCheckUsername.value.status == "available") {
+                    } else if (dataViewModel.stateOfCheckUsername.value.status === "available") {
                         popLoad()
                         onSignUp()
                     }

@@ -8,30 +8,30 @@ import kotlinx.coroutines.launch
 
 class MainViewModel : ViewModel() {
 
-    val baseUrl = "http://192.168.4.89:8000"
+    private val baseUrl = "http://192.168.4.89:8000"
 
-    data class stateOfUser (
+    data class StateOfUser (
         val loading : Boolean = false,
         val value : Int? = 0,
         val error : String? = null
     )
 
-    data class UserAvailability(
+    data class UserAvailability (
         val loading : Boolean = false,
         val status : String? = null,
         val error : String? = null
     )
 
-    fun createNewUser (username : String, password : String) {
+    fun createNewUser (username : String, password : String, login: Boolean) {
         viewModelScope.launch {
             try {
-                val response = dataService.createUser(User(username, password))
-                _stateOfUserRetrieval.value = stateOfUser (
+                val response = dataService.createUser(User(username, password, login))
+                _stateOfUserRetrieval.value = StateOfUser (
                     value = response.code,
                     loading = false
                 )
             } catch (e : Exception) {
-                _stateOfUserRetrieval.value = stateOfUser (
+                _stateOfUserRetrieval.value = StateOfUser (
                     error = e.message,
                     loading = false
                 )
@@ -56,9 +56,29 @@ class MainViewModel : ViewModel() {
         }
     }
 
-    private val _stateOfUserRetrieval = mutableStateOf(stateOfUser())
-    val stateOfUserRetrieval : State<stateOfUser> = _stateOfUserRetrieval
+    fun loginUser (username: String, password: String) {
+        viewModelScope.launch {
+            try {
+                val response = dataService.checkUser("$baseUrl/users/$username")
+                _stateOfCheckUsername.value = _stateOfCheckUsername.value.copy (
+                    status = response.code,
+                    loading = false
+                )
+            } catch (e : Exception) {
+                _stateOfCheckUsername.value = _stateOfCheckUsername.value.copy (
+                    error = e.message,
+                    loading = false
+                )
+            }
+        }
+    }
+
+    private val _stateOfUserRetrieval = mutableStateOf(StateOfUser())
+    val stateOfUserRetrieval : State<StateOfUser> = _stateOfUserRetrieval
 
     private val _stateOfCheckUsername = mutableStateOf(UserAvailability())
     val stateOfCheckUsername : State<UserAvailability> = _stateOfCheckUsername
+
+    private val _stateOfLogin = mutableStateOf(UserAvailability())
+    val stateOfLogin : State<UserAvailability> = _stateOfLogin
 }

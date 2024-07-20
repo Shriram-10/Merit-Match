@@ -2,7 +2,8 @@ package com.example.meritmatch
 
 data class User (
     var username : String,
-    var password : String
+    var password : String,
+    var login : Boolean
 )
 
 data class Code (
