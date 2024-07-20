@@ -1,11 +1,19 @@
 package com.example.meritmatch
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+
+var allTasks = mutableStateOf(listOf<Task>())
+var reservedTasks = mutableStateOf(listOf<Task>())
+var postedTasks = mutableStateOf(listOf<Task>())
 
 @Composable
 fun Navigation (modifier : Modifier) {
@@ -75,14 +83,22 @@ fun Navigation (modifier : Modifier) {
                     navController.navigate(Screen.Login.route)
                 },
                 toAvailableTasks = {
+                    viewModel.getAvailableTasks(user_id.value)
+                    allTasks = viewModel.stateOfAllTasks.value.status
+                    if (viewMod)
                     navController.navigate(Screen.AvailableTasks.route)
                 },
                 toReservedTasks = {
+                    viewModel.getReservedTasks(user_id.value)
+                    reservedTasks = viewModel.stateOfReservedTasks.value.status
                     navController.navigate(Screen.ReservedTasks.route)
                 },
                 toPostedTasks = {
+                    viewModel.getPostedTasks(user_id.value)
+                    postedTasks = viewModel.stateOfPostedTasks.value.status
                     navController.navigate(Screen.PostedTasks.route)
-                }
+                },
+                dataViewModel = viewModel
             )
         }
 

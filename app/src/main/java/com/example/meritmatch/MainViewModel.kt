@@ -1,7 +1,12 @@
 package com.example.meritmatch
 
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.State
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.snapshots.SnapshotStateList
+import androidx.compose.runtime.toMutableStateList
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.launch
@@ -36,7 +41,7 @@ class MainViewModel : ViewModel() {
 
     data class StateOfGettingPosts (
         val loading: Boolean = false,
-        val status: Int = 0,
+        val status: MutableState<List<Task>> = mutableStateOf<List<Task>>(listOf(Task("", "", 0.0, 0, "", "", 0))),
         val error: String? = null
     )
 
@@ -123,12 +128,12 @@ class MainViewModel : ViewModel() {
         viewModelScope.launch {
             try {
                 val response = dataService.availableTasks("$baseUrl/get_all_tasks/$userId")
-                _stateOfPost.value = _stateOfPost.value.copy (
-                    status = response.code,
+                _stateOfAllTasks.value = _stateOfAllTasks.value.copy (
+                    status = mutableStateOf(response.tasks),
                     loading = false
                 )
             } catch (e : Exception) {
-                _stateOfPost.value = _stateOfPost.value.copy (
+                _stateOfAllTasks.value = _stateOfAllTasks.value.copy (
                     error = e.message,
                     loading = false
                 )
@@ -140,12 +145,12 @@ class MainViewModel : ViewModel() {
         viewModelScope.launch {
             try {
                 val response = dataService.reservedTasks("$baseUrl/get_reserved_tasks/$userId")
-                _stateOfPost.value = _stateOfPost.value.copy (
-                    status = response.code,
+                _stateOfAllTasks.value = _stateOfAllTasks.value.copy (
+                    status = mutableStateOf(response.tasks),
                     loading = false
                 )
             } catch (e : Exception) {
-                _stateOfPost.value = _stateOfPost.value.copy (
+                _stateOfAllTasks.value = _stateOfAllTasks.value.copy (
                     error = e.message,
                     loading = false
                 )
@@ -157,12 +162,12 @@ class MainViewModel : ViewModel() {
         viewModelScope.launch {
             try {
                 val response = dataService.postedTasks("$baseUrl/get_posted_tasks/$userId")
-                _stateOfPost.value = _stateOfPost.value.copy (
-                    status = response.code,
+                _stateOfAllTasks.value = _stateOfAllTasks.value.copy (
+                    status = mutableStateOf(response.tasks),
                     loading = false
                 )
             } catch (e : Exception) {
-                _stateOfPost.value = _stateOfPost.value.copy (
+                _stateOfAllTasks.value = _stateOfAllTasks.value.copy (
                     error = e.message,
                     loading = false
                 )

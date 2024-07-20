@@ -35,7 +35,8 @@ fun HomePage (
     onLogout: () -> Unit,
     toAvailableTasks: () -> Unit,
     toReservedTasks: () -> Unit,
-    toPostedTasks: () -> Unit
+    toPostedTasks: () -> Unit,
+    dataViewModel: MainViewModel
 ) {
     val navBackStackEntry by navController.currentBackStackEntryAsState()
 
@@ -43,7 +44,7 @@ fun HomePage (
         android.os.Process.killProcess(android.os.Process.myPid())
     }
 
-    Scaffold(
+    Scaffold (
         topBar = @Composable {
             CustomTopAppBar (
                 title = "Home",

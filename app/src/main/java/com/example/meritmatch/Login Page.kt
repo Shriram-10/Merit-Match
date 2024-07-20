@@ -82,7 +82,7 @@ fun LoginPage (
             Button (
                 onClick = {
                     dataViewModel.loginUser(user.value.username, user.value.password, karma_points.value)
-                    if (!dataViewModel.stateOfLogin.value.loading && dataViewModel.stateOfLogin.value.error == null) {
+                    if (user_id.value != 0) {
                         onLogin()
                     }
                 },
