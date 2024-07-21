@@ -49,7 +49,7 @@ fun TaskListPage (
             NavigationBar {
                 items.forEach { item ->
                     val selected = navBackStackEntry?.destination?.route === item.route
-                    NavigationBarItem (
+                    NavigationBarItem(
                         selected = selected,
                         label = {
                             Text(
@@ -98,7 +98,7 @@ fun TaskListPage (
             Box (
                 modifier = Modifier
                     .fillMaxSize(),
-                contentAlignment = Alignment.Center
+                contentAlignment = Alignment.TopCenter
             ) {
                 LazyColumn {
                     items (

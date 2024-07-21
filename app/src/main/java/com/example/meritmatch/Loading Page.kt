@@ -27,7 +27,7 @@ fun LoadingPage () {
                 .size(80.dp),
             color = colors.primary,
             trackColor = colors.primaryContainer,
-            strokeWidth = 16.dp,
+            strokeWidth = 12.dp,
             strokeCap = StrokeCap.Round
         )
     }

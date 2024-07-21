@@ -1,6 +1,7 @@
 package com.example.meritmatch
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -30,6 +31,9 @@ fun Navigation (modifier : Modifier) {
             LoginPage (
                 modifier = modifier,
                 onLogin = {
+                    viewModel.getReservedTasks(user_id.value)
+                    viewModel.getAvailableTasks(user_id.value)
+                    viewModel.getPostedTasks(user_id.value)
                     navController.navigate(Screen.Home.route) {
                         popUpTo(Screen.Login.route) { inclusive = true }
                     }
@@ -72,19 +76,15 @@ fun Navigation (modifier : Modifier) {
                     navController.navigate(Screen.Login.route)
                 },
                 toAvailableTasks = {
-                    viewModel.getAvailableTasks(user_id.value)
-                    allTasks = viewModel.stateOfAllTasks.value.status
+                    setValues(viewModel)
                     navController.navigate(Screen.AvailableTasks.route)
-
                 },
                 toReservedTasks = {
-                    viewModel.getReservedTasks(user_id.value)
-                    reservedTasks = viewModel.stateOfReservedTasks.value.status
+                    setValues(viewModel)
                     navController.navigate(Screen.ReservedTasks.route)
                 },
                 toPostedTasks = {
-                    viewModel.getPostedTasks(user_id.value)
-                    postedTasks = viewModel.stateOfPostedTasks.value.status
+                    setValues(viewModel)
                     navController.navigate(Screen.PostedTasks.route)
                 },
                 dataViewModel = viewModel
@@ -142,4 +142,12 @@ fun Navigation (modifier : Modifier) {
         }
 
     }
+}
+
+fun setValues (
+    dataViewModel: MainViewModel
+) {
+    allTasks = dataViewModel.stateOfAllTasks.value.status
+    postedTasks = dataViewModel.stateOfPostedTasks.value.status
+    reservedTasks = dataViewModel.stateOfReservedTasks.value.status
 }

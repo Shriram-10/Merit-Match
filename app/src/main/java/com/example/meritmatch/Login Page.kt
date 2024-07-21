@@ -32,12 +32,12 @@ import kotlinx.coroutines.delay
 @Composable
 fun LoginPage (
     modifier: Modifier,
-    onLogin: () -> Unit,
+    onLogin: @Composable () -> Unit,
     goToSignUp: () -> Unit,
     dataViewModel: MainViewModel,
 ){
     val color = MaterialTheme.colorScheme
-    var displayLoading = remember {
+    val displayLoading = remember {
         mutableStateOf(false)
     }
 
@@ -88,15 +88,13 @@ fun LoginPage (
 
             Button(
                 onClick = {
-                    dataViewModel.loginUser(
+                    dataViewModel.loginUser (
                         user.value.username,
                         user.value.password,
                         karma_points.value
                     )
                     if (user_id.value == 0) {
                         displayLoading.value = true
-                    } else if (user_id.value != 0) {
-                        onLogin()
                     }
                 },
                 modifier = Modifier
@@ -181,7 +179,7 @@ fun LoginPage (
     if (user_id.value == 0 && displayLoading.value) {
         LoadingPage()
     } else if (user_id.value != 0) {
-        displayLoading.value = false
         onLogin()
+        displayLoading.value = false
     }
 }

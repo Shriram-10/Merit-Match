@@ -22,7 +22,7 @@ data class BottomNavigationItem(
     val selectedIcon: ImageVector
 )
 
-val items = listOf(
+val items = listOf (
     BottomNavigationItem(
         route = "available_tasks",
         title = "Available Tasks",
