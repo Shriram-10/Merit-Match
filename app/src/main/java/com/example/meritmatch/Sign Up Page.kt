@@ -36,8 +36,6 @@ fun SignUpPage (
     modifier: Modifier,
     onSignUp: () -> Unit,
     goToLogin: () -> Unit,
-    goLoad: () -> Unit,
-    popLoad: () -> Unit,
     dataViewModel: MainViewModel
 ) {
     val color = MaterialTheme.colorScheme

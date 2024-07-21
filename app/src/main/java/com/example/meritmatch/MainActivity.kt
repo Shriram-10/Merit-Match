@@ -1,6 +1,7 @@
 package com.example.meritmatch
 
 import android.os.Bundle
+import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -25,6 +26,15 @@ class MainActivity : ComponentActivity() {
                     Navigation(modifier = Modifier.padding(innerPadding))
                 }
             }
+        }
+    }
+    private var backPressedTime: Long = 0
+    override fun onBackPressed() {
+        if (backPressedTime + 2000 > System.currentTimeMillis()) {
+            super.onBackPressedDispatcher.onBackPressed()
+        } else {
+            Toast.makeText(this, "Press back again to exit", Toast.LENGTH_SHORT).show()
+            backPressedTime = System.currentTimeMillis()
         }
     }
 }

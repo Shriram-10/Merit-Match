@@ -24,13 +24,6 @@ fun Navigation (modifier : Modifier) {
         navController = navController,
         startDestination = Screen.Login.route
     ) {
-
-        composable (
-            route = Screen.Load.route
-        ) {
-            LoadingPage()
-        }
-
         composable (
             route = Screen.Login.route
         ) {
@@ -62,12 +55,6 @@ fun Navigation (modifier : Modifier) {
                     navController.navigate(Screen.Login.route) {
                         popUpTo(Screen.SignUp.route) { inclusive = true }
                     }
-                },
-                goLoad = {
-                    navController.navigate(Screen.Load.route)
-                },
-                popLoad = {
-                    navController.popBackStack(Screen.SignUp.route, false)
                 },
                 dataViewModel = viewModel
             )
