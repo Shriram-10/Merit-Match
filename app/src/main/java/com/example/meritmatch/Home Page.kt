@@ -145,6 +145,8 @@ fun HomePage (
                         label = "Posted Tasks",
                         onViewMore = toPostedTasks
                     )
+
+                    TaskItem(i = 1, taskList = dataViewModel.stateOfAllTasks.value.status)
                 }
             }
         }
