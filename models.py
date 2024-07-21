@@ -22,3 +22,4 @@ class Post(Base):
     kp_value = Column(Double)
     user_id = Column(Integer)
     reserved = Column(Integer)
+    completed = Column(Boolean)

@@ -5,6 +5,7 @@ import models
 from database import engine, SessionLocal
 from sqlalchemy.orm import Session
 from passlib.context import CryptContext
+from datetime import datetime
 
 
 app = FastAPI()
@@ -26,6 +27,7 @@ class PostBase(BaseModel):
     deadline: str
     kp_value: float
     reserved: int
+    completed: bool = False
 
 
 class User(BaseModel):
@@ -117,3 +119,61 @@ async def get_sent_tasks(user_id: int, db: db_dependency):
 async def get_all_tasks(user_id: int, db: db_dependency):
     all_tasks = db.query(models.Post).filter(user_id != models.Post.user_id).all()
     return {"tasks" : all_tasks, "code" : 1}
+
+@app.post("/reserve_task/{user_id}/{task_id}")
+async def reserve_task(user_id: int, task_id: int, db: db_dependency):
+    reserved_task = db.query(models.Post).filter(models.Post.reserved == 0 and models.Post.id == task_id).first()
+
+    if reserved_task:
+        setattr(reserved_task, 'reserved', user_id)
+        setattr(reserved_task, 'completed', False)
+        db.comit()
+        return {"code" : 1}
+    else:
+        return {"code" : -1}
+    
+@app.post("/send_notif/{user_id}/{task_id}")
+async def send_notification(user_id: int, task_id: int, db: db_dependency):
+    approved_task = db.query(models.Post).filter(models.Post.reserved > 0 and models.Post.user_id == user_id).first()
+
+    if approved_task: 
+        return {"Message" : "Task has been reserved by user {approved_task.username}"}
+    else:
+        return {"Message" : "error user"}
+
+@app.post("/submit_task/{user_id}/{task_id}")
+async def submit_task(task_id: int, user_id: int, db: db_dependency):
+    get_task = db.query(models.Post).filter(models.Post.reserved == user_id and models.Post.id == task_id).first()
+
+    if get_task:
+        setattr(get_task, 'completed', True)
+        db.commit()
+        return {"code" : 1}
+    else:
+        return {"code" : -1}
+    
+@app.post("/acknowledge_submission/{user_id}/{task_id}")
+async def accept_submission(task_id: int, user_id: int, db: db_dependency):
+    view_task = db.query(models.Post).filter(task_id == models.Post.id and models.Post.user_id == user_id).first()
+
+    if view_task:
+        payer = db.query(models.User).filter(user_id == models.User.id).first()
+        payee = db.query(models.User).filter(models.User.id == view_task.reserved).first()
+        setattr(payer, 'karma_points', payer.karma_points - view_task.kp_value)
+        setattr(payee, 'karma_points', payee.karma_points + view_task.kp_value)
+        db.commit()
+        return {"code" : 1}
+    else:
+        return {"code" : -1}
+    
+@app.post("/reject_submission/{user_id}/{task_id}")
+async def refuse_submission(task_id: int, user_id: int, db: db_dependency):
+    view_task = db.query(models.Post).filter(task_id == models.Post.id and models.Post.user_id == user_id).first()
+
+    if view_task:
+        setattr(view_task, 'completed', False)
+        setattr(view_task, 'reserved', 0)
+        setattr(view_task, 'post_time', datetime.now().__format__)
+        return {"code" : 1}
+    else:
+        return {"code" : -1}
