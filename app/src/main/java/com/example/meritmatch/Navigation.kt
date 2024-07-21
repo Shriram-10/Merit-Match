@@ -35,7 +35,9 @@ fun Navigation (modifier : Modifier) {
                     }
                 },
                 goToSignUp = {
-                    navController.navigate(Screen.SignUp.route)
+                    navController.navigate(Screen.SignUp.route) {
+                        popUpTo(Screen.Login.route) { inclusive = true }
+                    }
                 },
                 dataViewModel = viewModel
             )

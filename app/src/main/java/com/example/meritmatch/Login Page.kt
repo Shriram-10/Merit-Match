@@ -17,6 +17,9 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
@@ -31,18 +34,22 @@ fun LoginPage (
     modifier: Modifier,
     onLogin: () -> Unit,
     goToSignUp: () -> Unit,
-    dataViewModel: MainViewModel
+    dataViewModel: MainViewModel,
 ){
     val color = MaterialTheme.colorScheme
+    var displayLoading = remember {
+        mutableStateOf(false)
+    }
+
     Box (
         modifier = modifier.fillMaxSize(),
         contentAlignment = Alignment.Center
     ) {
-        Column (
+        Column(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
 
-            Text (
+            Text(
                 text = "Login",
                 modifier = Modifier.padding(24.dp),
                 style = MaterialTheme.typography.headlineLarge,
@@ -53,7 +60,7 @@ fun LoginPage (
                 textAlign = TextAlign.Center
             )
 
-            InputField (
+            InputField(
                 modifier = Modifier.padding(24.dp),
                 label = "Username",
                 placeholder = "Enter your username",
@@ -61,7 +68,7 @@ fun LoginPage (
             )
 
             Column {
-                InputField (
+                InputField(
                     modifier = Modifier.padding(bottom = 0.dp),
                     label = "Password",
                     placeholder = "Enter your password",
@@ -69,7 +76,7 @@ fun LoginPage (
                     dataViewModel = dataViewModel
                 )
 
-                Text (
+                Text(
                     text = "Forgot Password?",
                     modifier = Modifier.padding(top = 8.dp),
                     style = MaterialTheme.typography.bodyLarge,
@@ -77,12 +84,18 @@ fun LoginPage (
                 )
             }
 
-            Spacer (modifier = Modifier.height(50.dp))
+            Spacer(modifier = Modifier.height(50.dp))
 
-            Button (
+            Button(
                 onClick = {
-                    dataViewModel.loginUser(user.value.username, user.value.password, karma_points.value)
-                    if (user_id.value != 0) {
+                    dataViewModel.loginUser(
+                        user.value.username,
+                        user.value.password,
+                        karma_points.value
+                    )
+                    if (user_id.value == 0) {
+                        displayLoading.value = true
+                    } else if (user_id.value != 0) {
                         onLogin()
                     }
                 },
@@ -91,19 +104,19 @@ fun LoginPage (
                     .width(96.dp),
                 shape = RoundedCornerShape(50),
             ) {
-                Text (
+                Text(
                     text = "Login",
                     fontSize = 18.sp,
                     color = MaterialTheme.colorScheme.primaryContainer
                 )
             }
 
-            Spacer (modifier = Modifier.height(50.dp))
+            Spacer(modifier = Modifier.height(50.dp))
 
-            Box (
+            Box(
                 contentAlignment = Alignment.Center
             ) {
-                Canvas (
+                Canvas(
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(24.dp)
@@ -117,7 +130,7 @@ fun LoginPage (
                     )
                 }
 
-                Box (
+                Box(
                     contentAlignment = Alignment.Center
                 ) {
                     Button(
@@ -125,7 +138,7 @@ fun LoginPage (
                         modifier = Modifier
                             .height(50.dp)
                             .width(50.dp),
-                        colors = ButtonDefaults.buttonColors (
+                        colors = ButtonDefaults.buttonColors(
                             containerColor = color.primaryContainer,
                             contentColor = color.primary
                         ),
@@ -134,7 +147,7 @@ fun LoginPage (
 
                     }
 
-                    Text (
+                    Text(
                         text = "OR",
                         fontSize = 18.sp,
                         color = MaterialTheme.colorScheme.primary,
@@ -143,14 +156,14 @@ fun LoginPage (
                 }
             }
 
-            Text (
+            Text(
                 text = "Don't have an account?",
                 fontSize = 18.sp,
                 style = MaterialTheme.typography.bodyLarge,
                 color = MaterialTheme.colorScheme.primary
             )
 
-            Text (
+            Text(
                 text = "Sign Up",
                 modifier = Modifier
                     .padding(top = 8.dp)
@@ -163,5 +176,12 @@ fun LoginPage (
                 color = MaterialTheme.colorScheme.primary
             )
         }
+    }
+
+    if (user_id.value == 0 && displayLoading.value) {
+        LoadingPage()
+    } else if (user_id.value != 0) {
+        displayLoading.value = false
+        onLogin()
     }
 }

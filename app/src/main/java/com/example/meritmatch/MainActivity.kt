@@ -28,13 +28,4 @@ class MainActivity : ComponentActivity() {
             }
         }
     }
-    private var backPressedTime: Long = 0
-    override fun onBackPressed() {
-        if (backPressedTime + 2000 > System.currentTimeMillis()) {
-            super.onBackPressedDispatcher.onBackPressed()
-        } else {
-            Toast.makeText(this, "Press back again to exit", Toast.LENGTH_SHORT).show()
-            backPressedTime = System.currentTimeMillis()
-        }
-    }
 }
