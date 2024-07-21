@@ -13,7 +13,7 @@ import kotlinx.coroutines.launch
 
 class MainViewModel : ViewModel() {
 
-    private val baseUrl = "http://192.168.56.89:8000"
+    private val baseUrl = "http://192.168.169.89:8000"
 
     data class StateOfUser (
         val loading : Boolean = false,
@@ -41,7 +41,7 @@ class MainViewModel : ViewModel() {
 
     data class StateOfGettingPosts (
         val loading: Boolean = false,
-        val status: MutableState<List<Task>> = mutableStateOf<List<Task>>(listOf(Task("", "", 0.0, 0, "", "", 0))),
+        val status: MutableState<List<Task>> = mutableStateOf<List<Task>>(listOf()),
         val error: String? = null
     )
 
@@ -145,12 +145,12 @@ class MainViewModel : ViewModel() {
         viewModelScope.launch {
             try {
                 val response = dataService.reservedTasks("$baseUrl/get_reserved_tasks/$userId")
-                _stateOfAllTasks.value = _stateOfAllTasks.value.copy (
+                _stateOfReservedTasks.value = _stateOfReservedTasks.value.copy (
                     status = mutableStateOf(response.tasks),
                     loading = false
                 )
             } catch (e : Exception) {
-                _stateOfAllTasks.value = _stateOfAllTasks.value.copy (
+                _stateOfReservedTasks.value = _stateOfReservedTasks.value.copy (
                     error = e.message,
                     loading = false
                 )
@@ -162,12 +162,12 @@ class MainViewModel : ViewModel() {
         viewModelScope.launch {
             try {
                 val response = dataService.postedTasks("$baseUrl/get_posted_tasks/$userId")
-                _stateOfAllTasks.value = _stateOfAllTasks.value.copy (
+                _stateOfPostedTasks.value = _stateOfPostedTasks.value.copy (
                     status = mutableStateOf(response.tasks),
                     loading = false
                 )
             } catch (e : Exception) {
-                _stateOfAllTasks.value = _stateOfAllTasks.value.copy (
+                _stateOfPostedTasks.value = _stateOfPostedTasks.value.copy (
                     error = e.message,
                     loading = false
                 )

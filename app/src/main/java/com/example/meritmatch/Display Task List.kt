@@ -101,7 +101,12 @@ fun TaskListPage (
                 contentAlignment = Alignment.Center
             ) {
                 LazyColumn {
-                    items (10) { item ->
+                    items (
+                        count = if (label === "Available Tasks") allTasks.value.size
+                        else if (label === "Reserved Tasks") reservedTasks.value.size
+                        else if (label === "Posted Tasks") postedTasks.value.size
+                        else 1
+                    ) { item ->
                         Row (
                             modifier = Modifier
                                 .fillMaxSize(0.95f)
@@ -113,10 +118,12 @@ fun TaskListPage (
                             verticalAlignment = Alignment.CenterVertically
                         ) {
                             Text(
-                                if (label === "Available Tasks") allTasks.value.toString()
-                                else if (label === "Reserved Tasks") reservedTasks.value.toString()
-                                else if (label === "Posted Tasks") postedTasks.value.toString()
-                                else ""
+                                when (label) {
+                                    "Available Tasks" -> if (allTasks.value.isNotEmpty()) allTasks.value[item].toString() else "No Available Tasks"
+                                    "Reserved Tasks" -> if (reservedTasks.value.isNotEmpty()) reservedTasks.value[item].toString() else "No Reserved Tasks"
+                                    "Posted Tasks" -> if (postedTasks.value.isNotEmpty()) postedTasks.value[item].toString() else "No Posted Tasks"
+                                    else -> "Nothing"
+                                }
                             )
                         }
                     }

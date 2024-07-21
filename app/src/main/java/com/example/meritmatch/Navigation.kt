@@ -85,8 +85,8 @@ fun Navigation (modifier : Modifier) {
                 toAvailableTasks = {
                     viewModel.getAvailableTasks(user_id.value)
                     allTasks = viewModel.stateOfAllTasks.value.status
-                    if (viewMod)
                     navController.navigate(Screen.AvailableTasks.route)
+
                 },
                 toReservedTasks = {
                     viewModel.getReservedTasks(user_id.value)
