@@ -110,7 +110,7 @@ class MainViewModel : ViewModel() {
     fun postTasks (userId: Int, post: Task) {
         viewModelScope.launch {
             try {
-                val response = dataService.postTask(fullUrl = "$baseUrl/posts/create_posts/$userId", post)
+                val response = dataService.postTask(fullUrl = "$baseUrl/posts/create_post/$userId", post)
                 _stateOfPost.value = _stateOfPost.value.copy (
                     status = response.code,
                     loading = false

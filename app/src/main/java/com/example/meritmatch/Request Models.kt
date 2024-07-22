@@ -29,7 +29,10 @@ data class Task (
     val user_id : Int,
     val post_time : String,
     val deadline : String,
-    val reserved : Int
+    val reserved : Int,
+    val completed : Boolean = false,
+    val active : Boolean = true,
+    val payment : Boolean = false
 )
 
 data class Tasks (

@@ -48,6 +48,7 @@ fun HomePage (
     toAvailableTasks: () -> Unit,
     toReservedTasks: () -> Unit,
     toPostedTasks: () -> Unit,
+    toCreateTask: () -> Unit,
     dataViewModel: MainViewModel
 ) {
     val navBackStackEntry by navController.currentBackStackEntryAsState()
@@ -157,13 +158,15 @@ fun HomePage (
             }
 
             Button(
-                onClick = {},
+                onClick = {
+                    toCreateTask()
+                },
                 modifier = Modifier
                     .height(70.dp)
                     .width(78.dp)
                     .padding(bottom = 12.dp, end = 20.dp),
                 colors = ButtonDefaults.buttonColors(
-                    containerColor = color.secondaryContainer.copy(alpha = 0.75f)
+                    containerColor = color.secondaryContainer
                 ),
                 elevation = ButtonDefaults.buttonElevation(
                     defaultElevation = 8.dp,
@@ -175,7 +178,7 @@ fun HomePage (
                     imageVector = Icons.Outlined.Create,
                     contentDescription = null,
                     tint = color.surfaceTint,
-                    modifier = Modifier.scale(2.2f)
+                    modifier = Modifier.scale(2.0f)
                 )
             }
         }

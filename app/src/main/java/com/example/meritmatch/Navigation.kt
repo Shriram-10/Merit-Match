@@ -87,6 +87,9 @@ fun Navigation (modifier : Modifier) {
                     setValues(viewModel)
                     navController.navigate(Screen.PostedTasks.route)
                 },
+                toCreateTask = {
+                    navController.navigate(Screen.CreateTasks.route)
+                },
                 dataViewModel = viewModel
             )
         }
@@ -138,6 +141,19 @@ fun Navigation (modifier : Modifier) {
                 modifier = modifier,
                 navController = navController,
                 label = "Posted Tasks"
+            )
+        }
+
+        composable (
+            route = Screen.CreateTasks.route
+        ) {
+            CreateTask (
+                dataViewModel = viewModel,
+                goHome = {
+                    navController.navigate(Screen.Home.route) {
+                        popUpTo(Screen.CreateTasks.route) { inclusive = true }
+                    }
+                }
             )
         }
 

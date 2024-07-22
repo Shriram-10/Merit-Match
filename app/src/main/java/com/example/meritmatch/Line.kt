@@ -17,10 +17,10 @@ fun HorizontalLine(
     width : Float = 4f
 ){
     val color = MaterialTheme.colorScheme
-    Canvas(
+    Canvas (
         modifier = modifier
     ) {
-        drawLine(
+        drawLine (
             color = color.primaryContainer,
             start = Offset(size.width * start, size.height / 2),
             end = Offset(size.width * end, size.height / 2),
