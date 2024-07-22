@@ -30,6 +30,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.scale
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
@@ -59,15 +60,15 @@ fun TaskView (
             Column (
                 modifier = modifier
                     .height(225.dp)
-                    .clip(RoundedCornerShape(10))
-                    .background(color.inversePrimary),
+                    .clip(RoundedCornerShape(10)),
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.Center
             ) {
                 LazyVerticalGrid (
                     columns = GridCells.Fixed(1),
                     modifier = Modifier
-                        .fillMaxSize(),
+                        .fillMaxSize()
+                        .background(color.inversePrimary),
                     horizontalArrangement = Arrangement.spacedBy(16.dp),
                     verticalArrangement = Arrangement.spacedBy(16.dp),
                     contentPadding = PaddingValues(16.dp)
@@ -104,6 +105,7 @@ fun TaskView (
                 .size(40.dp)
                 .background(color.primaryContainer)
                 .align(Alignment.BottomCenter)
+                .shadow(elevation = 8.dp, clip = false, shape = RoundedCornerShape(100))
         ) {
             Button (
                 onClick = { onViewMore() },

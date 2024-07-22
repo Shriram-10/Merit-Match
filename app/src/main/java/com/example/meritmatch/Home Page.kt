@@ -1,8 +1,10 @@
 package com.example.meritmatch
 
 import androidx.activity.compose.BackHandler
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -31,6 +33,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
@@ -53,6 +57,12 @@ fun HomePage (
 ) {
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val color = MaterialTheme.colorScheme
+    val colorList = listOf(
+        color.primaryContainer.copy(0.7f),
+        color.secondaryContainer,
+        color.tertiaryContainer,
+        color.background
+    )
 
     BackHandler {
         android.os.Process.killProcess(android.os.Process.myPid())
@@ -73,31 +83,39 @@ fun HomePage (
             )
         },
         bottomBar = {
-            NavigationBar {
-                items.forEach { item ->
-                    val selected = navBackStackEntry?.destination?.route === item.route
-                    NavigationBarItem (
-                        selected = selected,
-                        label = {
-                            Text (item.title)
-                        },
-                        icon = {
-                            Icon(
-                                imageVector = if (selected) item.selectedIcon else item.unselectedIcon,
-                                contentDescription = item.title,
-                                tint = MaterialTheme.colorScheme.primary
-                            )
-                        },
-                        onClick = {
-                            navController.navigate(item.route) {
-                                popUpTo(navController.graph.startDestinationId) {
-                                    saveState = true
+            Box (
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .background(brush = Brush.verticalGradient(colorList))
+            ) {
+                NavigationBar (
+                    containerColor = Color.Transparent
+                ) {
+                    items.forEach { item ->
+                        val selected = navBackStackEntry?.destination?.route === item.route
+                        NavigationBarItem (
+                            selected = selected,
+                            label = {
+                                Text (item.title)
+                            },
+                            icon = {
+                                Icon(
+                                    imageVector = if (selected) item.selectedIcon else item.unselectedIcon,
+                                    contentDescription = item.title,
+                                    tint = MaterialTheme.colorScheme.primary
+                                )
+                            },
+                            onClick = {
+                                navController.navigate(item.route) {
+                                    popUpTo(navController.graph.startDestinationId) {
+                                        saveState = true
+                                    }
+                                    launchSingleTop = true
+                                    restoreState = true
                                 }
-                                launchSingleTop = true
-                                restoreState = true
                             }
-                        }
-                    )
+                        )
+                    }
                 }
             }
         }
@@ -157,28 +175,34 @@ fun HomePage (
                 }
             }
 
-            Button(
-                onClick = {
-                    toCreateTask()
-                },
+            Box (
                 modifier = Modifier
                     .height(70.dp)
                     .width(78.dp)
                     .padding(bottom = 12.dp, end = 20.dp),
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = color.secondaryContainer
-                ),
-                elevation = ButtonDefaults.buttonElevation(
-                    defaultElevation = 8.dp,
-                    pressedElevation = 0.dp
-                ),
-                shape = RoundedCornerShape(30)
+                contentAlignment = Alignment.Center
             ) {
+                Button(
+                    onClick = {
+                        toCreateTask()
+                    },
+                    modifier = Modifier.fillMaxSize(),
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = color.secondaryContainer
+                    ),
+                    elevation = ButtonDefaults.buttonElevation(
+                        defaultElevation = 8.dp,
+                        pressedElevation = 0.dp
+                    ),
+                    shape = RoundedCornerShape(30)
+                ) {
+
+                }
+
                 Icon (
                     imageVector = Icons.Outlined.Create,
                     contentDescription = null,
-                    tint = color.surfaceTint,
-                    modifier = Modifier.scale(2.0f)
+                    tint = color.surfaceTint
                 )
             }
         }
