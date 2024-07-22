@@ -6,11 +6,17 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.Create
 import androidx.compose.material.icons.outlined.Home
 import androidx.compose.material.icons.outlined.Search
 import androidx.compose.material.icons.outlined.Settings
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
@@ -24,6 +30,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.scale
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
@@ -44,6 +51,7 @@ fun HomePage (
     dataViewModel: MainViewModel
 ) {
     val navBackStackEntry by navController.currentBackStackEntryAsState()
+    val color = MaterialTheme.colorScheme
 
     BackHandler {
         android.os.Process.killProcess(android.os.Process.myPid())
@@ -95,7 +103,7 @@ fun HomePage (
     ) { innerPadding ->
         Box (
             modifier = modifier.padding(bottom = innerPadding.calculateBottomPadding() * 0.69f, top = innerPadding.calculateTopPadding() * 0.60f),
-            contentAlignment = Alignment.Center
+            contentAlignment = Alignment.BottomEnd
         ) {
             LazyColumn {
                 item {
@@ -145,9 +153,30 @@ fun HomePage (
                         label = "Posted Tasks",
                         onViewMore = toPostedTasks
                     )
-
-                    TaskItem(i = 1, taskList = dataViewModel.stateOfAllTasks.value.status)
                 }
+            }
+
+            Button(
+                onClick = {},
+                modifier = Modifier
+                    .height(70.dp)
+                    .width(78.dp)
+                    .padding(bottom = 12.dp, end = 20.dp),
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = color.secondaryContainer.copy(alpha = 0.75f)
+                ),
+                elevation = ButtonDefaults.buttonElevation(
+                    defaultElevation = 8.dp,
+                    pressedElevation = 0.dp
+                ),
+                shape = RoundedCornerShape(30)
+            ) {
+                Icon (
+                    imageVector = Icons.Outlined.Create,
+                    contentDescription = null,
+                    tint = color.surfaceTint,
+                    modifier = Modifier.scale(2.2f)
+                )
             }
         }
     }

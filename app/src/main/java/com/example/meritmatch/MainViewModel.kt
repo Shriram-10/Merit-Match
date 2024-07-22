@@ -13,7 +13,7 @@ import kotlinx.coroutines.launch
 
 class MainViewModel : ViewModel() {
 
-    private val baseUrl = "http://192.168.169.89:8000"
+    private val baseUrl = "http://192.168.48.89:8000"
 
     data class StateOfUser (
         val loading : Boolean = false,
@@ -110,7 +110,7 @@ class MainViewModel : ViewModel() {
     fun postTasks (userId: Int, post: Task) {
         viewModelScope.launch {
             try {
-                val response = dataService.postTask(fullUrl = "$baseUrl/create_posts/$userId", post)
+                val response = dataService.postTask(fullUrl = "$baseUrl/posts/create_posts/$userId", post)
                 _stateOfPost.value = _stateOfPost.value.copy (
                     status = response.code,
                     loading = false
@@ -127,7 +127,7 @@ class MainViewModel : ViewModel() {
     fun getAvailableTasks (userId: Int) {
         viewModelScope.launch {
             try {
-                val response = dataService.availableTasks("$baseUrl/get_all_tasks/$userId")
+                val response = dataService.availableTasks("$baseUrl/posts/get_all_tasks/$userId")
                 _stateOfAllTasks.value = _stateOfAllTasks.value.copy (
                     status = mutableStateOf(response.tasks),
                     loading = false
@@ -144,7 +144,7 @@ class MainViewModel : ViewModel() {
     fun getReservedTasks (userId: Int) {
         viewModelScope.launch {
             try {
-                val response = dataService.reservedTasks("$baseUrl/get_reserved_tasks/$userId")
+                val response = dataService.reservedTasks("$baseUrl/posts/get_reserved_tasks/$userId")
                 _stateOfReservedTasks.value = _stateOfReservedTasks.value.copy (
                     status = mutableStateOf(response.tasks),
                     loading = false
@@ -161,7 +161,7 @@ class MainViewModel : ViewModel() {
     fun getPostedTasks (userId: Int) {
         viewModelScope.launch {
             try {
-                val response = dataService.postedTasks("$baseUrl/get_posted_tasks/$userId")
+                val response = dataService.postedTasks("$baseUrl/posts/get_posted_tasks/$userId")
                 _stateOfPostedTasks.value = _stateOfPostedTasks.value.copy (
                     status = mutableStateOf(response.tasks),
                     loading = false
