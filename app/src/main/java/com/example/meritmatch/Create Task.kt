@@ -50,6 +50,7 @@ fun CreateTask (
     var noOfHours by remember { mutableStateOf("") }
     var displayToast by remember { mutableStateOf(false) }
     var message by remember { mutableStateOf("") }
+    var displayLoad by remember { mutableStateOf(false) }
 
     Box (
         modifier = Modifier
@@ -258,8 +259,7 @@ fun CreateTask (
 
                     Button (
                         modifier = Modifier
-                            .height(60.dp)
-                            .width(84.dp),
+                            .height(60.dp),
                         onClick = {
                             if (title == "") {
                                 message = "Title is empty."
@@ -283,11 +283,15 @@ fun CreateTask (
                                         user_id = user_id.value
                                     )
                                 )
-                                goHome()
+                                displayLoad = true
                             }
                         },
                         colors = ButtonDefaults.buttonColors(
-                            containerColor = colors.onPrimaryContainer
+                            containerColor = colors.onSecondaryContainer
+                        ),
+                        elevation = ButtonDefaults.buttonElevation(
+                            defaultElevation = 8.dp,
+                            pressedElevation = 0.dp
                         ),
                         shape = RoundedCornerShape(25)
                     ) {
@@ -301,5 +305,9 @@ fun CreateTask (
     if (displayToast) {
         Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
         displayToast = false
+    }
+    if (dataViewModel.stateOfPost.value.status == 1 && displayLoad) {
+        goHome()
+        displayLoad = false
     }
 }
