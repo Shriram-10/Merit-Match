@@ -88,6 +88,7 @@ fun Navigation (modifier : Modifier) {
                     navController.navigate(Screen.PostedTasks.route)
                 },
                 toCreateTask = {
+
                     navController.navigate(Screen.CreateTasks.route)
                 },
                 dataViewModel = viewModel

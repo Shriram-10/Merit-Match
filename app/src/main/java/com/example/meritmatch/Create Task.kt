@@ -1,6 +1,7 @@
 package com.example.meritmatch
 
 import android.widget.Toast
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -36,6 +37,8 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 
+val draft = mutableStateOf(Task("", "", 0.0, 0, "","", 0, completed = false, active = false, false))
+
 @Composable
 fun CreateTask (
     goHome: () -> Unit,
@@ -43,14 +46,31 @@ fun CreateTask (
 ) {
     val colors = MaterialTheme.colorScheme
     val context = LocalContext.current
-    var title by remember { mutableStateOf("") }
-    var description by remember { mutableStateOf("") }
-    var kPOffering by remember { mutableStateOf("") }
-    var noOfDays by remember { mutableStateOf("") }
-    var noOfHours by remember { mutableStateOf("") }
+    var title by remember { mutableStateOf(draft.value.title) }
+    var description by remember { mutableStateOf(draft.value.description) }
+    var kPOffering by remember { mutableStateOf(draft.value.kp_value.toString()) }
+    var noOfDays by remember { mutableStateOf(draft.value.deadline.split(" ")[0]) }
+    var noOfHours by remember { mutableStateOf(draft.value.deadline.split("")[1]) }
     var displayToast by remember { mutableStateOf(false) }
     var message by remember { mutableStateOf("") }
     var displayLoad by remember { mutableStateOf(false) }
+
+    BackHandler {
+        draft.value = Task (
+            title = title,
+            description = description,
+            user_id = user_id.value,
+            deadline = "$noOfDays $noOfHours",
+            kp_value = if (kPOffering.all { it.isDigit() || it == '.' }) kPOffering.toDouble() else 0.0,
+            post_time = "",
+            reserved = 0,
+            completed = false,
+            active = false
+        )
+        message = "Your draft has been saved."
+        displayToast = true
+        goHome()
+    }
 
     Box (
         modifier = Modifier
@@ -74,7 +94,14 @@ fun CreateTask (
                             .padding(top = 20.dp, start = 40.dp, end = 40.dp)
                             .clip(RoundedCornerShape(15)),
                         value = title,
-                        onValueChange = { title = it },
+                        onValueChange = { newValue ->
+                            if (newValue.length > 100) {
+                                message = "Title too long."
+                                displayToast = true
+                            } else {
+                                title = newValue
+                            }
+                        },
                         placeholder = { Text("Enter Title") },
                         label = { Text("Title") },
                         colors = TextFieldDefaults.colors(),
@@ -85,7 +112,14 @@ fun CreateTask (
 
                     TextField (
                         value = description,
-                        onValueChange = { description = it },
+                        onValueChange = {
+                            if (description.length <= 5000) {
+                                description = it
+                            } else {
+                                message = "Description too long."
+                                displayToast = true
+                            }
+                        },
                         placeholder = { Text("Enter Description") },
                         label = { Text("Description") },
                         colors = TextFieldDefaults.colors(),
