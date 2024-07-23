@@ -48,7 +48,8 @@ fun TaskListPage (
     modifier: Modifier,
     navController: NavController,
     label: String,
-    taskList: List<Task>
+    taskList: List<Task>,
+    dataViewModel: MainViewModel
 ) {
     val color = MaterialTheme.colorScheme
     val navBackStackEntry by navController.currentBackStackEntryAsState()
@@ -165,7 +166,11 @@ fun TaskListPage (
     }
     LaunchedEffect(refreshing) {
         if (refreshing) {
+            dataViewModel.getPostedTasks(user_id.value)
+            dataViewModel.getReservedTasks(user_id.value)
+            dataViewModel.getAvailableTasks(user_id.value)
             delay(2000)
+            setValues(dataViewModel)
             refreshing = false
         }
     }

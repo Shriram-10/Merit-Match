@@ -121,7 +121,8 @@ fun Navigation (modifier : Modifier) {
                 modifier = modifier,
                 navController = navController,
                 label = "Available Tasks",
-                taskList = allTasks.value
+                taskList = allTasks.value,
+                dataViewModel = viewModel
             )
         }
 
@@ -132,7 +133,8 @@ fun Navigation (modifier : Modifier) {
                 modifier = modifier,
                 navController = navController,
                 label = "Reserved Tasks",
-                taskList = reservedTasks.value
+                taskList = reservedTasks.value,
+                dataViewModel = viewModel
             )
         }
 
@@ -143,7 +145,8 @@ fun Navigation (modifier : Modifier) {
                 modifier = modifier,
                 navController = navController,
                 label = "Posted Tasks",
-                taskList = postedTasks.value
+                taskList = postedTasks.value,
+                dataViewModel = viewModel
             )
         }
 
