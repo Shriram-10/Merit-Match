@@ -147,6 +147,23 @@ class MainViewModel : ViewModel() {
         }
     }
 
+    fun getSubmittedTasks (userId: Int) {
+        viewModelScope.launch {
+            try {
+                val response = dataService.submittedTasks("$baseUrl/posts/get_submitted_tasks/$userId")
+                _stateOfSubmittedTasks.value = _stateOfSubmittedTasks.value.copy (
+                    status = mutableStateOf(response.tasks),
+                    loading = false
+                )
+            } catch (e : Exception) {
+                _stateOfSubmittedTasks.value = _stateOfSubmittedTasks.value.copy (
+                    error = e.message,
+                    loading = false
+                )
+            }
+        }
+    }
+
     fun getReservedTasks (userId: Int) {
         viewModelScope.launch {
             try {
@@ -263,6 +280,9 @@ class MainViewModel : ViewModel() {
 
     private val _stateOfAllTasks = mutableStateOf(StateOfGettingPosts())
     val stateOfAllTasks : State<StateOfGettingPosts> = _stateOfAllTasks
+
+    private val _stateOfSubmittedTasks = mutableStateOf(StateOfGettingPosts())
+    val stateOfSubmittedTasks : State<StateOfGettingPosts> = _stateOfSubmittedTasks
 
     private val _stateOfReservedTasks = mutableStateOf(StateOfGettingPosts())
     val stateOfReservedTasks : State<StateOfGettingPosts> = _stateOfReservedTasks

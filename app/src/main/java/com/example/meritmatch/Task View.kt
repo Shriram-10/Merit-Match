@@ -24,8 +24,6 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -36,6 +34,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+
 
 @Composable
 fun TaskView (
@@ -73,7 +72,7 @@ fun TaskView (
                     verticalArrangement = Arrangement.spacedBy(16.dp),
                     contentPadding = PaddingValues(16.dp)
                 ) {
-                    items (10) { item ->
+                    items (if (submittedTasks.value.isNotEmpty()) submittedTasks.value.size else 1 ) { item ->
                         Box (
                             modifier = Modifier
                                 .size(100.dp)
@@ -113,7 +112,7 @@ fun TaskView (
                     .fillMaxSize()
                     .align(Alignment.Center)
                     .border(BorderStroke(width = 6.dp, color = color.primaryContainer), shape = RoundedCornerShape(100)),
-                colors = ButtonDefaults.buttonColors(
+                colors = ButtonDefaults.buttonColors (
                     containerColor = color.onPrimary
                 ),
                 elevation = ButtonDefaults.buttonElevation(

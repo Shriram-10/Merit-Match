@@ -15,6 +15,7 @@ import androidx.navigation.compose.rememberNavController
 var allTasks = mutableStateOf(listOf<Task>())
 var reservedTasks = mutableStateOf(listOf<Task>())
 var postedTasks = mutableStateOf(listOf<Task>())
+var submittedTasks = mutableStateOf(listOf<Task>())
 
 @Composable
 fun Navigation (modifier : Modifier) {

@@ -454,9 +454,9 @@ fun TaskListItem (
     }
 
     if (displayLoading.value && dataViewModel.stateOfReservingTask.value.status == 1) {
-        refreshing2.value = true
         message = "Reserved Task successfully."
         displayToast = true
+        refreshing2.value = true
         dataViewModel.stateOfReservingTask.value.status = 0
         displayLoading.value = false
     }
@@ -469,9 +469,9 @@ fun TaskListItem (
     }
 
     if (displayLoading.value && dataViewModel.stateOfUnReservingTask.value.status == 1) {
-        refreshing2.value = true
         message = "Unreserved Task successfully."
         displayToast = true
+        refreshing2.value = true
         dataViewModel.stateOfUnReservingTask.value.status = 0
         displayLoading.value = false
     }
@@ -484,9 +484,9 @@ fun TaskListItem (
     }
 
     if (displayLoading.value && dataViewModel.stateOfSubmittingTask.value.status == 1) {
-        refreshing2.value = true
         message = "Task submitted successfully."
         displayToast = true
+        refreshing2.value = true
         dataViewModel.stateOfSubmittingTask.value.status = 0
         displayLoading.value = false
     }
@@ -499,9 +499,9 @@ fun TaskListItem (
     }
 
     if (displayLoading.value && dataViewModel.stateOfDeletingTask.value.status == 1) {
-        refreshing2.value = true
         message = "Task Deleted Successfully."
         displayToast = true
+        refreshing2.value = true
         dataViewModel.stateOfDeletingTask.value.status = 0
         displayLoading.value = false
     }
