@@ -203,16 +203,16 @@ fun CreateTask (
                         horizontalArrangement = Arrangement.SpaceBetween,
                         verticalAlignment = Alignment.CenterVertically
                     ) {
-                        Text ("Time")
+                        Spacer(Modifier.width(0.dp))
 
                         Text (
                             text = "DAYS",
-                            modifier = Modifier.padding(end = 8.dp)
+                            modifier = Modifier.padding(start = 28.dp, end = 8.dp)
                         )
 
                         Text (
                             text = "HOURS",
-                            modifier = Modifier.padding(end = 24.dp)
+                            modifier = Modifier.padding(end = 16.dp)
                         )
                     }
 
@@ -226,7 +226,7 @@ fun CreateTask (
                         verticalAlignment = Alignment.CenterVertically
                     ) {
 
-                        Spacer(modifier = Modifier.width(40.dp))
+                        Text ("Time")
 
                         OutlinedTextField (
                             value = noOfDays,

@@ -165,7 +165,7 @@ fun TaskListPage (
     }
     LaunchedEffect(refreshing) {
         if (refreshing) {
-            delay(2000) // Simulate a network request
+            delay(2000)
             refreshing = false
         }
     }
@@ -235,7 +235,7 @@ fun TaskListItem (
         ) {
             Button (
                 onClick = {},
-                modifier = Modifier.padding(start = 20.dp, end = 20.dp, top = 10.dp, bottom = 6.dp),
+                modifier = Modifier.padding(start = 20.dp, end = 8.dp, top = 10.dp, bottom = 6.dp),
                 shape = RoundedCornerShape(20),
                 elevation = ButtonDefaults.buttonElevation (
                     defaultElevation = 8.dp,
@@ -254,7 +254,6 @@ fun TaskListItem (
                 Button(
                     onClick = {},
                     modifier = Modifier.padding (
-                        start = 20.dp,
                         end = 20.dp,
                         top = 10.dp,
                         bottom = 6.dp

@@ -27,12 +27,6 @@ fun BalanceKP (
         modifier = modifier
             .fillMaxWidth()
             .height(64.dp)
-            .shadow(
-                elevation = 4.dp,
-                ambientColor = color.primary,
-                spotColor = color.primaryContainer,
-                shape = RoundedCornerShape(0)
-            )
             .background(
                 color = color.secondaryContainer,
                 shape = RoundedCornerShape(20)
