@@ -21,5 +21,8 @@ class Post(Base):
     deadline = Column(String(20))
     kp_value = Column(Double)
     user_id = Column(Integer)
+    username = Column(String(50))
     reserved = Column(Integer)
     completed = Column(Boolean)
+    payment = Column(Boolean)
+    active = Column(Boolean)

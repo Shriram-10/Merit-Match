@@ -1,5 +1,5 @@
 from fastapi import FastAPI, Depends, status
-from pydantic import BaseModel
+from pydantic import BaseModel, TypeAdapter
 from typing import Annotated
 import models
 from database import engine, SessionLocal
@@ -23,11 +23,14 @@ class PostBase(BaseModel):
     title: str
     description: str
     user_id: int
+    username: str
     post_time: str
     deadline: str
     kp_value: float
     reserved: int
     completed: bool = False
+    payment: bool = False
+    active: bool = True
 
 
 class User(BaseModel):
@@ -94,56 +97,67 @@ async def login_auth(user: User, db: db_dependency):
         return {"code" : -1}
     
 
-@app.post("/create_post/{user_id}")
+@app.post("/posts/create_post/{user_id}")
 async def create_post(user_id: int, post: PostBase, db: db_dependency):
     new_post = models.Post(**post.model_dump())
-
+    new_post.post_time = datetime.now().__format__('%Y-%m-%d %H:%M:%S')
     db.add(new_post)
     db.commit()
 
     return {"code" : 1}
 
-@app.get("/get_posted_tasks/{user_id}")
+@app.get("/posts/get_posted_tasks/{user_id}")
 async def get_sent_tasks(user_id: int, db: db_dependency):
-    posted_tasks = db.query(models.Post).filter(user_id == models.Post.user_id).all()
+    posted_tasks = db.query(models.Post).filter((user_id == models.Post.user_id) & (models.Post.active == True)).all()
 
     return {"tasks" : posted_tasks, "code" : 1}
     
-@app.get("/get_reserved_tasks/{user_id}")
+@app.get("/posts/get_reserved_tasks/{user_id}")
 async def get_sent_tasks(user_id: int, db: db_dependency):
     reserved_tasks = db.query(models.Post).filter(user_id == models.Post.reserved).all()
 
     return {"tasks" : reserved_tasks, "code" : 1}
 
-@app.get("/get_all_tasks/{user_id}")
+@app.get("/posts/get_all_tasks/{user_id}")
 async def get_all_tasks(user_id: int, db: db_dependency):
-    all_tasks = db.query(models.Post).filter(user_id != models.Post.user_id).all()
+    all_tasks = db.query(models.Post).filter((user_id != models.Post.user_id) & (models.Post.reserved == 0)).all()
     return {"tasks" : all_tasks, "code" : 1}
 
-@app.post("/reserve_task/{user_id}/{task_id}")
+@app.post("/posts/reserve_task/{user_id}/{task_id}")
 async def reserve_task(user_id: int, task_id: int, db: db_dependency):
-    reserved_task = db.query(models.Post).filter(models.Post.reserved == 0 and models.Post.id == task_id).first()
+    reserved_task = db.query(models.Post).filter((models.Post.user_id != user_id) & (models.Post.reserved == 0) & (models.Post.id == task_id)).first()
 
     if reserved_task:
         setattr(reserved_task, 'reserved', user_id)
         setattr(reserved_task, 'completed', False)
-        db.comit()
+        db.commit()
         return {"code" : 1}
     else:
         return {"code" : -1}
     
-@app.post("/send_notif/{user_id}/{task_id}")
+@app.post("/posts/unreserve_task/{user_id}/{task_id}")
+async def unreserve_task(user_id: int, task_id: int, db: db_dependency):
+    reserved_task = db.query(models.Post).filter((models.Post.reserved == user_id) & (models.Post.id == task_id)).first()
+    
+    if reserved_task:
+        setattr(reserved_task, 'reserved', 0)
+        db.commit()
+        return {"code" : 1}
+    else:
+        return {"code" : -1}
+    
+@app.get("/posts/send_notif/{user_id}/{task_id}")
 async def send_notification(user_id: int, task_id: int, db: db_dependency):
-    approved_task = db.query(models.Post).filter(models.Post.reserved > 0 and models.Post.user_id == user_id).first()
-
-    if approved_task: 
-        return {"Message" : "Task has been reserved by user {approved_task.username}"}
+    approved_task = db.query(models.Post).filter((models.Post.reserved > 0) & (models.Post.user_id == user_id)).first()
+    requested_user = db.query(models.User).filter(approved_task.reserved == models.User.id).first()
+    if approved_task and requested_user: 
+        return {"Message" : f"Task has been reserved by user {requested_user.id}"}
     else:
         return {"Message" : "error user"}
 
-@app.post("/submit_task/{user_id}/{task_id}")
+@app.post("/posts/submit_task/{user_id}/{task_id}")
 async def submit_task(task_id: int, user_id: int, db: db_dependency):
-    get_task = db.query(models.Post).filter(models.Post.reserved == user_id and models.Post.id == task_id).first()
+    get_task = db.query(models.Post).filter((models.Post.reserved == user_id) & (models.Post.id == task_id)).first()
 
     if get_task:
         setattr(get_task, 'completed', True)
@@ -152,13 +166,14 @@ async def submit_task(task_id: int, user_id: int, db: db_dependency):
     else:
         return {"code" : -1}
     
-@app.post("/acknowledge_submission/{user_id}/{task_id}")
+@app.post("/posts/acknowledge_submission/{user_id}/{task_id}")
 async def accept_submission(task_id: int, user_id: int, db: db_dependency):
-    view_task = db.query(models.Post).filter(task_id == models.Post.id and models.Post.user_id == user_id).first()
+    view_task = db.query(models.Post).filter((task_id == models.Post.id) & (models.Post.user_id == user_id) & (models.Post.completed == True)).first()
 
     if view_task:
         payer = db.query(models.User).filter(user_id == models.User.id).first()
         payee = db.query(models.User).filter(models.User.id == view_task.reserved).first()
+        setattr(view_task, 'payment', True)
         setattr(payer, 'karma_points', payer.karma_points - view_task.kp_value)
         setattr(payee, 'karma_points', payee.karma_points + view_task.kp_value)
         db.commit()
@@ -166,14 +181,74 @@ async def accept_submission(task_id: int, user_id: int, db: db_dependency):
     else:
         return {"code" : -1}
     
-@app.post("/reject_submission/{user_id}/{task_id}")
+@app.post("/posts/reject_submission/{user_id}/{task_id}")
 async def refuse_submission(task_id: int, user_id: int, db: db_dependency):
-    view_task = db.query(models.Post).filter(task_id == models.Post.id and models.Post.user_id == user_id).first()
+    view_task = db.query(models.Post).filter((task_id == models.Post.id) & (models.Post.user_id == user_id) & (models.Post.completed == True)).first()
 
     if view_task:
         setattr(view_task, 'completed', False)
         setattr(view_task, 'reserved', 0)
-        setattr(view_task, 'post_time', datetime.now().__format__)
+        setattr(view_task, 'post_time', datetime.now().__format__('%Y-%m-%d %H:%M:%S'))
+        db.commit()
         return {"code" : 1}
     else:
         return {"code" : -1}
+    
+@app.post("/users/logout/{username}")
+async def logout_user(username : str, db : db_dependency):
+    user = db.query(models.User).filter(username == models.User.username).first()
+
+    if user:
+        setattr(user,'login', False)
+        db.commit()
+        return {"code" : 1}
+    else:
+        return {"code" : -1}
+    
+@app.post("/posts/delete_post/{user_id}/{task_id}")
+async def delete_post(user_id : int, task_id : int, db : db_dependency):
+    post = db.query(models.Post).filter((user_id == models.Post.user_id) & (models.Post.id == task_id)).first()
+
+    if post:
+        setattr(post, 'reserved', 0)
+        setattr(post, 'completed', False)
+        setattr(post, 'active', False)
+        db.commit()
+        return {"code" : 1}
+    else: 
+        return {"code" : -1}
+    
+@app.post("/posts/modify_post/{user_id}/{task_id}")
+async def modify_post(user_id : int, task_id : int, db : db_dependency, modified_post: PostBase):
+    post = db.query(models.Post).filter((user_id == models.Post.user_id) & (models.Post.id == task_id)).first()
+
+    if post:
+        setattr(post, 'reserved', 0)
+        setattr(post, 'completed', False)
+        setattr(post, 'active', False)
+        setattr(post, 'title', modified_post.title)
+        setattr(post, 'description', modified_post.description)
+        setattr(post, 'kp_value', modified_post.kp_value)
+        setattr(post, 'deadline', modified_post.deadline)
+        setattr(post, 'post_time', datetime.now().__format__('%Y-%m-%d %H:%M:%S'))
+        db.commit()
+        return {"code" : 1}
+    else:
+        return {"code" : -1}
+    
+@app.get("/posts/notify_payment/{user_id}/{task_id}")
+async def send_notif(user_id: int, task_id: int, db: db_dependency):
+    accepted_task = db.query(models.Post).filter((models.Post.id == task_id) & (models.Post.reserved == user_id) & (models.Post.completed == True) & (models.Post.payment == True))
+    if accepted_task:
+        return {"code" : 1}
+    else:
+        return {"code" : -1}
+    
+@app.get("/posts/notify_declined_submission/{user_id}/{task_id}")
+async def send_notif_declined(user_id: int, task_id: int, db: db_dependency):
+    declined_task = db.query(models.Post).filter((models.Post.id == task_id) & (models.Post.reserved == 0) & (models.Post.completed == False) & (models.Post.payment == False))
+    if declined_task:
+        return {"code" : 1}
+    else:
+        return {"code" : -1}
+    
