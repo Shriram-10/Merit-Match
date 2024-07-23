@@ -304,7 +304,15 @@ fun CreateTask (
                             } else if (noOfDays == "" && noOfHours == "") {
                                 message = "Give a deadline."
                                 displayToast = true
+                            } else if (kPOffering == "") {
+                                message = "Offer Karma Points."
+                                displayToast = true
                             } else {
+                                if (noOfDays == "") {
+                                    noOfDays = "0"
+                                } else if (noOfHours == "") {
+                                    noOfHours = "0"
+                                }
                                 dataViewModel.postTasks (
                                     userId = user_id.value,
                                     post = Task(
