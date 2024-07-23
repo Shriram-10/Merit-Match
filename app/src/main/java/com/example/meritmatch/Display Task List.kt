@@ -24,16 +24,24 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.surfaceColorAtElevation
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.compose.currentBackStackEntryAsState
+import com.google.accompanist.swiperefresh.SwipeRefresh
+import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
+import kotlinx.coroutines.delay
 
 @Composable
 fun TaskListPage (
@@ -45,11 +53,14 @@ fun TaskListPage (
     val color = MaterialTheme.colorScheme
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val colorList = listOf (
-        color.primaryContainer.copy(0.7f),
+        color.primaryContainer,
         color.secondaryContainer,
         color.tertiaryContainer,
         color.background
     )
+    var refreshing by remember {
+        mutableStateOf(false)
+    }
 
     BackHandler {
         navController.navigate(Screen.Home.route) {
@@ -66,7 +77,9 @@ fun TaskListPage (
                     .fillMaxWidth()
                     .background(brush = Brush.verticalGradient(colorList))
             ) {
-                NavigationBar {
+                NavigationBar (
+                    containerColor = Color.Transparent
+                ) {
                     items.forEach { item ->
                         val selected = navBackStackEntry?.destination?.route === item.route
                         NavigationBarItem (
@@ -98,7 +111,7 @@ fun TaskListPage (
             }
         }
     ) { innerPadding ->
-        Column (
+        Column(
             modifier = modifier
                 .padding(
                     bottom = innerPadding.calculateBottomPadding() * 0.60f,
@@ -116,33 +129,44 @@ fun TaskListPage (
                 end = 0.95f
             )
 
-            Box (
+            Box(
                 modifier = Modifier
                     .fillMaxSize(),
                 contentAlignment = if (taskList.isNotEmpty()) Alignment.TopCenter else Alignment.Center
             ) {
-                LazyColumn {
-                    items (
-                        count = if (taskList.isNotEmpty()) taskList.size
-                        else 1
-                    ) { item ->
-                        if (taskList.isNotEmpty()) {
-                            TaskListItem (
-                                task = taskList[item],
-                                isPosted = label == "Posted Tasks",
-                                isReserved = label == "Reserved Tasks"
-                            )
-                        } else {
-                            Text (
-                                text = "No tasks found",
-                                fontSize = 16.sp,
-                                fontWeight = FontWeight.SemiBold,
-                                color = color.onPrimaryContainer.copy(alpha = 0.5f)
-                            )
+                SwipeRefresh (
+                    state = rememberSwipeRefreshState(isRefreshing = refreshing),
+                    onRefresh = { refreshing = true }
+                ) {
+                    LazyColumn {
+                        items(
+                            count = if (taskList.isNotEmpty()) taskList.size
+                            else 1
+                        ) { item ->
+                            if (taskList.isNotEmpty()) {
+                                TaskListItem(
+                                    task = taskList[item],
+                                    isPosted = label == "Posted Tasks",
+                                    isReserved = label == "Reserved Tasks"
+                                )
+                            } else {
+                                Text(
+                                    text = "No tasks found",
+                                    fontSize = 16.sp,
+                                    fontWeight = FontWeight.SemiBold,
+                                    color = color.onPrimaryContainer.copy(alpha = 0.5f)
+                                )
+                            }
                         }
                     }
                 }
             }
+        }
+    }
+    LaunchedEffect(refreshing) {
+        if (refreshing) {
+            delay(2000) // Simulate a network request
+            refreshing = false
         }
     }
 }
