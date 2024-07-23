@@ -13,7 +13,7 @@ import kotlinx.coroutines.launch
 
 class MainViewModel : ViewModel() {
 
-    private val baseUrl = "http://192.168.48.89:8000"
+    private val baseUrl = "http://192.168.65.89:8000"
 
     data class StateOfUser (
         val loading : Boolean = false,
