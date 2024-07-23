@@ -1,5 +1,6 @@
 package com.example.meritmatch
 
+import android.widget.Toast
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -34,6 +35,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -62,6 +64,7 @@ fun TaskListPage (
     var refreshing by remember {
         mutableStateOf(false)
     }
+    var setValues by remember { mutableStateOf(false) }
 
     BackHandler {
         navController.navigate(Screen.Home.route) {
@@ -130,10 +133,10 @@ fun TaskListPage (
                 end = 0.95f
             )
 
-            Box(
+            Box (
                 modifier = Modifier
                     .fillMaxSize(),
-                contentAlignment = if (taskList.isNotEmpty()) Alignment.TopCenter else Alignment.Center
+                contentAlignment = Alignment.TopCenter
             ) {
                 SwipeRefresh (
                     state = rememberSwipeRefreshState(isRefreshing = refreshing),
@@ -152,6 +155,7 @@ fun TaskListPage (
                                     dataViewModel = dataViewModel
                                 )
                             } else {
+                                Spacer(modifier = Modifier.height(250.dp))
                                 Text(
                                     text = "No tasks found",
                                     fontSize = 16.sp,
@@ -171,9 +175,13 @@ fun TaskListPage (
             dataViewModel.getReservedTasks(user_id.value)
             dataViewModel.getAvailableTasks(user_id.value)
             delay(2000)
-            setValues(dataViewModel)
+            setValues = true
             refreshing = false
         }
+    }
+    if (setValues) {
+        setValues(dataViewModel)
+        setValues = false
     }
 }
 
@@ -188,6 +196,8 @@ fun TaskListItem (
     var displayLoading by remember { mutableStateOf(false) }
     var message by remember { mutableStateOf("") }
     var displayToast by remember { mutableStateOf(false) }
+    val context = LocalContext.current
+
     Column (
         modifier = Modifier
             .fillMaxSize(0.95f)
@@ -198,12 +208,23 @@ fun TaskListItem (
         verticalArrangement = Arrangement.Top
     ) {
 
-        Text (
-            text = task.title.uppercase(),
-            modifier = Modifier.padding(top = 24.dp, start = 24.dp, bottom = 8.dp, end = 24.dp),
-            fontSize = 22.sp,
-            fontWeight = FontWeight.ExtraBold
-        )
+        Row (
+            verticalAlignment = Alignment.Bottom
+        ) {
+            Text (
+                text = task.title.uppercase(),
+                modifier = Modifier.padding(top = 24.dp, start = 24.dp, bottom = 8.dp, end = 16.dp),
+                fontSize = 22.sp,
+                fontWeight = FontWeight.ExtraBold
+            )
+
+            if (!isPosted) {
+                Text(
+                    text = "by ${task.username}",
+                    modifier = Modifier.padding(bottom = 8.dp, end = 24.dp)
+                )
+            }
+        }
 
         Row (
             horizontalArrangement = Arrangement.Start,
@@ -249,6 +270,9 @@ fun TaskListItem (
                         if (!isReserved) {
                             dataViewModel.reserveTasks(user_id.value, task.id)
                             displayLoading = true
+                        } else {
+                            dataViewModel.unreserveTasks(user_id.value, task.id)
+                            displayLoading = true
                         }
                     }
                 },
@@ -276,7 +300,7 @@ fun TaskListItem (
                         bottom = 6.dp
                     ),
                     shape = RoundedCornerShape(20),
-                    elevation = ButtonDefaults.buttonElevation(
+                    elevation = ButtonDefaults.buttonElevation (
                         defaultElevation = 8.dp,
                         pressedElevation = 0.dp
                     ),
@@ -292,15 +316,30 @@ fun TaskListItem (
         }
     }
 
-    if (displayLoading && dataViewModel.stateOfReservingTask.value.status == 0) {
-        LoadingPage()
-    } else if (dataViewModel.stateOfReservingTask.value.status == 1 && displayLoading) {
+    if (dataViewModel.stateOfReservingTask.value.status == 1 && displayLoading) {
         displayLoading = false
     } else if (dataViewModel.stateOfReservingTask.value.status == 1) {
         message = "Task reserved successfully."
         displayToast = true
+         dataViewModel.stateOfReservingTask.value.status = 0
     } else if (dataViewModel.stateOfReservingTask.value.status == -1) {
         message = "Could not reserve Task. Try again."
         displayToast = true
+        displayLoading = false
+        dataViewModel.stateOfReservingTask.value.status = 0
+    } else if (dataViewModel.stateOfUnReservingTask.value.status == 1 && displayLoading) {
+        displayLoading = false
+    } else if (dataViewModel.stateOfUnReservingTask.value.status == 0) {
+        message = "Task unreserved successfully."
+        displayToast = true
+    } else if (dataViewModel.stateOfUnReservingTask.value.status == -1) {
+        message = "Couldn't unreserve task. Try again."
+        displayToast = true
+        displayLoading = false
+        dataViewModel.stateOfUnReservingTask.value.status = 0
+    }
+    if (displayToast) {
+        Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
+        displayToast = false
     }
 }

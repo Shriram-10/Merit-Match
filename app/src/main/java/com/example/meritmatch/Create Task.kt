@@ -37,7 +37,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 
-val draft = mutableStateOf(Task("", "", 0.0, 0, "","", 0, completed = false, active = false, false))
+val draft = mutableStateOf(Task(id = 0, description = "", title = "", kp_value = 0.0, user_id = 0, post_time = "", deadline = "", completed = false, active = false, reserved = 0, username = ""))
 
 @Composable
 fun CreateTask (
@@ -65,7 +65,9 @@ fun CreateTask (
             post_time = "",
             reserved = 0,
             completed = false,
-            active = false
+            active = false,
+            id = 0,
+            username = localUsername.value
         )
         message = "Your draft has been saved."
         displayToast = true
@@ -322,7 +324,9 @@ fun CreateTask (
                                         deadline = "$noOfDays $noOfHours",
                                         post_time = "",
                                         reserved = 0,
-                                        user_id = user_id.value
+                                        user_id = user_id.value,
+                                        id = 0,
+                                        username = localUsername.value
                                     )
                                 )
                                 displayLoad = true

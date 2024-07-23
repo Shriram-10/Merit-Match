@@ -13,7 +13,7 @@ import kotlinx.coroutines.launch
 
 class MainViewModel : ViewModel() {
 
-    private val baseUrl = "http://192.168.65.89:8000"
+    private val baseUrl = "http://192.168.231.89:8000"
 
     data class StateOfUser (
         val loading : Boolean = false,
@@ -47,7 +47,7 @@ class MainViewModel : ViewModel() {
 
     data class StateOfReservingTasks (
         val loading: Boolean = false,
-        val status: Int = 0,
+        var status: Int = 0,
         val error: String? = null
     )
     fun createNewUser (username : String, password : String, login: Boolean) {
@@ -197,6 +197,23 @@ class MainViewModel : ViewModel() {
         }
     }
 
+    fun unreserveTasks (userId : Int, taskId : Int) {
+        viewModelScope.launch {
+            try {
+                val response = dataService.unreserveTask("$baseUrl/posts/unreserve_task/$userId/$taskId")
+                _stateOfUnReservingTask.value = _stateOfUnReservingTask.value.copy (
+                    status = response.code,
+                    loading = false
+                )
+            } catch (e : Exception) {
+                _stateOfUnReservingTask.value = _stateOfUnReservingTask.value.copy (
+                    error = e.message,
+                    loading = false
+                )
+            }
+        }
+    }
+
     private val _stateOfUserRetrieval = mutableStateOf(StateOfUser())
     val stateOfUserRetrieval : State<StateOfUser> = _stateOfUserRetrieval
 
@@ -220,4 +237,7 @@ class MainViewModel : ViewModel() {
 
     private val _stateOfReservingTask = mutableStateOf(StateOfReservingTasks())
     val stateOfReservingTask : State<StateOfReservingTasks> = _stateOfReservingTask
+
+    private val _stateOfUnReservingTask = mutableStateOf(StateOfReservingTasks())
+    val stateOfUnReservingTask : State<StateOfReservingTasks> = _stateOfUnReservingTask
 }

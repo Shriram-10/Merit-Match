@@ -26,6 +26,7 @@ data class Task (
     val id : Int,
     val title : String,
     val description : String,
+    val username : String,
     val kp_value : Double,
     val user_id : Int,
     val post_time : String,
