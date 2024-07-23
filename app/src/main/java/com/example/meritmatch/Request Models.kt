@@ -16,7 +16,7 @@ data class Message (
 )
 
 data class LoginCode (
-    val code : Int,
+    var code : Int,
     val username : String,
     val karma_points: Double,
     val id : Int

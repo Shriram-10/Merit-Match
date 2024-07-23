@@ -35,7 +35,7 @@ class MainViewModel : ViewModel() {
 
     data class StateOfPost (
         val loading: Boolean = false,
-        val status: Int = 0,
+        var status: Int = 0,
         val error: String? = null
     )
 

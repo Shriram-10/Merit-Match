@@ -17,7 +17,6 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -198,5 +197,8 @@ fun LoginPage (
 
     if (displayToast) {
         Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
+        dataViewModel.stateOfLogin.value.status.code = 0
+        displayLoading.value = false
+        displayToast = false
     }
 }

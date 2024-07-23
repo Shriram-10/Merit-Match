@@ -343,5 +343,13 @@ fun CreateTask (
     if (dataViewModel.stateOfPost.value.status == 1 && displayLoad) {
         goHome()
         displayLoad = false
+        message = "Task created successfully."
+        displayToast = true
+        dataViewModel.getPostedTasks(user_id.value)
+        setValues(dataViewModel)
+        dataViewModel.stateOfPost.value.status = 0
+    } else if (dataViewModel.stateOfPost.value.status == -1) {
+        message = "Failed to create task. Try again."
+        displayToast = true
     }
 }
