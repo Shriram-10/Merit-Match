@@ -45,12 +45,17 @@ import com.google.accompanist.swiperefresh.SwipeRefresh
 import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
 import kotlinx.coroutines.delay
 
+var setValues = mutableStateOf(false)
+var displayLoading = mutableStateOf(false)
+var refreshing1 = mutableStateOf(false)
+var refreshing2 = mutableStateOf(false)
+
+
 @Composable
 fun TaskListPage (
     modifier: Modifier,
     navController: NavController,
     label: String,
-    taskList: List<Task>,
     dataViewModel: MainViewModel
 ) {
     val color = MaterialTheme.colorScheme
@@ -61,10 +66,6 @@ fun TaskListPage (
         color.tertiaryContainer,
         color.background
     )
-    var refreshing by remember {
-        mutableStateOf(false)
-    }
-    var setValues by remember { mutableStateOf(false) }
 
     BackHandler {
         navController.navigate(Screen.Home.route) {
@@ -139,17 +140,33 @@ fun TaskListPage (
                 contentAlignment = Alignment.TopCenter
             ) {
                 SwipeRefresh (
-                    state = rememberSwipeRefreshState(isRefreshing = refreshing),
-                    onRefresh = { refreshing = true }
+                    state = rememberSwipeRefreshState(isRefreshing = refreshing1.value),
+                    onRefresh = { refreshing1.value = true }
                 ) {
                     LazyColumn {
                         items(
-                            count = if (taskList.isNotEmpty()) taskList.size
-                            else 1
+                            count = if (label == "Available Tasks" && allTasks.value.isNotEmpty()) allTasks.value.size
+                                else if (label == "Posted Tasks" && postedTasks.value.isNotEmpty()) postedTasks.value.size
+                                else if (label == "Reserved Tasks" && reservedTasks.value.isNotEmpty()) reservedTasks.value.size
+                                else 1
                         ) { item ->
-                            if (taskList.isNotEmpty()) {
+                            if (label == "Available Tasks" && allTasks.value.isNotEmpty()) {
                                 TaskListItem (
-                                    task = taskList[item],
+                                    task = allTasks.value[item],
+                                    isPosted = label == "Posted Tasks",
+                                    isReserved = label == "Reserved Tasks",
+                                    dataViewModel = dataViewModel
+                                )
+                            } else if (label == "Posted Tasks" && postedTasks.value.isNotEmpty()) {
+                                TaskListItem (
+                                    task = postedTasks.value[item],
+                                    isPosted = label == "Posted Tasks",
+                                    isReserved = label == "Reserved Tasks",
+                                    dataViewModel = dataViewModel
+                                )
+                            } else if (label == "Reserved Tasks" && reservedTasks.value.isNotEmpty()) {
+                                TaskListItem (
+                                    task = reservedTasks.value[item],
                                     isPosted = label == "Posted Tasks",
                                     isReserved = label == "Reserved Tasks",
                                     dataViewModel = dataViewModel
@@ -169,19 +186,35 @@ fun TaskListPage (
             }
         }
     }
-    LaunchedEffect(refreshing) {
-        if (refreshing) {
+    LaunchedEffect(refreshing1.value) {
+        if (refreshing1.value) {
             dataViewModel.getPostedTasks(user_id.value)
             dataViewModel.getReservedTasks(user_id.value)
             dataViewModel.getAvailableTasks(user_id.value)
             delay(2000)
-            setValues = true
-            refreshing = false
+            setValues.value = true
+            refreshing1.value = false
         }
     }
-    if (setValues) {
+
+    LaunchedEffect(refreshing2.value) {
+        if (refreshing2.value) {
+            dataViewModel.getPostedTasks(user_id.value)
+            dataViewModel.getReservedTasks(user_id.value)
+            dataViewModel.getAvailableTasks(user_id.value)
+            delay(2000)
+            setValues.value = true
+            refreshing2.value = false
+        }
+    }
+
+    if (setValues.value) {
         setValues(dataViewModel)
-        setValues = false
+        setValues.value = false
+    }
+
+    if (displayLoading.value) {
+        LoadingPage()
     }
 }
 
@@ -193,7 +226,6 @@ fun TaskListItem (
     dataViewModel: MainViewModel
 ) {
     val color = MaterialTheme.colorScheme
-    var displayLoading by remember { mutableStateOf(false) }
     var message by remember { mutableStateOf("") }
     var displayToast by remember { mutableStateOf(false) }
     val context = LocalContext.current
@@ -269,10 +301,10 @@ fun TaskListItem (
                     if (!isPosted) {
                         if (!isReserved) {
                             dataViewModel.reserveTasks(user_id.value, task.id)
-                            displayLoading = true
+                            displayLoading.value = true
                         } else {
                             dataViewModel.unreserveTasks(user_id.value, task.id)
-                            displayLoading = true
+                            displayLoading.value = true
                         }
                     }
                 },
@@ -316,28 +348,36 @@ fun TaskListItem (
         }
     }
 
-    if (dataViewModel.stateOfReservingTask.value.status == 1 && displayLoading) {
-        displayLoading = false
-    } else if (dataViewModel.stateOfReservingTask.value.status == 1) {
-        message = "Task reserved successfully."
+    if (displayLoading.value && dataViewModel.stateOfReservingTask.value.status == 1) {
+        message = "Reserved Task successfully."
         displayToast = true
-         dataViewModel.stateOfReservingTask.value.status = 0
-    } else if (dataViewModel.stateOfReservingTask.value.status == -1) {
-        message = "Could not reserve Task. Try again."
-        displayToast = true
-        displayLoading = false
+        refreshing2.value = true
         dataViewModel.stateOfReservingTask.value.status = 0
-    } else if (dataViewModel.stateOfUnReservingTask.value.status == 1 && displayLoading) {
-        displayLoading = false
-    } else if (dataViewModel.stateOfUnReservingTask.value.status == 0) {
-        message = "Task unreserved successfully."
-        displayToast = true
-    } else if (dataViewModel.stateOfUnReservingTask.value.status == -1) {
-        message = "Couldn't unreserve task. Try again."
-        displayToast = true
-        displayLoading = false
-        dataViewModel.stateOfUnReservingTask.value.status = 0
+        displayLoading.value = false
     }
+
+    if (displayLoading.value && dataViewModel.stateOfReservingTask.value.status == -1) {
+        message = "Failed to reserve task. Try again."
+        displayToast = true
+        dataViewModel.stateOfReservingTask.value.status = 0
+        displayLoading.value = false
+    }
+
+    if (displayLoading.value && dataViewModel.stateOfUnReservingTask.value.status == 1) {
+        message = "Unreserved Task successfully."
+        displayToast = true
+        refreshing2.value = true
+        dataViewModel.stateOfUnReservingTask.value.status = 0
+        displayLoading.value = false
+    }
+
+    if (displayLoading.value && dataViewModel.stateOfUnReservingTask.value.status == -1) {
+        message = "Failed to unreserve task. Try again."
+        displayToast = true
+        dataViewModel.stateOfUnReservingTask.value.status = 0
+        displayLoading.value = false
+    }
+
     if (displayToast) {
         Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
         displayToast = false
