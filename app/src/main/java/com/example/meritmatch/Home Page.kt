@@ -57,12 +57,14 @@ fun HomePage (
 ) {
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val color = MaterialTheme.colorScheme
-    val colorList = listOf(
+    val colorList = listOf (
         color.primaryContainer.copy(0.7f),
         color.secondaryContainer,
         color.tertiaryContainer,
         color.background
     )
+
+    setValues(dataViewModel)
 
     BackHandler {
         android.os.Process.killProcess(android.os.Process.myPid())

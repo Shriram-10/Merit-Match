@@ -88,7 +88,6 @@ fun Navigation (modifier : Modifier) {
                     navController.navigate(Screen.PostedTasks.route)
                 },
                 toCreateTask = {
-
                     navController.navigate(Screen.CreateTasks.route)
                 },
                 dataViewModel = viewModel
@@ -121,7 +120,8 @@ fun Navigation (modifier : Modifier) {
             TaskListPage (
                 modifier = modifier,
                 navController = navController,
-                label = "Available Tasks"
+                label = "Available Tasks",
+                taskList = allTasks.value
             )
         }
 
@@ -131,7 +131,8 @@ fun Navigation (modifier : Modifier) {
             TaskListPage (
                 modifier = modifier,
                 navController = navController,
-                label = "Reserved Tasks"
+                label = "Reserved Tasks",
+                taskList = reservedTasks.value
             )
         }
 
@@ -141,7 +142,8 @@ fun Navigation (modifier : Modifier) {
             TaskListPage (
                 modifier = modifier,
                 navController = navController,
-                label = "Posted Tasks"
+                label = "Posted Tasks",
+                taskList = postedTasks.value
             )
         }
 
