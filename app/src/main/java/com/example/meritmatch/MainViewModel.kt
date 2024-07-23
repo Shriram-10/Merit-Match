@@ -45,6 +45,11 @@ class MainViewModel : ViewModel() {
         val error: String? = null
     )
 
+    data class StateOfReservingTasks (
+        val loading: Boolean = false,
+        val status: Int = 0,
+        val error: String? = null
+    )
     fun createNewUser (username : String, password : String, login: Boolean) {
         viewModelScope.launch {
             try {
@@ -175,6 +180,23 @@ class MainViewModel : ViewModel() {
         }
     }
 
+    fun reserveTasks (userId : Int, taskId : Int) {
+        viewModelScope.launch {
+            try {
+                val response = dataService.reserveTask("$baseUrl/posts/reserve_task/$userId/$taskId")
+                _stateOfReservingTask.value = _stateOfReservingTask.value.copy (
+                    status = response.code,
+                    loading = false
+                )
+            } catch (e : Exception) {
+                _stateOfReservingTask.value = _stateOfReservingTask.value.copy (
+                    error = e.message,
+                    loading = false
+                )
+            }
+        }
+    }
+
     private val _stateOfUserRetrieval = mutableStateOf(StateOfUser())
     val stateOfUserRetrieval : State<StateOfUser> = _stateOfUserRetrieval
 
@@ -195,4 +217,7 @@ class MainViewModel : ViewModel() {
 
     private val _stateOfPostedTasks = mutableStateOf(StateOfGettingPosts())
     val stateOfPostedTasks : State<StateOfGettingPosts> = _stateOfPostedTasks
+
+    private val _stateOfReservingTask = mutableStateOf(StateOfReservingTasks())
+    val stateOfReservingTask : State<StateOfReservingTasks> = _stateOfReservingTask
 }

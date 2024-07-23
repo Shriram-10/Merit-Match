@@ -24,6 +24,9 @@ interface ApiService {
     suspend fun loginUser(@Url fullUrl : String, @Body request : User) : LoginCode
 
     @POST
+    suspend fun logoutUser(@Url fullUrl: String) : Code
+
+    @POST
     suspend fun postTask(@Url fullUrl: String, @Body request : Task) : Code
 
     @GET
@@ -34,4 +37,31 @@ interface ApiService {
 
     @GET
     suspend fun reservedTasks(@Url fullUrl : String) : Tasks
+
+    @POST
+    suspend fun reserveTask(@Url fullUrl : String) : Code
+
+    @POST
+    suspend fun unreserveTask(@Url fullUrl: String) : Code
+
+    @POST
+    suspend fun modifyPost(@Url fullUrl: String, @Body request : Task) : Code
+
+    @POST
+    suspend fun deletePost(@Url fullUrl : String) : Code
+
+    @POST
+    suspend fun submitTask(@Url fullUrl: String) : Code
+
+    @POST
+    suspend fun approveSubmission(@Url fullUrl: String) : Code
+
+    @POST
+    suspend fun declineSubmission(@Url fullUrl : String) : Code
+
+    @GET
+    suspend fun notifyApproved(@Url fullUrl: String) : Code
+
+    @GET
+    suspend fun notifyDeclined(@Url fullUrl : String) : Code
 }

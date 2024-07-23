@@ -23,6 +23,7 @@ data class LoginCode (
 )
 
 data class Task (
+    val id : Int,
     val title : String,
     val description : String,
     val kp_value : Double,

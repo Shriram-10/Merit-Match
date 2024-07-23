@@ -262,11 +262,11 @@ fun CreateTask (
                             value = noOfHours,
                             onValueChange = { newValue ->
                                 try {
-                                    if (newValue.all { it.isDigit() } && newValue.toInt() >= 0 && newValue.toInt() <= 24) {
+                                    if (newValue.all { it.isDigit() } && newValue.toInt() >= 0 && newValue.toInt() < 24) {
                                         noOfHours = newValue
                                     } else {
                                         if (newValue.toInt() > 24) {
-                                            message = "No. of hours must not exceed 24."
+                                            message = "No. of hours must be less than 24."
                                         }
                                         displayToast = true
                                     }

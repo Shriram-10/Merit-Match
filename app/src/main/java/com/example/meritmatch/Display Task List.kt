@@ -145,10 +145,11 @@ fun TaskListPage (
                             else 1
                         ) { item ->
                             if (taskList.isNotEmpty()) {
-                                TaskListItem(
+                                TaskListItem (
                                     task = taskList[item],
                                     isPosted = label == "Posted Tasks",
-                                    isReserved = label == "Reserved Tasks"
+                                    isReserved = label == "Reserved Tasks",
+                                    dataViewModel = dataViewModel
                                 )
                             } else {
                                 Text(
@@ -180,9 +181,13 @@ fun TaskListPage (
 fun TaskListItem (
     task: Task,
     isPosted : Boolean,
-    isReserved : Boolean
+    isReserved : Boolean,
+    dataViewModel: MainViewModel
 ) {
     val color = MaterialTheme.colorScheme
+    var displayLoading by remember { mutableStateOf(false) }
+    var message by remember { mutableStateOf("") }
+    var displayToast by remember { mutableStateOf(false) }
     Column (
         modifier = Modifier
             .fillMaxSize(0.95f)
@@ -195,7 +200,7 @@ fun TaskListItem (
 
         Text (
             text = task.title.uppercase(),
-            modifier = Modifier.padding(top = 24.dp, start = 24.dp, bottom = 8.dp),
+            modifier = Modifier.padding(top = 24.dp, start = 24.dp, bottom = 8.dp, end = 24.dp),
             fontSize = 22.sp,
             fontWeight = FontWeight.ExtraBold
         )
@@ -239,7 +244,14 @@ fun TaskListItem (
                 .padding(4.dp)
         ) {
             Button (
-                onClick = {},
+                onClick = {
+                    if (!isPosted) {
+                        if (!isReserved) {
+                            dataViewModel.reserveTasks(user_id.value, task.id)
+                            displayLoading = true
+                        }
+                    }
+                },
                 modifier = Modifier.padding(start = 20.dp, end = 8.dp, top = 10.dp, bottom = 6.dp),
                 shape = RoundedCornerShape(20),
                 elevation = ButtonDefaults.buttonElevation (
@@ -278,5 +290,17 @@ fun TaskListItem (
                 }
             }
         }
+    }
+
+    if (displayLoading && dataViewModel.stateOfReservingTask.value.status == 0) {
+        LoadingPage()
+    } else if (dataViewModel.stateOfReservingTask.value.status == 1 && displayLoading) {
+        displayLoading = false
+    } else if (dataViewModel.stateOfReservingTask.value.status == 1) {
+        message = "Task reserved successfully."
+        displayToast = true
+    } else if (dataViewModel.stateOfReservingTask.value.status == -1) {
+        message = "Could not reserve Task. Try again."
+        displayToast = true
     }
 }
