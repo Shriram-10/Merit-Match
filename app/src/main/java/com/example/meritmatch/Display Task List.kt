@@ -28,6 +28,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -43,6 +44,12 @@ fun TaskListPage (
 ) {
     val color = MaterialTheme.colorScheme
     val navBackStackEntry by navController.currentBackStackEntryAsState()
+    val colorList = listOf (
+        color.primaryContainer.copy(0.7f),
+        color.secondaryContainer,
+        color.tertiaryContainer,
+        color.background
+    )
 
     BackHandler {
         navController.navigate(Screen.Home.route) {
@@ -54,33 +61,39 @@ fun TaskListPage (
 
     Scaffold (
         bottomBar = {
-            NavigationBar {
-                items.forEach { item ->
-                    val selected = navBackStackEntry?.destination?.route === item.route
-                    NavigationBarItem (
-                        selected = selected,
-                        label = {
-                            Text(
-                                text = item.title
-                            )
-                        },
-                        icon = {
-                            Icon(
-                                imageVector = if (selected) item.selectedIcon else item.unselectedIcon,
-                                contentDescription = item.title,
-                                tint = MaterialTheme.colorScheme.primary
-                            )
-                        },
-                        onClick = {
-                            navController.navigate(item.route) {
-                                popUpTo(navController.graph.startDestinationId) {
-                                    saveState = true
+            Box (
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .background(brush = Brush.verticalGradient(colorList))
+            ) {
+                NavigationBar {
+                    items.forEach { item ->
+                        val selected = navBackStackEntry?.destination?.route === item.route
+                        NavigationBarItem (
+                            selected = selected,
+                            label = {
+                                Text(
+                                    text = item.title
+                                )
+                            },
+                            icon = {
+                                Icon(
+                                    imageVector = if (selected) item.selectedIcon else item.unselectedIcon,
+                                    contentDescription = item.title,
+                                    tint = MaterialTheme.colorScheme.primary
+                                )
+                            },
+                            onClick = {
+                                navController.navigate(item.route) {
+                                    popUpTo(navController.graph.startDestinationId) {
+                                        saveState = true
+                                    }
+                                    launchSingleTop = true
+                                    restoreState = true
                                 }
-                                launchSingleTop = true
-                                restoreState = true
                             }
-                        }
-                    )
+                        )
+                    }
                 }
             }
         }
@@ -153,7 +166,7 @@ fun TaskListItem (
 
         Text (
             text = task.title.uppercase(),
-            modifier = Modifier.padding(top = 24.dp, start = 24.dp, bottom = 8.dp).width(80.dp),
+            modifier = Modifier.padding(top = 24.dp, start = 24.dp, bottom = 8.dp),
             fontSize = 22.sp,
             fontWeight = FontWeight.ExtraBold
         )
@@ -209,7 +222,7 @@ fun TaskListItem (
                 )
             ) {
                 Text (
-                    text = if (isPosted) "Modify Post" else "Unreserve Post"
+                    text = if (isPosted) "Modify Post" else if (isReserved) "Unreserve Task" else "Reserve Task"
                 )
             }
 
