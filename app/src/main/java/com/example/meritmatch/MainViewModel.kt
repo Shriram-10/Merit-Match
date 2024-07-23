@@ -50,6 +50,7 @@ class MainViewModel : ViewModel() {
         var status: Int = 0,
         val error: String? = null
     )
+
     fun createNewUser (username : String, password : String, login: Boolean) {
         viewModelScope.launch {
             try {
@@ -214,6 +215,40 @@ class MainViewModel : ViewModel() {
         }
     }
 
+    fun submitTasks (userId : Int, taskId : Int) {
+        viewModelScope.launch {
+            try {
+                val response = dataService.submitTask("$baseUrl/posts/submit_task/$userId/$taskId")
+                _stateOfSubmittingTask.value = _stateOfSubmittingTask.value.copy (
+                    status = response.code,
+                    loading = false
+                )
+            } catch (e : Exception) {
+                _stateOfSubmittingTask.value = _stateOfSubmittingTask.value.copy (
+                    error = e.message,
+                    loading = false
+                )
+            }
+        }
+    }
+
+    fun deleteTasks (userId : Int, taskId : Int) {
+        viewModelScope.launch {
+            try {
+                val response = dataService.deletePost("$baseUrl/posts/delete_post/$userId/$taskId")
+                _stateOfDeletingTask.value = _stateOfDeletingTask.value.copy (
+                    status = response.code,
+                    loading = false
+                )
+            } catch (e : Exception) {
+                _stateOfDeletingTask.value = _stateOfDeletingTask.value.copy (
+                    error = e.message,
+                    loading = false
+                )
+            }
+        }
+    }
+
     private val _stateOfUserRetrieval = mutableStateOf(StateOfUser())
     val stateOfUserRetrieval : State<StateOfUser> = _stateOfUserRetrieval
 
@@ -240,4 +275,10 @@ class MainViewModel : ViewModel() {
 
     private val _stateOfUnReservingTask = mutableStateOf(StateOfReservingTasks())
     val stateOfUnReservingTask : State<StateOfReservingTasks> = _stateOfUnReservingTask
+
+    private val _stateOfSubmittingTask = mutableStateOf(StateOfReservingTasks())
+    val stateOfSubmittingTask : State<StateOfReservingTasks> = _stateOfSubmittingTask
+
+    private val _stateOfDeletingTask = mutableStateOf(StateOfReservingTasks())
+    val stateOfDeletingTask : State<StateOfReservingTasks> = _stateOfDeletingTask
 }

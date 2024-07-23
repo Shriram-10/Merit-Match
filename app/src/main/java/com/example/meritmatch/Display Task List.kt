@@ -15,8 +15,14 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.Delete
+import androidx.compose.material.icons.outlined.Edit
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.BasicAlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
@@ -50,7 +56,6 @@ var displayLoading = mutableStateOf(false)
 var refreshing1 = mutableStateOf(false)
 var refreshing2 = mutableStateOf(false)
 
-
 @Composable
 fun TaskListPage (
     modifier: Modifier,
@@ -66,6 +71,7 @@ fun TaskListPage (
         color.tertiaryContainer,
         color.background
     )
+    var newTaskList by remember { mutableStateOf(false) }
 
     BackHandler {
         navController.navigate(Screen.Home.route) {
@@ -193,6 +199,7 @@ fun TaskListPage (
             dataViewModel.getAvailableTasks(user_id.value)
             delay(2000)
             setValues.value = true
+            newTaskList = true
             refreshing1.value = false
         }
     }
@@ -204,6 +211,7 @@ fun TaskListPage (
             dataViewModel.getAvailableTasks(user_id.value)
             delay(2000)
             setValues.value = true
+            newTaskList = true
             refreshing2.value = false
         }
     }
@@ -213,11 +221,16 @@ fun TaskListPage (
         setValues.value = false
     }
 
+    if (newTaskList) {
+        TaskListPage(dataViewModel = dataViewModel, navController = navController, label = label, modifier = modifier)
+    }
+
     if (displayLoading.value) {
         LoadingPage()
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TaskListItem (
     task: Task,
@@ -229,6 +242,93 @@ fun TaskListItem (
     var message by remember { mutableStateOf("") }
     var displayToast by remember { mutableStateOf(false) }
     val context = LocalContext.current
+    var displayAlert by remember { mutableStateOf(false) }
+
+    if (displayAlert) {
+        BasicAlertDialog (
+            onDismissRequest = {
+                displayAlert = false
+            },
+            content = {
+                Column (
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    modifier = Modifier
+                        .clip(RoundedCornerShape(10))
+                        .background(color.secondaryContainer)
+                ) {
+                    Text (
+                        text = "Modify / Delete Post?",
+                        fontSize = 18.sp,
+                        fontWeight = FontWeight.SemiBold,
+                        modifier = Modifier
+                            .padding(top = 16.dp, bottom = 20.dp)
+                    )
+                    Row {
+                        Box (
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Button (
+                                onClick = {},
+                                shape = RoundedCornerShape(20),
+                                modifier = Modifier
+                                    .height(60.dp)
+                                    .width(60.dp)
+                                    .padding(12.dp),
+                                elevation = ButtonDefaults.buttonElevation(
+                                    defaultElevation = 8.dp,
+                                    pressedElevation = 0.dp
+                                ),
+                                colors = ButtonDefaults.buttonColors(
+                                    containerColor = color.onErrorContainer
+                                )
+                            ) {
+
+                            }
+
+                            Icon (
+                                Icons.Outlined.Edit,
+                                contentDescription = "Edit",
+                                tint = color.onError
+                            )
+                        }
+
+                        Box (
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Button (
+                                onClick = {
+                                    dataViewModel.deleteTasks(user_id.value, task.id)
+                                    displayLoading.value = true
+                                    displayAlert = false
+                                },
+                                shape = RoundedCornerShape(20),
+                                modifier = Modifier
+                                    .height(60.dp)
+                                    .width(60.dp)
+                                    .padding(12.dp),
+                                elevation = ButtonDefaults.buttonElevation(
+                                    defaultElevation = 8.dp,
+                                    pressedElevation = 0.dp
+                                ),
+                                colors = ButtonDefaults.buttonColors(
+                                    containerColor = color.onErrorContainer
+                                )
+                            ) {
+
+                            }
+
+                            Icon (
+                                Icons.Outlined.Delete,
+                                contentDescription = "Delete",
+                                tint = color.onError
+                            )
+                        }
+                    }
+                }
+
+            }
+        )
+    }
 
     Column (
         modifier = Modifier
@@ -306,6 +406,8 @@ fun TaskListItem (
                             dataViewModel.unreserveTasks(user_id.value, task.id)
                             displayLoading.value = true
                         }
+                    } else {
+                        displayAlert = true
                     }
                 },
                 modifier = Modifier.padding(start = 20.dp, end = 8.dp, top = 10.dp, bottom = 6.dp),
@@ -325,7 +427,10 @@ fun TaskListItem (
 
             if (isReserved) {
                 Button(
-                    onClick = {},
+                    onClick = {
+                        dataViewModel.submitTasks(user_id.value, task.id)
+                        displayLoading.value = true
+                    },
                     modifier = Modifier.padding (
                         end = 20.dp,
                         top = 10.dp,
@@ -349,9 +454,9 @@ fun TaskListItem (
     }
 
     if (displayLoading.value && dataViewModel.stateOfReservingTask.value.status == 1) {
+        refreshing2.value = true
         message = "Reserved Task successfully."
         displayToast = true
-        refreshing2.value = true
         dataViewModel.stateOfReservingTask.value.status = 0
         displayLoading.value = false
     }
@@ -364,9 +469,9 @@ fun TaskListItem (
     }
 
     if (displayLoading.value && dataViewModel.stateOfUnReservingTask.value.status == 1) {
+        refreshing2.value = true
         message = "Unreserved Task successfully."
         displayToast = true
-        refreshing2.value = true
         dataViewModel.stateOfUnReservingTask.value.status = 0
         displayLoading.value = false
     }
@@ -375,6 +480,36 @@ fun TaskListItem (
         message = "Failed to unreserve task. Try again."
         displayToast = true
         dataViewModel.stateOfUnReservingTask.value.status = 0
+        displayLoading.value = false
+    }
+
+    if (displayLoading.value && dataViewModel.stateOfSubmittingTask.value.status == 1) {
+        refreshing2.value = true
+        message = "Task submitted successfully."
+        displayToast = true
+        dataViewModel.stateOfSubmittingTask.value.status = 0
+        displayLoading.value = false
+    }
+
+    if (displayLoading.value && dataViewModel.stateOfSubmittingTask.value.status == -1) {
+        message = "Task submission failed. Try again."
+        displayToast = true
+        dataViewModel.stateOfSubmittingTask.value.status = 0
+        displayLoading.value = false
+    }
+
+    if (displayLoading.value && dataViewModel.stateOfDeletingTask.value.status == 1) {
+        refreshing2.value = true
+        message = "Task Deleted Successfully."
+        displayToast = true
+        dataViewModel.stateOfDeletingTask.value.status = 0
+        displayLoading.value = false
+    }
+
+    if (displayLoading.value && dataViewModel.stateOfDeletingTask.value.status == -1) {
+        message = "Task deletion failed. Try again."
+        displayToast = true
+        dataViewModel.stateOfDeletingTask.value.status = 0
         displayLoading.value = false
     }
 
