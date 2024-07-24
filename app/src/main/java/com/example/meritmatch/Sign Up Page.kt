@@ -105,7 +105,6 @@ fun SignUpPage (
                 placeholder = "Enter referral code if you got one.",
                 dataViewModel = dataViewModel
             )
-            Text(gotha.value)
 
             Spacer (modifier = Modifier.height(50.dp))
 

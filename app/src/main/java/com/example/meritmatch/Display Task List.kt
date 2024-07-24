@@ -241,7 +241,7 @@ fun TaskListPage (
             dataViewModel.getAvailableTasks(user_id.value)
             dataViewModel.getSubmittedTasks(user_id.value)
             dataViewModel.getWaitingTasks(user_id.value)
-            delay(2000)
+            delay(400)
             setValues.value = true
             newTaskList = true
             if (refreshing2.value) {
