@@ -6,6 +6,8 @@ from database import engine, SessionLocal
 from sqlalchemy.orm import Session
 from passlib.context import CryptContext
 from datetime import datetime
+import random
+import string
 
 
 app = FastAPI()
@@ -18,6 +20,10 @@ def password_hash(password):
 
 def verify_password(plain_password, hashed_password):
     return pwd_context.verify(plain_password, hashed_password)
+
+def generate_referral_code(length=8):
+    characters = string.ascii_uppercase + string.digits
+    return ''.join(random.choice(characters) for _ in range(length))
 
 class PostBase(BaseModel):
     title: str
@@ -38,6 +44,7 @@ class User(BaseModel):
     password: str
     karma_points: float
     login: bool = False
+    referral_code: str
 
 
 def get_db():
@@ -54,16 +61,18 @@ db_dependency = Annotated[Session, Depends(get_db)]
 @app.post("/users", status_code=status.HTTP_201_CREATED)
 async def create_user(user: User, db: db_dependency):
     new_user = models.User(**user.model_dump())
-    existing_user = db.query(models.User).filter(models.User.username == new_user.username).first()
-
+    existing_user = db.query(models.User).filter((models.User.referral_code == new_user.referral_code) & (models.User.username != new_user.username)).first()
+    new_user.karma_points = 300
     if existing_user:
-        return {"code" : -1}
-    else:
-       new_user.password = password_hash(user.username)
-       new_user.login = user.login
-       db.add(new_user)
-       db.commit()
-       return {"code" : 1} 
+       existing_user.karma_points += 350
+       new_user.karma_points += 100
+
+    new_user.password = password_hash(user.password)
+    new_user.login = True
+    new_user.referral_code = generate_referral_code()
+    db.add(new_user)
+    db.commit()
+    return {"code" : 1} 
 
 
 @app.get("/users/{username}")
@@ -89,7 +98,8 @@ async def login_auth(user: User, db: db_dependency):
                 "code" : 1,
                 "username" : existing_user.username,
                 "karma_points" : existing_user.karma_points,
-                "id" : existing_user.id
+                "id" : existing_user.id,
+                "referral_code" : existing_user.referral_code
             }
         else: 
             return {"code" : -2}
@@ -197,11 +207,14 @@ async def accept_submission(task_id: int, user_id: int, db: db_dependency):
     if view_task:
         payer = db.query(models.User).filter(user_id == models.User.id).first()
         payee = db.query(models.User).filter(models.User.id == view_task.reserved).first()
-        setattr(view_task, 'payment', True)
-        setattr(payer, 'karma_points', payer.karma_points - view_task.kp_value)
-        setattr(payee, 'karma_points', payee.karma_points + view_task.kp_value)
-        db.commit()
-        return {"code" : 1}
+        if payer.karma_points >= view_task.kp_value:
+            setattr(view_task, 'payment', True)
+            setattr(payer, 'karma_points', payer.karma_points - view_task.kp_value)
+            setattr(payee, 'karma_points', payee.karma_points + view_task.kp_value)
+            db.commit()
+            return {"code" : 1}
+        else:
+            return {"code" : -2}
     else:
         return {"code" : -1}
     
@@ -249,7 +262,7 @@ async def modify_post(user_id : int, task_id : int, db : db_dependency, modified
     if post:
         setattr(post, 'reserved', 0)
         setattr(post, 'completed', False)
-        setattr(post, 'active', False)
+        setattr(post, 'active', True)
         setattr(post, 'title', modified_post.title)
         setattr(post, 'description', modified_post.description)
         setattr(post, 'kp_value', modified_post.kp_value)
