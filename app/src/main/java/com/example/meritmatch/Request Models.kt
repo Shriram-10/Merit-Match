@@ -4,7 +4,8 @@ data class User (
     var username : String,
     var password : String,
     var login : Boolean,
-    var karma_points : Double
+    var karma_points : Double,
+    val referral_code: String
 )
 
 data class Code (
@@ -19,7 +20,7 @@ data class LoginCode (
     var code : Int,
     val username : String,
     val karma_points: Double,
-    val id : Int
+    val id : Int,
 )
 
 data class Task (

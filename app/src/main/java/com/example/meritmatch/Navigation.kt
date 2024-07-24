@@ -80,6 +80,12 @@ fun Navigation (modifier : Modifier) {
                 onLogout = {
                     navController.navigate(Screen.Login.route)
                 },
+                toSettings = {
+                    navController.navigate(Screen.Settings.route)
+                },
+                toSearch = {
+                    navController.navigate(Screen.Search.route)
+                },
                 toAvailableTasks = {
                     setValues(viewModel)
                     navController.navigate(Screen.AvailableTasks.route)

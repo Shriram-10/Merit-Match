@@ -29,7 +29,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
 val karma_points = mutableStateOf(350.00)
-val user = mutableStateOf(User("", "", false, karma_points.value))
+val user = mutableStateOf(User("", "", false, karma_points.value, ""))
 val referralCode = mutableStateOf("")
 
 @Composable
@@ -114,6 +114,7 @@ fun SignUpPage (
                     if (!dataViewModel.stateOfCheckUsername.value.loading && dataViewModel.stateOfCheckUsername.value.error != null) {
                         onSignUp()
                     }
+                    user_id.value = 0
                 },
                 modifier = Modifier
                     .height(42.dp)

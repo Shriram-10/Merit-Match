@@ -58,6 +58,8 @@ fun HomePage (
     toPostedTasks: () -> Unit,
     toCreateTask: () -> Unit,
     toWaitingTasks: () -> Unit,
+    toSearch: () -> Unit,
+    toSettings: () -> Unit,
     dataViewModel: MainViewModel
 ) {
     val navBackStackEntry by navController.currentBackStackEntryAsState()
@@ -80,12 +82,8 @@ fun HomePage (
         topBar = @Composable {
             CustomTopAppBar (
                 title = "Home",
-                searchNavigate = {
-                    navController.navigate(Screen.Search.route)
-                },
-                settingsNavigate = {
-                    navController.navigate(Screen.Settings.route)
-                },
+                searchNavigate = toSearch,
+                settingsNavigate = toSettings,
                 endIcon = Icons.Outlined.Settings,
                 startIcon =  Icons.Outlined.Search
             )
@@ -249,7 +247,9 @@ fun HomePage (
             toPostedTasks = toPostedTasks,
             toCreateTask = toCreateTask,
             toWaitingTasks = toWaitingTasks,
-            dataViewModel = dataViewModel
+            dataViewModel = dataViewModel,
+            toSettings = toSettings,
+            toSearch = toSearch
         )
     }
 }

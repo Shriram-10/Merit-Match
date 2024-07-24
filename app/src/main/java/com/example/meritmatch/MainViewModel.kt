@@ -72,7 +72,7 @@ class MainViewModel : ViewModel() {
     fun createNewUser (username : String, password : String, login: Boolean) {
         viewModelScope.launch {
             try {
-                val response = dataService.createUser(User(username = username, password = password, login = login, karma_points = karma_points.value))
+                val response = dataService.createUser(User(username = username, password = password, login = login, karma_points = karma_points.value, referral_code = ""))
                 _stateOfUserRetrieval.value = StateOfUser (
                     value = response.code,
                     loading = false
@@ -112,7 +112,8 @@ class MainViewModel : ViewModel() {
                         username = username,
                         password = password,
                         karma_points = kp,
-                        login = true
+                        login = true,
+                        referral_code = ""
                     )
                 )
                 _stateOfLogin.value = _stateOfLogin.value.copy (
