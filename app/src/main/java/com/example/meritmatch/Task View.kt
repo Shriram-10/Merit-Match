@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -91,13 +92,8 @@ fun TaskView (
                                         horizontalAlignment = Alignment.Start,
                                         modifier = Modifier.fillMaxSize()
                                     ) {
-                                        Text (
-                                            text = submittedTasks.value[item].title.uppercase(),
-                                            modifier = Modifier.padding(start = 16.dp, top = 16.dp, bottom = 16.dp),
-                                            fontSize = 18.sp,
-                                            color = color.error,
-                                            fontWeight = FontWeight.Bold
-                                        )
+                                        TaskViewItem(taskItem = submittedTasks.value[item])
+
                                     }
                                 } else {
                                     Text(
@@ -110,9 +106,7 @@ fun TaskView (
                                 }
                             } else if (label == "Pending Approvals") {
                                 if (waitingTasks.value.isNotEmpty()) {
-                                    Text(
-                                        waitingTasks.value[item].title
-                                    )
+                                    TaskViewItem(taskItem = waitingTasks.value[item])
                                 } else {
                                     Text(
                                         text = "None of your posted tasks are awaiting approval.",
@@ -151,7 +145,10 @@ fun TaskView (
                 modifier = Modifier
                     .fillMaxSize()
                     .align(Alignment.Center)
-                    .border(BorderStroke(width = 6.dp, color = color.primaryContainer), shape = RoundedCornerShape(100)),
+                    .border(
+                        BorderStroke(width = 6.dp, color = color.primaryContainer),
+                        shape = RoundedCornerShape(100)
+                    ),
                 colors = ButtonDefaults.buttonColors (
                     containerColor = color.onPrimary
                 ),
@@ -196,6 +193,31 @@ fun LabeledTaskView (
             modifier = modifier,
             onViewMore = onViewMore,
             label = label
+        )
+    }
+}
+
+@Composable
+fun TaskViewItem (
+    taskItem : Task
+) {
+    val color = MaterialTheme.colorScheme
+    Row (
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Text (
+            text = taskItem.title.uppercase(),
+            modifier = Modifier.padding(start = 16.dp, top = 16.dp, bottom = 16.dp),
+            fontSize = 18.sp,
+            color = color.error,
+            fontWeight = FontWeight.Bold
+        )
+
+        Text (
+            text = "by ${taskItem.username}",
+            modifier = Modifier.padding(start = 16.dp, top = 16.dp, bottom = 16.dp),
+            fontSize = 13.sp,
+            fontWeight = FontWeight.Light
         )
     }
 }
