@@ -414,17 +414,20 @@ fun TaskListItem (
         horizontalAlignment = Alignment.Start,
         verticalArrangement = Arrangement.Top
     ) {
-        Row (
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.End
-        ) {
-            Text (
-                text = "STATUS : ${label}",
-                modifier = Modifier.padding(top = 8.dp, end = 16.dp),
-                color = color.error,
-                fontSize = 16.sp,
-                fontWeight = FontWeight.ExtraBold
-            )
+        if (isHistory) {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.End
+            ) {
+                Text(
+                    text = "STATUS : ${label}",
+                    modifier = Modifier.padding(top = 8.dp, end = 16.dp),
+                    color = color.error,
+                    fontSize = 16.sp,
+                    fontWeight = FontWeight.ExtraBold,
+                    letterSpacing = 2.sp
+                )
+            }
         }
 
         Row (
