@@ -16,6 +16,7 @@ var allTasks = mutableStateOf(listOf<Task>())
 var reservedTasks = mutableStateOf(listOf<Task>())
 var postedTasks = mutableStateOf(listOf<Task>())
 var submittedTasks = mutableStateOf(listOf<Task>())
+var waitingTasks = mutableStateOf(listOf<Task>())
 
 @Composable
 fun Navigation (modifier : Modifier) {
@@ -36,6 +37,7 @@ fun Navigation (modifier : Modifier) {
                     viewModel.getAvailableTasks(user_id.value)
                     viewModel.getPostedTasks(user_id.value)
                     viewModel.getSubmittedTasks(user_id.value)
+                    viewModel.getWaitingTasks(user_id.value)
                     navController.navigate(Screen.Home.route) {
                         popUpTo(Screen.Login.route) { inclusive = true }
                     }
@@ -94,6 +96,9 @@ fun Navigation (modifier : Modifier) {
                 },
                 toSubmittedTasks = {
                     navController.navigate(Screen.SubmittedTasks.route)
+                },
+                toWaitingTasks = {
+                    navController.navigate(Screen.WaitingTasks.route)
                 },
                 dataViewModel = viewModel
             )

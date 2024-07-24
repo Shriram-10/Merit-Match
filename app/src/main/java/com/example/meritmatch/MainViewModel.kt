@@ -164,6 +164,23 @@ class MainViewModel : ViewModel() {
         }
     }
 
+    fun getWaitingTasks (userId: Int) {
+        viewModelScope.launch {
+            try {
+                val response = dataService.waitingTasks("$baseUrl/posts/get_waiting_tasks/$userId")
+                _stateOfWaitingTasks.value = _stateOfWaitingTasks.value.copy (
+                    status = mutableStateOf(response.tasks),
+                    loading = false
+                )
+            } catch (e : Exception) {
+                _stateOfWaitingTasks.value = _stateOfWaitingTasks.value.copy (
+                    error = e.message,
+                    loading = false
+                )
+            }
+        }
+    }
+
     fun getReservedTasks (userId: Int) {
         viewModelScope.launch {
             try {
@@ -306,6 +323,9 @@ class MainViewModel : ViewModel() {
 
     private val _stateOfPostedTasks = mutableStateOf(StateOfGettingPosts())
     val stateOfPostedTasks : State<StateOfGettingPosts> = _stateOfPostedTasks
+
+    private val _stateOfWaitingTasks = mutableStateOf(StateOfGettingPosts())
+    val stateOfWaitingTasks : State<StateOfGettingPosts> = _stateOfWaitingTasks
 
     private val _stateOfReservingTask = mutableStateOf(StateOfReservingTasks())
     val stateOfReservingTask : State<StateOfReservingTasks> = _stateOfReservingTask

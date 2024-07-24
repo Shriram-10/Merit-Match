@@ -57,6 +57,7 @@ fun HomePage (
     toSubmittedTasks: () -> Unit,
     toPostedTasks: () -> Unit,
     toCreateTask: () -> Unit,
+    toWaitingTasks: () -> Unit,
     dataViewModel: MainViewModel
 ) {
     val navBackStackEntry by navController.currentBackStackEntryAsState()
@@ -160,7 +161,7 @@ fun HomePage (
 
                         BalanceKP(modifier = Modifier.padding(16.dp), balance = karma_points.value)
 
-                        LabeledTaskView(
+                        LabeledTaskView (
                             modifier = Modifier
                                 .padding(start = 16.dp)
                                 .fillMaxWidth(0.95f)
@@ -169,22 +170,13 @@ fun HomePage (
                             onViewMore = toSubmittedTasks
                         )
 
-                        LabeledTaskView(
+                        LabeledTaskView (
                             modifier = Modifier
                                 .padding(start = 16.dp)
                                 .fillMaxWidth(0.95f)
                                 .height(225.dp),
-                            label = "Reserved Tasks",
-                            onViewMore = toReservedTasks
-                        )
-
-                        LabeledTaskView(
-                            modifier = Modifier
-                                .padding(start = 16.dp)
-                                .fillMaxWidth(0.95f)
-                                .height(225.dp),
-                            label = "Posted Tasks",
-                            onViewMore = toPostedTasks
+                            label = "Tasks awaiting approval",
+                            onViewMore = toWaitingTasks
                         )
                     }
                 }
@@ -229,6 +221,7 @@ fun HomePage (
             dataViewModel.getReservedTasks(user_id.value)
             dataViewModel.getAvailableTasks(user_id.value)
             dataViewModel.getSubmittedTasks(user_id.value)
+            dataViewModel.getWaitingTasks(user_id.value)
             delay(2000)
             setValues.value = true
             newHomePage = true
@@ -255,6 +248,7 @@ fun HomePage (
             toSubmittedTasks = toSubmittedTasks,
             toPostedTasks = toPostedTasks,
             toCreateTask = toCreateTask,
+            toWaitingTasks = toWaitingTasks,
             dataViewModel = dataViewModel
         )
     }

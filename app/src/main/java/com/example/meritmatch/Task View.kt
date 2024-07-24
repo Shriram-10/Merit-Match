@@ -40,7 +40,8 @@ import androidx.compose.ui.unit.sp
 @Composable
 fun TaskView (
     modifier: Modifier,
-    onViewMore: () -> Unit
+    onViewMore: () -> Unit,
+    label: String
 ) {
     val color = MaterialTheme.colorScheme
 
@@ -73,16 +74,24 @@ fun TaskView (
                     verticalArrangement = Arrangement.spacedBy(16.dp),
                     contentPadding = PaddingValues(16.dp)
                 ) {
-                    items (if (submittedTasks.value.isNotEmpty()) submittedTasks.value.size else 1) { item ->
+                    items (
+                        if (label == "Submitted Tasks" && submittedTasks.value.isNotEmpty()) submittedTasks.value.size
+                        else if (label == "Tasks awaiting approval" && waitingTasks.value.isNotEmpty()) waitingTasks.value.size
+                        else 1
+                    ) { item ->
                         Box (
                             modifier = Modifier
                                 .clip(RoundedCornerShape(20))
                                 .background(color.primaryContainer),
                             contentAlignment = Alignment.TopCenter
                         ) {
-                            if (submittedTasks.value.isNotEmpty()) {
+                            if (label == "Submitted Tasks" && submittedTasks.value.isNotEmpty()) {
                                 Text (
                                     submittedTasks.value[item].title
+                                )
+                            } else if (label == "Tasks awaiting approval" && waitingTasks.value.isNotEmpty()) {
+                                Text (
+                                    waitingTasks.value[item].title
                                 )
                             } else {
                                 Text(
@@ -164,7 +173,8 @@ fun LabeledTaskView (
 
         TaskView (
             modifier = modifier,
-            onViewMore = onViewMore
+            onViewMore = onViewMore,
+            label = label
         )
     }
 }

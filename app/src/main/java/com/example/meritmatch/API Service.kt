@@ -41,6 +41,9 @@ interface ApiService {
     @GET
     suspend fun reservedTasks(@Url fullUrl : String) : Tasks
 
+    @GET
+    suspend fun waitingTasks(@Url fullUrl : String) : Tasks
+
     @POST
     suspend fun reserveTask(@Url fullUrl : String) : Code
 
