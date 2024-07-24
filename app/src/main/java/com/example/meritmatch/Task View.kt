@@ -87,9 +87,18 @@ fun TaskView (
                         ) {
                             if (label == "Submitted Tasks") {
                                 if (submittedTasks.value.isNotEmpty()) {
-                                    Text(
-                                        submittedTasks.value[item].title
-                                    )
+                                    Column (
+                                        horizontalAlignment = Alignment.Start,
+                                        modifier = Modifier.fillMaxSize()
+                                    ) {
+                                        Text (
+                                            text = submittedTasks.value[item].title.uppercase(),
+                                            modifier = Modifier.padding(start = 16.dp, top = 16.dp, bottom = 16.dp),
+                                            fontSize = 18.sp,
+                                            color = color.error,
+                                            fontWeight = FontWeight.Bold
+                                        )
+                                    }
                                 } else {
                                     Text(
                                         text = "None of your submitted tasks are awaiting payment.",

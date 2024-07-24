@@ -38,6 +38,7 @@ fun Navigation (modifier : Modifier) {
                     viewModel.getPostedTasks(user_id.value)
                     viewModel.getSubmittedTasks(user_id.value)
                     viewModel.getWaitingTasks(user_id.value)
+                    viewModel.getBalance(user_id.value)
                     navController.navigate(Screen.Home.route) {
                         popUpTo(Screen.Login.route) { inclusive = true }
                     }
