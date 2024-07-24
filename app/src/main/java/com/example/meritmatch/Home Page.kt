@@ -30,6 +30,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
@@ -39,6 +40,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.compose.currentBackStackEntryAsState
+import com.google.accompanist.swiperefresh.SwipeRefresh
+import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
 import kotlinx.coroutines.delay
 
 var localUsername = mutableStateOf("")
@@ -64,6 +67,7 @@ fun HomePage (
         color.tertiaryContainer,
         color.background
     )
+    var newHomePage by remember { mutableStateOf(false) }
 
     setValues(dataViewModel)
 
@@ -127,54 +131,62 @@ fun HomePage (
             modifier = modifier.padding(bottom = innerPadding.calculateBottomPadding() * 0.69f, top = innerPadding.calculateTopPadding() * 0.60f),
             contentAlignment = Alignment.BottomEnd
         ) {
-            LazyColumn {
-                item {
-                    Headline (modifier = Modifier.padding(top = 24.dp, bottom = 8.dp), text = "Welcome, ${localUsername.value}")
+            SwipeRefresh (
+                state = rememberSwipeRefreshState(isRefreshing = refreshing1.value),
+                onRefresh = { refreshing1.value = true }
+            ) {
+                LazyColumn {
+                    item {
+                        Headline(
+                            modifier = Modifier.padding(top = 24.dp, bottom = 8.dp),
+                            text = "Welcome, ${localUsername.value}"
+                        )
 
-                    Text (
-                        text = "What would you like to do today?",
-                        style = MaterialTheme.typography.headlineMedium,
-                        fontSize = 18.sp,
-                        modifier = Modifier.padding(start = 16.dp),
-                        color = MaterialTheme.colorScheme.primary
-                    )
+                        Text(
+                            text = "What would you like to do today?",
+                            style = MaterialTheme.typography.headlineMedium,
+                            fontSize = 18.sp,
+                            modifier = Modifier.padding(start = 16.dp),
+                            color = MaterialTheme.colorScheme.primary
+                        )
 
-                    HorizontalLine (
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .height(20.dp),
-                        start = 0.05f,
-                        end = 0.95f
-                    )
+                        HorizontalLine(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(20.dp),
+                            start = 0.05f,
+                            end = 0.95f
+                        )
 
-                    BalanceKP (modifier = Modifier.padding(16.dp), balance = karma_points.value)
+                        BalanceKP(modifier = Modifier.padding(16.dp), balance = karma_points.value)
 
-                    LabeledTaskView (
-                        modifier = Modifier
-                            .padding(start = 16.dp)
-                            .fillMaxWidth(0.95f)
-                            .height(225.dp),
-                        label = "Submitted Tasks",
-                        onViewMore = toSubmittedTasks
-                    )
+                        LabeledTaskView(
+                            modifier = Modifier
+                                .padding(start = 16.dp)
+                                .fillMaxWidth(0.95f)
+                                .height(225.dp),
+                            label = "Submitted Tasks",
+                            onViewMore = toSubmittedTasks
+                        )
 
-                    LabeledTaskView (
-                        modifier = Modifier
-                            .padding(start = 16.dp)
-                            .fillMaxWidth(0.95f)
-                            .height(225.dp),
-                        label = "Reserved Tasks",
-                        onViewMore = toReservedTasks
-                    )
+                        LabeledTaskView(
+                            modifier = Modifier
+                                .padding(start = 16.dp)
+                                .fillMaxWidth(0.95f)
+                                .height(225.dp),
+                            label = "Reserved Tasks",
+                            onViewMore = toReservedTasks
+                        )
 
-                    LabeledTaskView (
-                        modifier = Modifier
-                            .padding(start = 16.dp)
-                            .fillMaxWidth(0.95f)
-                            .height(225.dp),
-                        label = "Posted Tasks",
-                        onViewMore = toPostedTasks
-                    )
+                        LabeledTaskView(
+                            modifier = Modifier
+                                .padding(start = 16.dp)
+                                .fillMaxWidth(0.95f)
+                                .height(225.dp),
+                            label = "Posted Tasks",
+                            onViewMore = toPostedTasks
+                        )
+                    }
                 }
             }
 
@@ -209,5 +221,41 @@ fun HomePage (
                 )
             }
         }
+    }
+
+    LaunchedEffect(refreshing2.value || refreshing1.value) {
+        if (refreshing2.value || refreshing1.value) {
+            dataViewModel.getPostedTasks(user_id.value)
+            dataViewModel.getReservedTasks(user_id.value)
+            dataViewModel.getAvailableTasks(user_id.value)
+            dataViewModel.getSubmittedTasks(user_id.value)
+            delay(2000)
+            setValues.value = true
+            newHomePage = true
+            if (refreshing2.value) {
+                refreshing2.value = false
+            } else if (refreshing1.value) {
+                refreshing1.value = false
+            }
+        }
+    }
+
+    if (setValues.value) {
+        setValues(dataViewModel)
+        setValues.value = false
+    }
+
+    if (newHomePage) {
+        HomePage(
+            modifier = modifier,
+            navController = navController,
+            onLogout = onLogout,
+            toAvailableTasks = toAvailableTasks,
+            toReservedTasks = toReservedTasks,
+            toSubmittedTasks = toSubmittedTasks,
+            toPostedTasks = toPostedTasks,
+            toCreateTask = toCreateTask,
+            dataViewModel = dataViewModel
+        )
     }
 }

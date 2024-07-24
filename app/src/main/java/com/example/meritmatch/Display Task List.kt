@@ -147,7 +147,7 @@ fun TaskListPage (
             ) {
                 SwipeRefresh (
                     state = rememberSwipeRefreshState(isRefreshing = refreshing1.value),
-                    onRefresh = { refreshing1.value = true }
+                    onRefresh = { refreshing1.value = true },
                 ) {
                     LazyColumn {
                         items(
@@ -205,27 +205,21 @@ fun TaskListPage (
             }
         }
     }
-    LaunchedEffect(refreshing1.value) {
-        if (refreshing1.value) {
-            dataViewModel.getPostedTasks(user_id.value)
-            dataViewModel.getReservedTasks(user_id.value)
-            dataViewModel.getAvailableTasks(user_id.value)
-            delay(2000)
-            setValues.value = true
-            newTaskList = true
-            refreshing1.value = false
-        }
-    }
 
-    LaunchedEffect(refreshing2.value) {
-        if (refreshing2.value) {
+    LaunchedEffect(refreshing2.value || refreshing1.value) {
+        if (refreshing2.value || refreshing1.value) {
             dataViewModel.getPostedTasks(user_id.value)
             dataViewModel.getReservedTasks(user_id.value)
             dataViewModel.getAvailableTasks(user_id.value)
+            dataViewModel.getSubmittedTasks(user_id.value)
             delay(2000)
             setValues.value = true
             newTaskList = true
-            refreshing2.value = false
+            if (refreshing2.value) {
+                refreshing2.value = false
+            } else if (refreshing1.value) {
+                refreshing1.value = false
+            }
         }
     }
 
