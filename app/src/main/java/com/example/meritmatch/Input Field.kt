@@ -47,7 +47,6 @@ fun InputField (
         modifier = modifier,
         value = valueStr,
         onValueChange = {
-            dataViewModel.checkUser(user.value.username)
             valueStr = it
             if (password) {
                 user.value.password = valueStr
@@ -96,7 +95,9 @@ fun InputField (
         }
     )
 
-    LaunchedEffect(valueStr) {
-        dataViewModel.checkUser(username = valueStr)
+    if (!password && !referral) {
+        LaunchedEffect(valueStr) {
+            dataViewModel.checkUser(username = valueStr)
+        }
     }
 }

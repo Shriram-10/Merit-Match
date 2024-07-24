@@ -29,7 +29,7 @@ class MainViewModel : ViewModel() {
 
     data class StateOfUserLogin (
         val loading : Boolean = false,
-        val status : LoginCode = LoginCode(code = 0, username = "", karma_points = 0.0, id = 0),
+        val status : LoginCode = LoginCode(code = 0, username = "", karma_points = 0.0, id = 0, ""),
         val error : String? = null
     )
 
@@ -69,10 +69,10 @@ class MainViewModel : ViewModel() {
         val error : String? = null
     )
 
-    fun createNewUser (username : String, password : String, login: Boolean) {
+    fun createNewUser (username : String, password : String, login: Boolean, referralCode: String) {
         viewModelScope.launch {
             try {
-                val response = dataService.createUser(User(username = username, password = password, login = login, karma_points = karma_points.value, referral_code = ""))
+                val response = dataService.createUser(User(username = username, password = password, login = login, karma_points = karma_points.value, referral_code = referralCode))
                 _stateOfUserRetrieval.value = StateOfUser (
                     value = response.code,
                     loading = false
@@ -123,6 +123,7 @@ class MainViewModel : ViewModel() {
                 localUsername.value = response.username
                 karma_points.value = response.karma_points
                 user_id.value = response.id
+                referralCode.value = response.referral_code
             } catch (e : Exception) {
                 _stateOfCheckUsername.value = _stateOfCheckUsername.value.copy (
                     error = e.message,

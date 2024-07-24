@@ -21,6 +21,7 @@ data class LoginCode (
     val username : String,
     val karma_points: Double,
     val id : Int,
+    val referral_code: String
 )
 
 data class Task (
