@@ -154,6 +154,7 @@ fun TaskListPage (
                             count = if (label == "Available Tasks" && allTasks.value.isNotEmpty()) allTasks.value.size
                                 else if (label == "Posted Tasks" && postedTasks.value.isNotEmpty()) postedTasks.value.size
                                 else if (label == "Reserved Tasks" && reservedTasks.value.isNotEmpty()) reservedTasks.value.size
+                                else if (label == "Submitted Tasks" && submittedTasks.value.isNotEmpty()) submittedTasks.value.size
                                 else 1
                         ) { item ->
                             if (label == "Available Tasks" && allTasks.value.isNotEmpty()) {
@@ -161,6 +162,7 @@ fun TaskListPage (
                                     task = allTasks.value[item],
                                     isPosted = label == "Posted Tasks",
                                     isReserved = label == "Reserved Tasks",
+                                    isSubmitted = label == "Submitted Tasks",
                                     dataViewModel = dataViewModel
                                 )
                             } else if (label == "Posted Tasks" && postedTasks.value.isNotEmpty()) {
@@ -168,6 +170,7 @@ fun TaskListPage (
                                     task = postedTasks.value[item],
                                     isPosted = label == "Posted Tasks",
                                     isReserved = label == "Reserved Tasks",
+                                    isSubmitted = label == "Submitted Tasks",
                                     dataViewModel = dataViewModel
                                 )
                             } else if (label == "Reserved Tasks" && reservedTasks.value.isNotEmpty()) {
@@ -175,9 +178,19 @@ fun TaskListPage (
                                     task = reservedTasks.value[item],
                                     isPosted = label == "Posted Tasks",
                                     isReserved = label == "Reserved Tasks",
+                                    isSubmitted = label == "Submitted Tasks",
                                     dataViewModel = dataViewModel
                                 )
-                            } else {
+                            } else if (label == "Submitted Tasks" && submittedTasks.value.isNotEmpty()) {
+                                TaskListItem (
+                                    task = submittedTasks.value[item],
+                                    isPosted = label == "Posted Tasks",
+                                    isReserved = label == "Reserved Tasks",
+                                    isSubmitted = label == "Submitted Tasks",
+                                    dataViewModel = dataViewModel
+                                )
+                            }
+                            else {
                                 Spacer(modifier = Modifier.height(250.dp))
                                 Text(
                                     text = "No tasks found",
@@ -236,6 +249,7 @@ fun TaskListItem (
     task: Task,
     isPosted : Boolean,
     isReserved : Boolean,
+    isSubmitted : Boolean,
     dataViewModel: MainViewModel
 ) {
     val color = MaterialTheme.colorScheme
@@ -398,7 +412,10 @@ fun TaskListItem (
         ) {
             Button (
                 onClick = {
-                    if (!isPosted) {
+                    if (isSubmitted) {
+                        dataViewModel.unsubmitTasks(user_id.value, task.id)
+                        displayLoading.value = true
+                    } else if (!isPosted) {
                         if (!isReserved) {
                             dataViewModel.reserveTasks(user_id.value, task.id)
                             displayLoading.value = true
@@ -421,7 +438,7 @@ fun TaskListItem (
                 )
             ) {
                 Text (
-                    text = if (isPosted) "Modify Post" else if (isReserved) "Unreserve Task" else "Reserve Task"
+                    text = if (isPosted) "Modify Post" else if (isReserved) "Unreserve Task" else if (isReserved && !isSubmitted) "Reserve Task" else "Unsubmit Task"
                 )
             }
 
@@ -510,6 +527,21 @@ fun TaskListItem (
         message = "Task deletion failed. Try again."
         displayToast = true
         dataViewModel.stateOfDeletingTask.value.status = 0
+        displayLoading.value = false
+    }
+
+    if (displayLoading.value && dataViewModel.stateOfUnsubmittingTask.value.status == 1) {
+        message = "Task unsubmitted Successfully."
+        displayToast = true
+        refreshing2.value = true
+        dataViewModel.stateOfUnsubmittingTask.value.status = 0
+        displayLoading.value = false
+    }
+
+    if (displayLoading.value && dataViewModel.stateOfUnsubmittingTask.value.status == -1) {
+        message = "Task unsubmission failed. Try again."
+        displayToast = true
+        dataViewModel.stateOfUnsubmittingTask.value.status = 0
         displayLoading.value = false
     }
 

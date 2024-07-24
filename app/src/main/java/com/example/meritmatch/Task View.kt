@@ -32,6 +32,7 @@ import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
@@ -72,17 +73,26 @@ fun TaskView (
                     verticalArrangement = Arrangement.spacedBy(16.dp),
                     contentPadding = PaddingValues(16.dp)
                 ) {
-                    items (if (submittedTasks.value.isNotEmpty()) submittedTasks.value.size else 1 ) { item ->
+                    items (if (submittedTasks.value.isNotEmpty()) submittedTasks.value.size else 1) { item ->
                         Box (
                             modifier = Modifier
-                                .size(100.dp)
                                 .clip(RoundedCornerShape(20))
-                                .background(color.primaryContainer)
-                                .clickable {
-
-                                }
+                                .background(color.primaryContainer),
+                            contentAlignment = Alignment.TopCenter
                         ) {
-
+                            if (submittedTasks.value.isNotEmpty()) {
+                                Text (
+                                    submittedTasks.value[item].title
+                                )
+                            } else {
+                                Text(
+                                    text = "None of your submitted tasks are awaiting approval.",
+                                    fontSize = 18.sp,
+                                    fontWeight = FontWeight.Bold,
+                                    modifier = Modifier.padding(20.dp),
+                                    textAlign = TextAlign.Center
+                                )
+                            }
                         }
                     }
                 }

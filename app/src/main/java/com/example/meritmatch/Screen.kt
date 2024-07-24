@@ -8,6 +8,7 @@ sealed class Screen (val route : String) {
     data object Settings : Screen("settings_page")
     data object CreateTasks : Screen("create_page")
 
+    data object SubmittedTasks : Screen("submitted_tasks")
     data object AvailableTasks : Screen("available_tasks")
     data object ReservedTasks : Screen("reserved_tasks")
     data object PostedTasks : Screen("posted_tasks")

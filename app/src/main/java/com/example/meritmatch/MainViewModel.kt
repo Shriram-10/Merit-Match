@@ -13,7 +13,7 @@ import kotlinx.coroutines.launch
 
 class MainViewModel : ViewModel() {
 
-    private val baseUrl = "http://192.168.231.89:8000"
+    private val baseUrl = "http://192.168.16.89:8000"
 
     data class StateOfUser (
         val loading : Boolean = false,
@@ -249,6 +249,23 @@ class MainViewModel : ViewModel() {
         }
     }
 
+    fun unsubmitTasks (userId : Int, taskId : Int) {
+        viewModelScope.launch {
+            try {
+                val response = dataService.unsubmitTask("$baseUrl/posts/unsubmit_task/$userId/$taskId")
+                _stateOfUnsubmittingTask.value = _stateOfUnsubmittingTask.value.copy (
+                    status = response.code,
+                    loading = false
+                )
+            } catch (e : Exception) {
+                _stateOfUnsubmittingTask.value = _stateOfUnsubmittingTask.value.copy (
+                    error = e.message,
+                    loading = false
+                )
+            }
+        }
+    }
+
     fun deleteTasks (userId : Int, taskId : Int) {
         viewModelScope.launch {
             try {
@@ -298,6 +315,9 @@ class MainViewModel : ViewModel() {
 
     private val _stateOfSubmittingTask = mutableStateOf(StateOfReservingTasks())
     val stateOfSubmittingTask : State<StateOfReservingTasks> = _stateOfSubmittingTask
+
+    private val _stateOfUnsubmittingTask = mutableStateOf(StateOfReservingTasks())
+    val stateOfUnsubmittingTask : State<StateOfReservingTasks> = _stateOfUnsubmittingTask
 
     private val _stateOfDeletingTask = mutableStateOf(StateOfReservingTasks())
     val stateOfDeletingTask : State<StateOfReservingTasks> = _stateOfDeletingTask

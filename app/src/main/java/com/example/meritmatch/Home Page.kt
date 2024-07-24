@@ -51,6 +51,7 @@ fun HomePage (
     onLogout: () -> Unit,
     toAvailableTasks: () -> Unit,
     toReservedTasks: () -> Unit,
+    toSubmittedTasks: () -> Unit,
     toPostedTasks: () -> Unit,
     toCreateTask: () -> Unit,
     dataViewModel: MainViewModel
@@ -153,8 +154,8 @@ fun HomePage (
                             .padding(start = 16.dp)
                             .fillMaxWidth(0.95f)
                             .height(225.dp),
-                        label = "Available Tasks",
-                        onViewMore = toAvailableTasks
+                        label = "Submitted Tasks",
+                        onViewMore = toSubmittedTasks
                     )
 
                     LabeledTaskView (

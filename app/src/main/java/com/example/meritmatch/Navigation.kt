@@ -35,6 +35,7 @@ fun Navigation (modifier : Modifier) {
                     viewModel.getReservedTasks(user_id.value)
                     viewModel.getAvailableTasks(user_id.value)
                     viewModel.getPostedTasks(user_id.value)
+                    viewModel.getSubmittedTasks(user_id.value)
                     navController.navigate(Screen.Home.route) {
                         popUpTo(Screen.Login.route) { inclusive = true }
                     }
@@ -90,6 +91,9 @@ fun Navigation (modifier : Modifier) {
                 },
                 toCreateTask = {
                     navController.navigate(Screen.CreateTasks.route)
+                },
+                toSubmittedTasks = {
+                    navController.navigate(Screen.SubmittedTasks.route)
                 },
                 dataViewModel = viewModel
             )
@@ -149,6 +153,17 @@ fun Navigation (modifier : Modifier) {
         }
 
         composable (
+            route = Screen.SubmittedTasks.route
+        ) {
+            TaskListPage (
+                modifier = modifier,
+                navController = navController,
+                label = "Submitted Tasks",
+                dataViewModel = viewModel
+            )
+        }
+
+        composable (
             route = Screen.CreateTasks.route
         ) {
             CreateTask (
@@ -170,4 +185,5 @@ fun setValues (
     allTasks = dataViewModel.stateOfAllTasks.value.status
     postedTasks = dataViewModel.stateOfPostedTasks.value.status
     reservedTasks = dataViewModel.stateOfReservedTasks.value.status
+    submittedTasks = dataViewModel.stateOfSubmittedTasks.value.status
 }
