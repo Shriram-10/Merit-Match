@@ -25,6 +25,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -36,9 +37,10 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import kotlinx.coroutines.delay
 
-val draft = mutableStateOf(Task(id = 0, description = "", title = "", kp_value = 0.0, user_id = 0, post_time = "", deadline = "", completed = false, active = false, reserved = 0, username = ""))
-val modifyDraft = mutableStateOf(Task(id = 0, description = "", title = "", kp_value = 0.0, user_id = 0, post_time = "", deadline = "", completed = false, active = false, reserved = 0, username = ""))
+val draft = mutableStateOf(Task(id = 0, description = "", title = "", kp_value = 0.0, user_id = 0, post_time = "", deadline = "0 0", completed = false, active = false, reserved = 0, username = ""))
+val modifyDraft = mutableStateOf(Task(id = 0, description = "", title = "", kp_value = 0.0, user_id = 0, post_time = "", deadline = "0 0", completed = false, active = false, reserved = 0, username = ""))
 
 @Composable
 fun CreateTask (
@@ -50,14 +52,15 @@ fun CreateTask (
 ) {
     val colors = MaterialTheme.colorScheme
     val context = LocalContext.current
-    var title by remember { mutableStateOf(if (modify) draft.value.title else modifyDraft.value.title) }
-    var description by remember { mutableStateOf(if (modify) draft.value.description else modifyDraft.value.description) }
-    var kPOffering by remember { mutableStateOf(if (modify) draft.value.kp_value.toString() else modifyDraft.value.kp_value.toString()) }
-    var noOfDays by remember { mutableStateOf(if (modify) draft.value.deadline.split(" ")[0] else modifyDraft.value.deadline.split("")[0]) }
-    var noOfHours by remember { mutableStateOf(if (modify) draft.value.deadline.split(" ")[1] else modifyDraft.value.deadline.split("")[1]) }
+    var title by remember { mutableStateOf(if (!modify) draft.value.title else modifyDraft.value.title) }
+    var description by remember { mutableStateOf(if (!modify) draft.value.description else modifyDraft.value.description) }
+    var kPOffering by remember { mutableStateOf(if (!modify) draft.value.kp_value.toString() else modifyDraft.value.kp_value.toString()) }
+    var noOfDays by remember { mutableStateOf(if (!modify) draft.value.deadline.split(" ")[0] else modifyDraft.value.deadline.split(" ")[0]) }
+    var noOfHours by remember { mutableStateOf(if (!modify) draft.value.deadline.split(" ")[1] else modifyDraft.value.deadline.split(" ")[1]) }
     var displayToast by remember { mutableStateOf(false) }
     var message by remember { mutableStateOf("") }
     var displayLoad by remember { mutableStateOf(false) }
+    var setValues by remember { mutableStateOf(false) }
 
     BackHandler {
         draft.value = Task (
@@ -319,20 +322,38 @@ fun CreateTask (
                                 } else if (noOfHours == "") {
                                     noOfHours = "0"
                                 }
-                                dataViewModel.postTasks (
-                                    userId = user_id.value,
-                                    post = Task(
-                                        title = title,
-                                        description = description,
-                                        kp_value = kPOffering.toDouble(),
-                                        deadline = "$noOfDays $noOfHours",
-                                        post_time = "",
-                                        reserved = 0,
-                                        user_id = user_id.value,
-                                        id = 0,
-                                        username = localUsername.value
+                                if (!modify) {
+                                    dataViewModel.postTasks(
+                                        userId = user_id.value,
+                                        post = Task(
+                                            title = title,
+                                            description = description,
+                                            kp_value = kPOffering.toDouble(),
+                                            deadline = "$noOfDays $noOfHours",
+                                            post_time = "",
+                                            reserved = 0,
+                                            user_id = user_id.value,
+                                            id = 0,
+                                            username = localUsername.value
+                                        )
                                     )
-                                )
+                                } else {
+                                    dataViewModel.modifyPost(
+                                        userId = user_id.value,
+                                        task = Task (
+                                            title = title,
+                                            description = description,
+                                            kp_value = kPOffering.toDouble(),
+                                            deadline = "$noOfDays $noOfHours",
+                                            post_time = "",
+                                            reserved = 0,
+                                            user_id = user_id.value,
+                                            id = 0,
+                                            username = localUsername.value
+                                        ),
+                                        taskId = task.id
+                                    )
+                                }
                                 displayLoad = true
                             }
                         },
@@ -357,15 +378,31 @@ fun CreateTask (
         displayToast = false
     }
     if (dataViewModel.stateOfPost.value.status == 1 && displayLoad) {
-        goHome()
+        dataViewModel.getPostedTasks(user_id.value)
+        setValues = true
         displayLoad = false
         message = "Task created successfully."
         displayToast = true
-        dataViewModel.getPostedTasks(user_id.value)
-        setValues(dataViewModel)
         dataViewModel.stateOfPost.value.status = 0
-    } else if (dataViewModel.stateOfPost.value.status == -1) {
+        goHome()
+    } else if (dataViewModel.stateOfPost.value.status == -1 && !modify) {
         message = "Failed to create task. Try again."
         displayToast = true
+    } else if (dataViewModel.stateOfModifyingPost.value.status == 1 && displayLoad) {
+        dataViewModel.getPostedTasks(user_id.value)
+        setValues = true
+        displayLoad = false
+        message = "Task modified successfully."
+        displayToast = true
+        dataViewModel.stateOfPost.value.status = 0
+        goHome()
+    } else if (dataViewModel.stateOfModifyingPost.value.status == -1 && modify) {
+        message = "Failed to modify task. Try again."
+        displayToast = true
+    }
+
+    if (setValues) {
+        setValues(dataViewModel)
+        setValues = false
     }
 }

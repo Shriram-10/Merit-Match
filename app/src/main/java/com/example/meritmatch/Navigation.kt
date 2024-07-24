@@ -157,7 +157,9 @@ fun Navigation (modifier : Modifier) {
                 navController = navController,
                 label = "Posted Tasks",
                 dataViewModel = viewModel,
-                toModify = {}
+                toModify = {
+                    navController.navigate(Screen.ModifyTasks.route)
+                }
             )
         }
 

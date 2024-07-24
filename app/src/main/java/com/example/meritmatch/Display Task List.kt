@@ -309,6 +309,7 @@ fun TaskListItem (
                             Button (
                                 onClick = {
                                     modifyDraft.value = task
+                                    displayAlert = false
                                     toModify()
                                 },
                                 shape = RoundedCornerShape(20),

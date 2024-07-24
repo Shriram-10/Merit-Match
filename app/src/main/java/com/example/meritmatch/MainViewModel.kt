@@ -373,12 +373,12 @@ class MainViewModel : ViewModel() {
         viewModelScope.launch {
             try {
                 val response = dataService.modifyPost("$baseUrl/posts/modify_post/$userId/$taskId", task)
-                _stateOfDeletingTask.value = _stateOfDeletingTask.value.copy (
+                _stateOfModifyingPost.value = _stateOfModifyingPost.value.copy (
                     status = response.code,
                     loading = false
                 )
             } catch (e : Exception) {
-                _stateOfDeletingTask.value = _stateOfDeletingTask.value.copy (
+                _stateOfModifyingPost.value = _stateOfModifyingPost.value.copy (
                     error = e.message,
                     loading = false
                 )
@@ -437,6 +437,6 @@ class MainViewModel : ViewModel() {
     private val _stateOfGettingBalance = mutableStateOf(StateOfBalanceRetrieval())
     val stateOfGettingBalance : State<StateOfBalanceRetrieval> = _stateOfGettingBalance
 
-    private val _stateOfModifyingPost = mutableStateOf(StateOfBalanceRetrieval())
-    val stateOfModifyingPost : State<StateOfBalanceRetrieval> = _stateOfModifyingPost
+    private val _stateOfModifyingPost = mutableStateOf(StateOfModifyingPost())
+    val stateOfModifyingPost : State<StateOfModifyingPost> = _stateOfModifyingPost
 }
