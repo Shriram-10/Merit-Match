@@ -175,7 +175,7 @@ fun HomePage (
                                 .padding(start = 16.dp)
                                 .fillMaxWidth(0.95f)
                                 .height(225.dp),
-                            label = "Tasks awaiting approval",
+                            label = "Pending Approvals",
                             onViewMore = toWaitingTasks
                         )
                     }

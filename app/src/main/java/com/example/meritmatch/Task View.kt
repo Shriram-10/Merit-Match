@@ -85,22 +85,34 @@ fun TaskView (
                                 .background(color.primaryContainer),
                             contentAlignment = Alignment.TopCenter
                         ) {
-                            if (label == "Submitted Tasks" && submittedTasks.value.isNotEmpty()) {
-                                Text (
-                                    submittedTasks.value[item].title
-                                )
-                            } else if (label == "Tasks awaiting approval" && waitingTasks.value.isNotEmpty()) {
-                                Text (
-                                    waitingTasks.value[item].title
-                                )
-                            } else {
-                                Text(
-                                    text = "None of your submitted tasks are awaiting approval.",
-                                    fontSize = 18.sp,
-                                    fontWeight = FontWeight.Bold,
-                                    modifier = Modifier.padding(20.dp),
-                                    textAlign = TextAlign.Center
-                                )
+                            if (label == "Submitted Tasks") {
+                                if (submittedTasks.value.isNotEmpty()) {
+                                    Text(
+                                        submittedTasks.value[item].title
+                                    )
+                                } else {
+                                    Text(
+                                        text = "None of your posted tasks are awaiting payment.",
+                                        fontSize = 18.sp,
+                                        fontWeight = FontWeight.Bold,
+                                        modifier = Modifier.padding(20.dp),
+                                        textAlign = TextAlign.Center
+                                    )
+                                }
+                            } else if (label == "Pending Approvals") {
+                                if (waitingTasks.value.isNotEmpty()) {
+                                    Text(
+                                        waitingTasks.value[item].title
+                                    )
+                                } else {
+                                    Text(
+                                        text = "None of your submitted tasks are awaiting approval.",
+                                        fontSize = 18.sp,
+                                        fontWeight = FontWeight.Bold,
+                                        modifier = Modifier.padding(20.dp),
+                                        textAlign = TextAlign.Center
+                                    )
+                                }
                             }
                         }
                     }

@@ -155,6 +155,7 @@ fun TaskListPage (
                                 else if (label == "Posted Tasks" && postedTasks.value.isNotEmpty()) postedTasks.value.size
                                 else if (label == "Reserved Tasks" && reservedTasks.value.isNotEmpty()) reservedTasks.value.size
                                 else if (label == "Submitted Tasks" && submittedTasks.value.isNotEmpty()) submittedTasks.value.size
+                                else if (label == "Pending Approvals" && pendingTasks.value.isNotEmpty()) pendingTasks.value.size
                                 else 1
                         ) { item ->
                             if (label == "Available Tasks" && allTasks.value.isNotEmpty()) {
@@ -184,6 +185,14 @@ fun TaskListPage (
                             } else if (label == "Submitted Tasks" && submittedTasks.value.isNotEmpty()) {
                                 TaskListItem (
                                     task = submittedTasks.value[item],
+                                    isPosted = label == "Posted Tasks",
+                                    isReserved = label == "Reserved Tasks",
+                                    isSubmitted = label == "Submitted Tasks",
+                                    dataViewModel = dataViewModel
+                                )
+                            } else if (label == "Pending Approvals" && pendingTasks.value.isNotEmpty()) {
+                                TaskListItem (
+                                    task = pendingTasks.value[item],
                                     isPosted = label == "Posted Tasks",
                                     isReserved = label == "Reserved Tasks",
                                     isSubmitted = label == "Submitted Tasks",
