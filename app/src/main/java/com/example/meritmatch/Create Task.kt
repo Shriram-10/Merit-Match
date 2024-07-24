@@ -38,19 +38,23 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 
 val draft = mutableStateOf(Task(id = 0, description = "", title = "", kp_value = 0.0, user_id = 0, post_time = "", deadline = "", completed = false, active = false, reserved = 0, username = ""))
+val modifyDraft = mutableStateOf(Task(id = 0, description = "", title = "", kp_value = 0.0, user_id = 0, post_time = "", deadline = "", completed = false, active = false, reserved = 0, username = ""))
 
 @Composable
 fun CreateTask (
     goHome: () -> Unit,
+    label : String,
+    modify : Boolean = label == "Modify Task",
+    task: Task,
     dataViewModel: MainViewModel
 ) {
     val colors = MaterialTheme.colorScheme
     val context = LocalContext.current
-    var title by remember { mutableStateOf(draft.value.title) }
-    var description by remember { mutableStateOf(draft.value.description) }
-    var kPOffering by remember { mutableStateOf(draft.value.kp_value.toString()) }
-    var noOfDays by remember { mutableStateOf(draft.value.deadline.split(" ")[0]) }
-    var noOfHours by remember { mutableStateOf(draft.value.deadline.split("")[1]) }
+    var title by remember { mutableStateOf(if (modify) draft.value.title else modifyDraft.value.title) }
+    var description by remember { mutableStateOf(if (modify) draft.value.description else modifyDraft.value.description) }
+    var kPOffering by remember { mutableStateOf(if (modify) draft.value.kp_value.toString() else modifyDraft.value.kp_value.toString()) }
+    var noOfDays by remember { mutableStateOf(if (modify) draft.value.deadline.split(" ")[0] else modifyDraft.value.deadline.split("")[0]) }
+    var noOfHours by remember { mutableStateOf(if (modify) draft.value.deadline.split(" ")[1] else modifyDraft.value.deadline.split("")[1]) }
     var displayToast by remember { mutableStateOf(false) }
     var message by remember { mutableStateOf("") }
     var displayLoad by remember { mutableStateOf(false) }
@@ -82,7 +86,7 @@ fun CreateTask (
     ) {
         Column {
             Headline (
-                text = "Create Task",
+                text = label,
                 modifier = Modifier.padding(top = 28.dp)
             )
 

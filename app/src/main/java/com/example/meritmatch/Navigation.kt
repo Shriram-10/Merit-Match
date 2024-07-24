@@ -132,7 +132,8 @@ fun Navigation (modifier : Modifier) {
                 modifier = modifier,
                 navController = navController,
                 label = "Available Tasks",
-                dataViewModel = viewModel
+                dataViewModel = viewModel,
+                toModify = {}
             )
         }
 
@@ -143,7 +144,8 @@ fun Navigation (modifier : Modifier) {
                 modifier = modifier,
                 navController = navController,
                 label = "Reserved Tasks",
-                dataViewModel = viewModel
+                dataViewModel = viewModel,
+                toModify = {}
             )
         }
 
@@ -154,7 +156,8 @@ fun Navigation (modifier : Modifier) {
                 modifier = modifier,
                 navController = navController,
                 label = "Posted Tasks",
-                dataViewModel = viewModel
+                dataViewModel = viewModel,
+                toModify = {}
             )
         }
 
@@ -165,7 +168,8 @@ fun Navigation (modifier : Modifier) {
                 modifier = modifier,
                 navController = navController,
                 label = "Submitted Tasks",
-                dataViewModel = viewModel
+                dataViewModel = viewModel,
+                toModify = {}
             )
         }
 
@@ -176,7 +180,8 @@ fun Navigation (modifier : Modifier) {
                 modifier = modifier,
                 navController = navController,
                 label = "Pending Approvals",
-                dataViewModel = viewModel
+                dataViewModel = viewModel,
+                toModify = {}
             )
         }
 
@@ -185,6 +190,8 @@ fun Navigation (modifier : Modifier) {
         ) {
             CreateTask (
                 dataViewModel = viewModel,
+                label = "Create Task",
+                task = draft.value,
                 goHome = {
                     navController.navigate(Screen.Home.route) {
                         popUpTo(Screen.CreateTasks.route) { inclusive = true }
@@ -193,6 +200,20 @@ fun Navigation (modifier : Modifier) {
             )
         }
 
+        composable (
+            route = Screen.ModifyTasks.route
+        ) {
+            CreateTask (
+                dataViewModel = viewModel,
+                label = "Modify Task",
+                task = modifyDraft.value,
+                goHome = {
+                    navController.navigate(Screen.PostedTasks.route) {
+                        popUpTo(Screen.ModifyTasks.route) { inclusive = true }
+                    }
+                }
+            )
+        }
     }
 }
 

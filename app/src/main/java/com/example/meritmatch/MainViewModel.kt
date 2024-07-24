@@ -63,6 +63,12 @@ class MainViewModel : ViewModel() {
         val error: String? = null
     )
 
+    data class StateOfModifyingPost (
+        val loading : Boolean = false,
+        var status : Int = 0,
+        val error : String? = null
+    )
+
     fun createNewUser (username : String, password : String, login: Boolean) {
         viewModelScope.launch {
             try {
@@ -363,6 +369,23 @@ class MainViewModel : ViewModel() {
         }
     }
 
+    fun modifyPost (userId : Int, taskId : Int, task : Task) {
+        viewModelScope.launch {
+            try {
+                val response = dataService.modifyPost("$baseUrl/posts/modify_post/$userId/$taskId", task)
+                _stateOfDeletingTask.value = _stateOfDeletingTask.value.copy (
+                    status = response.code,
+                    loading = false
+                )
+            } catch (e : Exception) {
+                _stateOfDeletingTask.value = _stateOfDeletingTask.value.copy (
+                    error = e.message,
+                    loading = false
+                )
+            }
+        }
+    }
+
     private val _stateOfUserRetrieval = mutableStateOf(StateOfUser())
     val stateOfUserRetrieval : State<StateOfUser> = _stateOfUserRetrieval
 
@@ -413,4 +436,7 @@ class MainViewModel : ViewModel() {
 
     private val _stateOfGettingBalance = mutableStateOf(StateOfBalanceRetrieval())
     val stateOfGettingBalance : State<StateOfBalanceRetrieval> = _stateOfGettingBalance
+
+    private val _stateOfModifyingPost = mutableStateOf(StateOfBalanceRetrieval())
+    val stateOfModifyingPost : State<StateOfBalanceRetrieval> = _stateOfModifyingPost
 }

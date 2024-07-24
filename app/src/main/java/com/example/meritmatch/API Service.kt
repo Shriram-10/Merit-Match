@@ -69,11 +69,5 @@ interface ApiService {
     suspend fun declineSubmission(@Url fullUrl : String) : Code
 
     @GET
-    suspend fun notifyApproved(@Url fullUrl: String) : Code
-
-    @GET
-    suspend fun notifyDeclined(@Url fullUrl : String) : Code
-
-    @GET
     suspend fun getBalance(@Url fullUrl : String) : Balance
 }

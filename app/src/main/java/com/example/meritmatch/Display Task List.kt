@@ -63,7 +63,8 @@ fun TaskListPage (
     modifier: Modifier,
     navController: NavController,
     label: String,
-    dataViewModel: MainViewModel
+    dataViewModel: MainViewModel,
+    toModify: () -> Unit
 ) {
     val color = MaterialTheme.colorScheme
     val navBackStackEntry by navController.currentBackStackEntryAsState()
@@ -124,7 +125,7 @@ fun TaskListPage (
             }
         }
     ) { innerPadding ->
-        Column(
+        Column (
             modifier = modifier
                 .padding(
                     bottom = innerPadding.calculateBottomPadding() * 0.60f,
@@ -134,7 +135,7 @@ fun TaskListPage (
         ) {
             Headline(text = label)
 
-            HorizontalLine(
+            HorizontalLine (
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(20.dp),
@@ -167,7 +168,8 @@ fun TaskListPage (
                                     isReserved = label == "Reserved Tasks",
                                     isSubmitted = label == "Submitted Tasks",
                                     isPending = label == "Pending Approvals",
-                                    dataViewModel = dataViewModel
+                                    dataViewModel = dataViewModel,
+                                    toModify = toModify
                                 )
                             } else if (label == "Posted Tasks" && postedTasks.value.isNotEmpty()) {
                                 TaskListItem (
@@ -176,7 +178,8 @@ fun TaskListPage (
                                     isReserved = label == "Reserved Tasks",
                                     isSubmitted = label == "Submitted Tasks",
                                     isPending = label == "Pending Approvals",
-                                    dataViewModel = dataViewModel
+                                    dataViewModel = dataViewModel,
+                                    toModify = toModify
                                 )
                             } else if (label == "Reserved Tasks" && reservedTasks.value.isNotEmpty()) {
                                 TaskListItem (
@@ -185,7 +188,8 @@ fun TaskListPage (
                                     isReserved = label == "Reserved Tasks",
                                     isSubmitted = label == "Submitted Tasks",
                                     isPending = label == "Pending Approvals",
-                                    dataViewModel = dataViewModel
+                                    dataViewModel = dataViewModel,
+                                    toModify = toModify
                                 )
                             } else if (label == "Submitted Tasks" && submittedTasks.value.isNotEmpty()) {
                                 TaskListItem (
@@ -194,7 +198,8 @@ fun TaskListPage (
                                     isReserved = label == "Reserved Tasks",
                                     isSubmitted = label == "Submitted Tasks",
                                     isPending = label == "Pending Approvals",
-                                    dataViewModel = dataViewModel
+                                    dataViewModel = dataViewModel,
+                                    toModify = toModify
                                 )
                             } else if (label == "Pending Approvals" && waitingTasks.value.isNotEmpty()) {
                                 TaskListItem (
@@ -203,7 +208,8 @@ fun TaskListPage (
                                     isReserved = label == "Reserved Tasks",
                                     isSubmitted = label == "Submitted Tasks",
                                     isPending = label == "Pending Approvals",
-                                    dataViewModel = dataViewModel
+                                    dataViewModel = dataViewModel,
+                                    toModify = toModify
                                 )
                             }
                             else {
@@ -252,7 +258,7 @@ fun TaskListPage (
     }
 
     if (newTaskList) {
-        TaskListPage(dataViewModel = dataViewModel, navController = navController, label = label, modifier = modifier)
+        TaskListPage(dataViewModel = dataViewModel, navController = navController, label = label, modifier = modifier, toModify = toModify)
     }
 
     if (displayLoading.value) {
@@ -268,7 +274,8 @@ fun TaskListItem (
     isReserved : Boolean,
     isSubmitted : Boolean,
     isPending : Boolean,
-    dataViewModel: MainViewModel
+    dataViewModel: MainViewModel,
+    toModify: () -> Unit
 ) {
     val color = MaterialTheme.colorScheme
     var message by remember { mutableStateOf("") }
@@ -300,7 +307,10 @@ fun TaskListItem (
                             contentAlignment = Alignment.Center
                         ) {
                             Button (
-                                onClick = {},
+                                onClick = {
+                                    modifyDraft.value = task
+                                    toModify()
+                                },
                                 shape = RoundedCornerShape(20),
                                 modifier = Modifier
                                     .height(60.dp)
