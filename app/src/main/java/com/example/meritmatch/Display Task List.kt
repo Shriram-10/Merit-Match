@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -43,6 +44,7 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
@@ -155,7 +157,7 @@ fun TaskListPage (
                                 else if (label == "Posted Tasks" && postedTasks.value.isNotEmpty()) postedTasks.value.size
                                 else if (label == "Reserved Tasks" && reservedTasks.value.isNotEmpty()) reservedTasks.value.size
                                 else if (label == "Submitted Tasks" && submittedTasks.value.isNotEmpty()) submittedTasks.value.size
-                                else if (label == "Pending Approvals" && pendingTasks.value.isNotEmpty()) pendingTasks.value.size
+                                else if (label == "Pending Approvals" && waitingTasks.value.isNotEmpty()) waitingTasks.value.size
                                 else 1
                         ) { item ->
                             if (label == "Available Tasks" && allTasks.value.isNotEmpty()) {
@@ -164,6 +166,7 @@ fun TaskListPage (
                                     isPosted = label == "Posted Tasks",
                                     isReserved = label == "Reserved Tasks",
                                     isSubmitted = label == "Submitted Tasks",
+                                    isPending = label == "Pending Approvals",
                                     dataViewModel = dataViewModel
                                 )
                             } else if (label == "Posted Tasks" && postedTasks.value.isNotEmpty()) {
@@ -172,6 +175,7 @@ fun TaskListPage (
                                     isPosted = label == "Posted Tasks",
                                     isReserved = label == "Reserved Tasks",
                                     isSubmitted = label == "Submitted Tasks",
+                                    isPending = label == "Pending Approvals",
                                     dataViewModel = dataViewModel
                                 )
                             } else if (label == "Reserved Tasks" && reservedTasks.value.isNotEmpty()) {
@@ -180,6 +184,7 @@ fun TaskListPage (
                                     isPosted = label == "Posted Tasks",
                                     isReserved = label == "Reserved Tasks",
                                     isSubmitted = label == "Submitted Tasks",
+                                    isPending = label == "Pending Approvals",
                                     dataViewModel = dataViewModel
                                 )
                             } else if (label == "Submitted Tasks" && submittedTasks.value.isNotEmpty()) {
@@ -188,25 +193,33 @@ fun TaskListPage (
                                     isPosted = label == "Posted Tasks",
                                     isReserved = label == "Reserved Tasks",
                                     isSubmitted = label == "Submitted Tasks",
+                                    isPending = label == "Pending Approvals",
                                     dataViewModel = dataViewModel
                                 )
-                            } else if (label == "Pending Approvals" && pendingTasks.value.isNotEmpty()) {
+                            } else if (label == "Pending Approvals" && waitingTasks.value.isNotEmpty()) {
                                 TaskListItem (
-                                    task = pendingTasks.value[item],
+                                    task = waitingTasks.value[item],
                                     isPosted = label == "Posted Tasks",
                                     isReserved = label == "Reserved Tasks",
                                     isSubmitted = label == "Submitted Tasks",
+                                    isPending = label == "Pending Approvals",
                                     dataViewModel = dataViewModel
                                 )
                             }
                             else {
-                                Spacer(modifier = Modifier.height(250.dp))
-                                Text(
-                                    text = "No tasks found",
-                                    fontSize = 16.sp,
-                                    fontWeight = FontWeight.SemiBold,
-                                    color = color.onPrimaryContainer.copy(alpha = 0.5f)
-                                )
+                                Column (
+                                    modifier = Modifier.fillParentMaxSize(),
+                                    horizontalAlignment = Alignment.CenterHorizontally,
+                                    verticalArrangement = Arrangement.Center
+
+                                ) {
+                                    Text (
+                                        text = "No tasks found",
+                                        fontSize = 16.sp,
+                                        fontWeight = FontWeight.SemiBold,
+                                        color = color.onPrimaryContainer.copy(alpha = 0.5f),
+                                    )
+                                }
                             }
                         }
                     }
@@ -254,6 +267,7 @@ fun TaskListItem (
     isPosted : Boolean,
     isReserved : Boolean,
     isSubmitted : Boolean,
+    isPending : Boolean,
     dataViewModel: MainViewModel
 ) {
     val color = MaterialTheme.colorScheme
@@ -416,19 +430,24 @@ fun TaskListItem (
         ) {
             Button (
                 onClick = {
-                    if (isSubmitted) {
-                        dataViewModel.unsubmitTasks(user_id.value, task.id)
-                        displayLoading.value = true
-                    } else if (!isPosted) {
-                        if (!isReserved) {
-                            dataViewModel.reserveTasks(user_id.value, task.id)
+                    if (!isPending) {
+                        if (isSubmitted) {
+                            dataViewModel.unsubmitTasks(user_id.value, task.id)
                             displayLoading.value = true
+                        } else if (!isPosted) {
+                            if (!isReserved) {
+                                dataViewModel.reserveTasks(user_id.value, task.id)
+                                displayLoading.value = true
+                            } else {
+                                dataViewModel.unreserveTasks(user_id.value, task.id)
+                                displayLoading.value = true
+                            }
                         } else {
-                            dataViewModel.unreserveTasks(user_id.value, task.id)
-                            displayLoading.value = true
+                            displayAlert = true
                         }
                     } else {
-                        displayAlert = true
+                        dataViewModel.approvePayment(user_id.value, task.id)
+                        displayLoading.value = true
                     }
                 },
                 modifier = Modifier.padding(start = 20.dp, end = 8.dp, top = 10.dp, bottom = 6.dp),
@@ -442,15 +461,20 @@ fun TaskListItem (
                 )
             ) {
                 Text (
-                    text = if (isPosted) "Modify Post" else if (isReserved) "Unreserve Task" else if (isReserved && !isSubmitted) "Reserve Task" else "Unsubmit Task"
+                    text = if (isPosted) "Modify Post" else if (isReserved) "Unreserve Task" else if (!isReserved && !isSubmitted && !isPending) "Reserve Task" else if (isSubmitted) "Unsubmit Task" else "Approve\nPayment"
                 )
             }
 
-            if (isReserved) {
+            if (isReserved || isPending) {
                 Button(
                     onClick = {
-                        dataViewModel.submitTasks(user_id.value, task.id)
-                        displayLoading.value = true
+                        if (isReserved) {
+                            dataViewModel.submitTasks(user_id.value, task.id)
+                            displayLoading.value = true
+                        } else {
+                            dataViewModel.declinePayment(user_id.value, task.id)
+                            displayLoading.value = true
+                        }
                     },
                     modifier = Modifier.padding (
                         end = 20.dp,
@@ -467,7 +491,8 @@ fun TaskListItem (
                     )
                 ) {
                     Text (
-                        "Submit Task"
+                        text = if (isReserved) "Submit Task" else "Decline\nSubmission",
+                        textAlign = TextAlign.Center
                     )
                 }
             }
@@ -546,6 +571,37 @@ fun TaskListItem (
         message = "Task unsubmission failed. Try again."
         displayToast = true
         dataViewModel.stateOfUnsubmittingTask.value.status = 0
+        displayLoading.value = false
+    }
+
+    if (displayLoading.value && dataViewModel.stateOfAcceptSubmission.value.status == 1) {
+        message = "Transaction is successful."
+        displayToast = true
+        dataViewModel.getBalance(user_id.value)
+        refreshing2.value = true
+        dataViewModel.stateOfAcceptSubmission.value.status = 0
+        displayLoading.value = false
+    }
+
+    if (displayLoading.value && dataViewModel.stateOfAcceptSubmission.value.status == -1) {
+        message = "Transaction failed. Try again."
+        displayToast = true
+        dataViewModel.stateOfAcceptSubmission.value.status = 0
+        displayLoading.value = false
+    }
+
+    if (displayLoading.value && dataViewModel.stateOfDeclinePayment.value.status == 1) {
+        message = "Submission declined successfully"
+        displayToast = true
+        refreshing2.value = true
+        dataViewModel.stateOfDeclinePayment.value.status = 0
+        displayLoading.value = false
+    }
+
+    if (displayLoading.value && dataViewModel.stateOfDeclinePayment.value.status == -1) {
+        message = "Couldn't decline submission. Try again."
+        displayToast = true
+        dataViewModel.stateOfDeclinePayment.value.status = 0
         displayLoading.value = false
     }
 

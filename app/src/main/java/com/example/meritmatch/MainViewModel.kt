@@ -51,6 +51,18 @@ class MainViewModel : ViewModel() {
         val error: String? = null
     )
 
+    data class StateOfApproval (
+        val loading: Boolean = false,
+        var status: Int = 0,
+        val error: String? = null
+    )
+
+    data class StateOfBalanceRetrieval (
+        val loading: Boolean = false,
+        var status: Balance = Balance(0.0, 0),
+        val error: String? = null
+    )
+
     fun createNewUser (username : String, password : String, login: Boolean) {
         viewModelScope.launch {
             try {
@@ -72,12 +84,12 @@ class MainViewModel : ViewModel() {
         viewModelScope.launch {
             try {
                 val response = dataService.checkUser("$baseUrl/users/$username")
-                _stateOfCheckUsername.value = _stateOfCheckUsername.value.copy (
+                _stateOfCheckUsername.value = _stateOfCheckUsername.value.copy(
                     status = response.code,
                     loading = false
                 )
-            } catch (e : Exception) {
-                _stateOfCheckUsername.value = _stateOfCheckUsername.value.copy (
+            } catch (e: Exception) {
+                _stateOfCheckUsername.value = _stateOfCheckUsername.value.copy(
                     error = e.message,
                     loading = false
                 )
@@ -140,6 +152,23 @@ class MainViewModel : ViewModel() {
                 )
             } catch (e : Exception) {
                 _stateOfAllTasks.value = _stateOfAllTasks.value.copy (
+                    error = e.message,
+                    loading = false
+                )
+            }
+        }
+    }
+
+    fun getBalance (userId: Int) {
+        viewModelScope.launch {
+            try {
+                val response = dataService.getBalance("$baseUrl/users/get_balance/$userId")
+                _stateOfGettingBalance.value = _stateOfGettingBalance.value.copy (
+                    status = response,
+                    loading = false
+                )
+            } catch (e : Exception) {
+                _stateOfGettingBalance.value = _stateOfGettingBalance.value.copy (
                     error = e.message,
                     loading = false
                 )
@@ -266,6 +295,40 @@ class MainViewModel : ViewModel() {
         }
     }
 
+    fun approvePayment (userId: Int, taskId : Int) {
+        viewModelScope.launch {
+            try {
+                val response = dataService.approveSubmission("$baseUrl/posts/acknowledge_submission/$userId/$taskId")
+                _stateOfAcceptSubmission.value = _stateOfAcceptSubmission.value.copy (
+                    status = response.code,
+                    loading = false
+                )
+            } catch (e : Exception) {
+                _stateOfAcceptSubmission.value = _stateOfAcceptSubmission.value.copy (
+                    error = e.message,
+                    loading = false
+                )
+            }
+        }
+    }
+
+    fun declinePayment (userId: Int, taskId : Int) {
+        viewModelScope.launch {
+            try {
+                val response = dataService.declineSubmission("$baseUrl/posts/reject_submission/$userId/$taskId")
+                _stateOfDeclinePayment.value = _stateOfDeclinePayment.value.copy (
+                    status = response.code,
+                    loading = false
+                )
+            } catch (e : Exception) {
+                _stateOfDeclinePayment.value = _stateOfDeclinePayment.value.copy (
+                    error = e.message,
+                    loading = false
+                )
+            }
+        }
+    }
+
     fun unsubmitTasks (userId : Int, taskId : Int) {
         viewModelScope.launch {
             try {
@@ -341,4 +404,13 @@ class MainViewModel : ViewModel() {
 
     private val _stateOfDeletingTask = mutableStateOf(StateOfReservingTasks())
     val stateOfDeletingTask : State<StateOfReservingTasks> = _stateOfDeletingTask
+
+    private val _stateOfAcceptSubmission = mutableStateOf(StateOfApproval())
+    val stateOfAcceptSubmission : State<StateOfApproval> = _stateOfAcceptSubmission
+
+    private val _stateOfDeclinePayment = mutableStateOf(StateOfApproval())
+    val stateOfDeclinePayment : State<StateOfApproval> = _stateOfDeclinePayment
+
+    private val _stateOfGettingBalance = mutableStateOf(StateOfBalanceRetrieval())
+    val stateOfGettingBalance : State<StateOfBalanceRetrieval> = _stateOfGettingBalance
 }

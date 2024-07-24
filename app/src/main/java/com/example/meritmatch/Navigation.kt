@@ -17,7 +17,6 @@ var reservedTasks = mutableStateOf(listOf<Task>())
 var postedTasks = mutableStateOf(listOf<Task>())
 var submittedTasks = mutableStateOf(listOf<Task>())
 var waitingTasks = mutableStateOf(listOf<Task>())
-var pendingTasks = mutableStateOf(listOf<Task>())
 
 @Composable
 fun Navigation (modifier : Modifier) {
@@ -203,4 +202,6 @@ fun setValues (
     postedTasks = dataViewModel.stateOfPostedTasks.value.status
     reservedTasks = dataViewModel.stateOfReservedTasks.value.status
     submittedTasks = dataViewModel.stateOfSubmittedTasks.value.status
+    waitingTasks = dataViewModel.stateOfWaitingTasks.value.status
+    karma_points.value = dataViewModel.stateOfGettingBalance.value.status.balance
 }

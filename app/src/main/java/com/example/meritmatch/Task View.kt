@@ -92,7 +92,7 @@ fun TaskView (
                                     )
                                 } else {
                                     Text(
-                                        text = "None of your posted tasks are awaiting payment.",
+                                        text = "None of your submitted tasks are awaiting payment.",
                                         fontSize = 18.sp,
                                         fontWeight = FontWeight.Bold,
                                         modifier = Modifier.padding(20.dp),
@@ -106,7 +106,7 @@ fun TaskView (
                                     )
                                 } else {
                                     Text(
-                                        text = "None of your submitted tasks are awaiting approval.",
+                                        text = "None of your posted tasks are awaiting approval.",
                                         fontSize = 18.sp,
                                         fontWeight = FontWeight.Bold,
                                         modifier = Modifier.padding(20.dp),

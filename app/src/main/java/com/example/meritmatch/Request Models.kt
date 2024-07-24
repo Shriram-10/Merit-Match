@@ -41,3 +41,8 @@ data class Tasks (
     val code: Int,
     val tasks : List<Task>
 )
+
+data class Balance (
+    val balance : Double,
+    val code : Int
+)
