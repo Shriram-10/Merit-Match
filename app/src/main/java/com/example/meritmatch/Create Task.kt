@@ -377,23 +377,30 @@ fun CreateTask (
         Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
         displayToast = false
     }
+
+    if (displayLoad) {
+        LoadingPage()
+    }
+
     if (dataViewModel.stateOfPost.value.status == 1 && displayLoad) {
         dataViewModel.getPostedTasks(user_id.value)
-        setValues = true
         displayLoad = false
         message = "Task created successfully."
         displayToast = true
+        setValues = true
         dataViewModel.stateOfPost.value.status = 0
         goHome()
     } else if (dataViewModel.stateOfPost.value.status == -1 && !modify) {
         message = "Failed to create task. Try again."
         displayToast = true
-    } else if (dataViewModel.stateOfModifyingPost.value.status == 1 && displayLoad) {
+    }
+
+    if (dataViewModel.stateOfModifyingPost.value.status == 1 && displayLoad) {
         dataViewModel.getPostedTasks(user_id.value)
-        setValues = true
         displayLoad = false
         message = "Task modified successfully."
         displayToast = true
+        setValues = true
         dataViewModel.stateOfPost.value.status = 0
         goHome()
     } else if (dataViewModel.stateOfModifyingPost.value.status == -1 && modify) {
@@ -401,8 +408,11 @@ fun CreateTask (
         displayToast = true
     }
 
-    if (setValues) {
-        setValues(dataViewModel)
-        setValues = false
+    LaunchedEffect(setValues) {
+        delay(1000)
+        if (setValues) {
+            setValues(dataViewModel)
+            setValues = false
+        }
     }
 }
