@@ -62,7 +62,7 @@ db_dependency = Annotated[Session, Depends(get_db)]
 async def create_user(user: User, db: db_dependency):
     new_user = models.User(**user.model_dump())
     existing_user = db.query(models.User).filter((models.User.referral_code == new_user.referral_code) & (models.User.username != new_user.username)).first()
-    new_user.karma_points = 300
+    new_user.karma_points = 350
     if existing_user:
        existing_user.karma_points += 350
        new_user.karma_points += 100
@@ -145,6 +145,12 @@ async def get_waiting_tasks(user_id: int, db: db_dependency):
 
     return {"tasks" : waiting_tasks, "code" : 1}
 
+@app.get("/posts/get_history_tasks/{user_id}")
+async def get_history_tasks(user_id: int, db: db_dependency):
+    history_tasks = db.query(models.Post).filter((models.Post.user_id == user_id) | (models.Post.reserved == user_id)).all()
+
+    return {"tasks" : history_tasks, "code" : 1}
+
 @app.post("/posts/reserve_task/{user_id}/{task_id}")
 async def reserve_task(user_id: int, task_id: int, db: db_dependency):
     reserved_task = db.query(models.Post).filter((models.Post.user_id != user_id) & (models.Post.reserved == 0) & (models.Post.id == task_id)).first()
@@ -221,11 +227,14 @@ async def accept_submission(task_id: int, user_id: int, db: db_dependency):
 @app.post("/posts/reject_submission/{user_id}/{task_id}")
 async def refuse_submission(task_id: int, user_id: int, db: db_dependency):
     view_task = db.query(models.Post).filter((task_id == models.Post.id) & (models.Post.user_id == user_id) & (models.Post.completed == True)).first()
-
     if view_task:
+        new_repost = view_task
+        new_repost.post_time = datetime.now().__format__('%Y-%m-%d %H:%M:%S')
+        new_repost.completed = False
+        new_repost.reserved = 0
         setattr(view_task, 'completed', False)
-        setattr(view_task, 'reserved', 0)
-        setattr(view_task, 'post_time', datetime.now().__format__('%Y-%m-%d %H:%M:%S'))
+        setattr(view_task, 'active', False)
+        db.add(new_repost)
         db.commit()
         return {"code" : 1}
     else:
