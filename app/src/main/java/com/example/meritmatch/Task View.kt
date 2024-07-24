@@ -78,6 +78,7 @@ fun TaskView (
                     items (
                         if (label == "Submitted Tasks" && submittedTasks.value.isNotEmpty()) submittedTasks.value.size
                         else if (label == "Tasks awaiting approval" && waitingTasks.value.isNotEmpty()) waitingTasks.value.size
+                        else if (label == "Tasks History" && historyTasks.value.isNotEmpty()) historyTasks.value.size
                         else 1
                     ) { item ->
                         Box (
@@ -96,7 +97,7 @@ fun TaskView (
 
                                     }
                                 } else {
-                                    Text(
+                                    Text (
                                         text = "None of your submitted tasks are awaiting payment.",
                                         fontSize = 18.sp,
                                         fontWeight = FontWeight.Bold,
@@ -108,8 +109,20 @@ fun TaskView (
                                 if (waitingTasks.value.isNotEmpty()) {
                                     TaskViewItem(taskItem = waitingTasks.value[item])
                                 } else {
-                                    Text(
+                                    Text (
                                         text = "None of your posted tasks are awaiting approval.",
+                                        fontSize = 18.sp,
+                                        fontWeight = FontWeight.Bold,
+                                        modifier = Modifier.padding(20.dp),
+                                        textAlign = TextAlign.Center
+                                    )
+                                }
+                            } else if (label == "Tasks History") {
+                                if (historyTasks.value.isNotEmpty()) {
+                                    TaskViewItem(taskItem = historyTasks.value[item])
+                                } else {
+                                    Text (
+                                        text = "Create or do a task to get started.",
                                         fontSize = 18.sp,
                                         fontWeight = FontWeight.Bold,
                                         modifier = Modifier.padding(20.dp),

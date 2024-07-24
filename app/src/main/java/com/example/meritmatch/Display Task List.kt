@@ -159,6 +159,7 @@ fun TaskListPage (
                                 else if (label == "Reserved Tasks" && reservedTasks.value.isNotEmpty()) reservedTasks.value.size
                                 else if (label == "Submitted Tasks" && submittedTasks.value.isNotEmpty()) submittedTasks.value.size
                                 else if (label == "Pending Approvals" && waitingTasks.value.isNotEmpty()) waitingTasks.value.size
+                                else if (label == "Tasks History" && historyTasks.value.isNotEmpty()) historyTasks.value.size
                                 else 1
                         ) { item ->
                             if (label == "Available Tasks" && allTasks.value.isNotEmpty()) {
@@ -169,7 +170,8 @@ fun TaskListPage (
                                     isSubmitted = label == "Submitted Tasks",
                                     isPending = label == "Pending Approvals",
                                     dataViewModel = dataViewModel,
-                                    toModify = toModify
+                                    toModify = toModify,
+                                    label = "label"
                                 )
                             } else if (label == "Posted Tasks" && postedTasks.value.isNotEmpty()) {
                                 TaskListItem (
@@ -179,7 +181,8 @@ fun TaskListPage (
                                     isSubmitted = label == "Submitted Tasks",
                                     isPending = label == "Pending Approvals",
                                     dataViewModel = dataViewModel,
-                                    toModify = toModify
+                                    toModify = toModify,
+                                    label = "label"
                                 )
                             } else if (label == "Reserved Tasks" && reservedTasks.value.isNotEmpty()) {
                                 TaskListItem (
@@ -189,7 +192,8 @@ fun TaskListPage (
                                     isSubmitted = label == "Submitted Tasks",
                                     isPending = label == "Pending Approvals",
                                     dataViewModel = dataViewModel,
-                                    toModify = toModify
+                                    toModify = toModify,
+                                    label = "label"
                                 )
                             } else if (label == "Submitted Tasks" && submittedTasks.value.isNotEmpty()) {
                                 TaskListItem (
@@ -199,7 +203,8 @@ fun TaskListPage (
                                     isSubmitted = label == "Submitted Tasks",
                                     isPending = label == "Pending Approvals",
                                     dataViewModel = dataViewModel,
-                                    toModify = toModify
+                                    toModify = toModify,
+                                    label = "label"
                                 )
                             } else if (label == "Pending Approvals" && waitingTasks.value.isNotEmpty()) {
                                 TaskListItem (
@@ -209,10 +214,27 @@ fun TaskListPage (
                                     isSubmitted = label == "Submitted Tasks",
                                     isPending = label == "Pending Approvals",
                                     dataViewModel = dataViewModel,
-                                    toModify = toModify
+                                    toModify = toModify,
+                                    label = "label"
                                 )
-                            }
-                            else {
+                            } else if (label == "Tasks History" && historyTasks.value.isNotEmpty()) {
+                                TaskListItem (
+                                    task = historyTasks.value[item],
+                                    isPosted = label == "Posted Tasks",
+                                    isReserved = label == "Reserved Tasks",
+                                    isSubmitted = label == "Submitted Tasks",
+                                    isPending = label == "Pending Approvals",
+                                    dataViewModel = dataViewModel,
+                                    toModify = toModify,
+                                    label = if (historyTasks.value[item].payment) "completed"
+                                        else if (historyTasks.value[item].completed) "submitted"
+                                        else if (historyTasks.value[item].reserved == user_id.value && historyTasks.value[item].active) "reserved"
+                                        else if (!historyTasks.value[item].active && historyTasks.value[item].reserved == 0) "deleted"
+                                        else if (!historyTasks.value[item].active && historyTasks.value[item].reserved == user_id.value) "declined"
+                                        else "posted",
+                                    isHistory = true
+                                )
+                            } else {
                                 Column (
                                     modifier = Modifier.fillParentMaxSize(),
                                     horizontalAlignment = Alignment.CenterHorizontally,
@@ -241,6 +263,7 @@ fun TaskListPage (
             dataViewModel.getAvailableTasks(user_id.value)
             dataViewModel.getSubmittedTasks(user_id.value)
             dataViewModel.getWaitingTasks(user_id.value)
+            dataViewModel.getHistoryTasks(user_id.value)
             delay(400)
             setValues.value = true
             newTaskList = true
@@ -270,11 +293,13 @@ fun TaskListPage (
 @Composable
 fun TaskListItem (
     task: Task,
+    label : String,
     isPosted : Boolean,
     isReserved : Boolean,
     isSubmitted : Boolean,
     isPending : Boolean,
     dataViewModel: MainViewModel,
+    isHistory: Boolean = false,
     toModify: () -> Unit
 ) {
     val color = MaterialTheme.colorScheme
@@ -378,17 +403,36 @@ fun TaskListItem (
             .fillMaxSize(0.95f)
             .padding(16.dp)
             .clip(RoundedCornerShape(15))
-            .background(color.primaryContainer),
+            .background (
+                if (label == "reserved" || label == "label") color.primaryContainer
+                else if (label == "completed") color.secondaryContainer
+                else if (label == "submitted") color.tertiaryContainer
+                else if (label == "deleted") color.surfaceContainerHighest
+                else if (label == "declined") color.errorContainer
+                else color.onTertiaryContainer
+            ),
         horizontalAlignment = Alignment.Start,
         verticalArrangement = Arrangement.Top
     ) {
+        Row (
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.End
+        ) {
+            Text (
+                text = "STATUS : ${label}",
+                modifier = Modifier.padding(top = 8.dp, end = 16.dp),
+                color = color.error,
+                fontSize = 16.sp,
+                fontWeight = FontWeight.ExtraBold
+            )
+        }
 
         Row (
             verticalAlignment = Alignment.Bottom
         ) {
             Text (
                 text = task.title.uppercase(),
-                modifier = Modifier.padding(top = 24.dp, start = 24.dp, bottom = 8.dp, end = 16.dp),
+                modifier = if (!isPosted) Modifier.padding(top = 24.dp, start = 24.dp, bottom = 8.dp, end = 16.dp) else Modifier,
                 fontSize = 22.sp,
                 fontWeight = FontWeight.ExtraBold
             )
@@ -410,7 +454,14 @@ fun TaskListItem (
             Box(
                 modifier = Modifier
                     .clip(RoundedCornerShape(30))
-                    .background(color.inversePrimary),
+                    .background(
+                        if (label == "reserved" || label == "label") color.inversePrimary
+                        else if (label == "completed") color.inverseOnSurface
+                        else if (label == "submitted") color.onTertiary
+                        else if (label == "deleted") color.surfaceContainer
+                        else if (label == "declined") color.error
+                        else color.tertiary
+                    ),
                 contentAlignment = Alignment.Center
             ) {
                 Text(
@@ -439,41 +490,48 @@ fun TaskListItem (
                 .fillMaxWidth()
                 .padding(4.dp)
         ) {
-            Button (
-                onClick = {
-                    if (!isPending) {
-                        if (isSubmitted) {
-                            dataViewModel.unsubmitTasks(user_id.value, task.id)
-                            displayLoading.value = true
-                        } else if (!isPosted) {
-                            if (!isReserved) {
-                                dataViewModel.reserveTasks(user_id.value, task.id)
+            if (!isHistory) {
+                Button(
+                    onClick = {
+                        if (!isPending) {
+                            if (isSubmitted) {
+                                dataViewModel.unsubmitTasks(user_id.value, task.id)
                                 displayLoading.value = true
+                            } else if (!isPosted) {
+                                if (!isReserved) {
+                                    dataViewModel.reserveTasks(user_id.value, task.id)
+                                    displayLoading.value = true
+                                } else {
+                                    dataViewModel.unreserveTasks(user_id.value, task.id)
+                                    displayLoading.value = true
+                                }
                             } else {
-                                dataViewModel.unreserveTasks(user_id.value, task.id)
-                                displayLoading.value = true
+                                displayAlert = true
                             }
                         } else {
-                            displayAlert = true
+                            dataViewModel.approvePayment(user_id.value, task.id)
+                            displayLoading.value = true
                         }
-                    } else {
-                        dataViewModel.approvePayment(user_id.value, task.id)
-                        displayLoading.value = true
-                    }
-                },
-                modifier = Modifier.padding(start = 20.dp, end = 8.dp, top = 10.dp, bottom = 6.dp),
-                shape = RoundedCornerShape(20),
-                elevation = ButtonDefaults.buttonElevation (
-                    defaultElevation = 8.dp,
-                    pressedElevation = 0.dp
-                ),
-                colors = ButtonDefaults.buttonColors (
-                    containerColor = color.onErrorContainer
-                )
-            ) {
-                Text (
-                    text = if (isPosted) "Modify Post" else if (isReserved) "Unreserve Task" else if (!isReserved && !isSubmitted && !isPending) "Reserve Task" else if (isSubmitted) "Unsubmit Task" else "Approve\nPayment"
-                )
+                    },
+                    modifier = Modifier.padding(
+                        start = 20.dp,
+                        end = 8.dp,
+                        top = 10.dp,
+                        bottom = 6.dp
+                    ),
+                    shape = RoundedCornerShape(20),
+                    elevation = ButtonDefaults.buttonElevation(
+                        defaultElevation = 8.dp,
+                        pressedElevation = 0.dp
+                    ),
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = color.onErrorContainer
+                    )
+                ) {
+                    Text(
+                        text = if (isPosted) "Modify Post" else if (isReserved) "Unreserve Task" else if (!isReserved && !isSubmitted && !isPending) "Reserve Task" else if (isSubmitted) "Unsubmit Task" else "Approve\nPayment"
+                    )
+                }
             }
 
             if (isReserved || isPending) {

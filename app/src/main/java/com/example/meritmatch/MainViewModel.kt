@@ -252,6 +252,23 @@ class MainViewModel : ViewModel() {
         }
     }
 
+    fun getHistoryTasks (userId: Int) {
+        viewModelScope.launch {
+            try {
+                val response = dataService.historyTasks("$baseUrl/posts/get_history_tasks/$userId")
+                _stateOfHistoryTasks.value = _stateOfHistoryTasks.value.copy (
+                    status = mutableStateOf(response.tasks),
+                    loading = false
+                )
+            } catch (e : Exception) {
+                _stateOfHistoryTasks.value = _stateOfHistoryTasks.value.copy (
+                    error = e.message,
+                    loading = false
+                )
+            }
+        }
+    }
+
     fun reserveTasks (userId : Int, taskId : Int) {
         viewModelScope.launch {
             try {
@@ -414,6 +431,9 @@ class MainViewModel : ViewModel() {
 
     private val _stateOfWaitingTasks = mutableStateOf(StateOfGettingPosts())
     val stateOfWaitingTasks : State<StateOfGettingPosts> = _stateOfWaitingTasks
+
+    private val _stateOfHistoryTasks = mutableStateOf(StateOfGettingPosts())
+    val stateOfHistoryTasks : State<StateOfGettingPosts> = _stateOfHistoryTasks
 
     private val _stateOfReservingTask = mutableStateOf(StateOfReservingTasks())
     val stateOfReservingTask : State<StateOfReservingTasks> = _stateOfReservingTask

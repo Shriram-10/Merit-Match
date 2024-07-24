@@ -58,6 +58,7 @@ fun HomePage (
     toPostedTasks: () -> Unit,
     toCreateTask: () -> Unit,
     toWaitingTasks: () -> Unit,
+    toHistoryTasks: () -> Unit,
     toSearch: () -> Unit,
     toSettings: () -> Unit,
     dataViewModel: MainViewModel
@@ -176,6 +177,15 @@ fun HomePage (
                             label = "Pending Approvals",
                             onViewMore = toWaitingTasks
                         )
+
+                        LabeledTaskView (
+                            modifier = Modifier
+                                .padding(start = 16.dp)
+                                .fillMaxWidth(0.95f)
+                                .height(225.dp),
+                            label = "Tasks History",
+                            onViewMore = toHistoryTasks
+                        )
                     }
                 }
             }
@@ -192,10 +202,10 @@ fun HomePage (
                         toCreateTask()
                     },
                     modifier = Modifier.fillMaxSize(),
-                    colors = ButtonDefaults.buttonColors(
+                    colors = ButtonDefaults.buttonColors (
                         containerColor = color.secondaryContainer
                     ),
-                    elevation = ButtonDefaults.buttonElevation(
+                    elevation = ButtonDefaults.buttonElevation (
                         defaultElevation = 8.dp,
                         pressedElevation = 0.dp
                     ),
@@ -220,6 +230,7 @@ fun HomePage (
             dataViewModel.getAvailableTasks(user_id.value)
             dataViewModel.getSubmittedTasks(user_id.value)
             dataViewModel.getWaitingTasks(user_id.value)
+            dataViewModel.getHistoryTasks(user_id.value)
             delay(2000)
             setValues.value = true
             newHomePage = true
@@ -249,7 +260,8 @@ fun HomePage (
             toWaitingTasks = toWaitingTasks,
             dataViewModel = dataViewModel,
             toSettings = toSettings,
-            toSearch = toSearch
+            toSearch = toSearch,
+            toHistoryTasks = toHistoryTasks
         )
     }
 }

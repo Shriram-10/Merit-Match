@@ -164,7 +164,7 @@ fun LoginPage (
             }
 
             Text(
-                text = "Don't have an account? ${user_id.value}",
+                text = "Don't have an account?",
                 fontSize = 18.sp,
                 style = MaterialTheme.typography.bodyLarge,
                 color = MaterialTheme.colorScheme.primary

@@ -17,6 +17,7 @@ var reservedTasks = mutableStateOf(listOf<Task>())
 var postedTasks = mutableStateOf(listOf<Task>())
 var submittedTasks = mutableStateOf(listOf<Task>())
 var waitingTasks = mutableStateOf(listOf<Task>())
+var historyTasks = mutableStateOf(listOf<Task>())
 
 @Composable
 fun Navigation (modifier : Modifier) {
@@ -39,6 +40,7 @@ fun Navigation (modifier : Modifier) {
                     viewModel.getSubmittedTasks(user_id.value)
                     viewModel.getWaitingTasks(user_id.value)
                     viewModel.getBalance(user_id.value)
+                    viewModel.getHistoryTasks(user_id.value)
                     navController.navigate(Screen.Home.route) {
                         popUpTo(Screen.Login.route) { inclusive = true }
                     }
@@ -106,6 +108,9 @@ fun Navigation (modifier : Modifier) {
                 },
                 toWaitingTasks = {
                     navController.navigate(Screen.WaitingTasks.route)
+                },
+                toHistoryTasks = {
+                    navController.navigate(Screen.HistoryTasks.route)
                 },
                 dataViewModel = viewModel
             )
@@ -194,6 +199,18 @@ fun Navigation (modifier : Modifier) {
         }
 
         composable (
+            route = Screen.HistoryTasks.route
+        ) {
+            TaskListPage (
+                modifier = modifier,
+                navController = navController,
+                label = "Tasks History",
+                dataViewModel = viewModel,
+                toModify = {}
+            )
+        }
+
+        composable (
             route = Screen.CreateTasks.route
         ) {
             CreateTask (
@@ -233,5 +250,6 @@ fun setValues (
     reservedTasks = dataViewModel.stateOfReservedTasks.value.status
     submittedTasks = dataViewModel.stateOfSubmittedTasks.value.status
     waitingTasks = dataViewModel.stateOfWaitingTasks.value.status
+    historyTasks = dataViewModel.stateOfHistoryTasks.value.status
     karma_points.value = dataViewModel.stateOfGettingBalance.value.status.balance
 }
