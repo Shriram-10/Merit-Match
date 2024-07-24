@@ -30,6 +30,7 @@ import androidx.compose.ui.unit.sp
 
 val karma_points = mutableStateOf(350.00)
 val user = mutableStateOf(User("", "", false, karma_points.value))
+val referralCode = mutableStateOf("")
 
 @Composable
 fun SignUpPage (
@@ -97,6 +98,14 @@ fun SignUpPage (
                 dataViewModel = dataViewModel,
                 password = true
             )
+
+            InputField (
+                modifier = Modifier.padding(bottom = 0.dp),
+                label = "Referral Code",
+                placeholder = "Enter referral code if you got one.",
+                dataViewModel = dataViewModel
+            )
+            Text(gotha.value)
 
             Spacer (modifier = Modifier.height(50.dp))
 

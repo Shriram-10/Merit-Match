@@ -12,6 +12,7 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -22,14 +23,14 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.ViewModel
-
 @Composable
 fun InputField (
     modifier: Modifier,
     label: String = "",
     placeholder: String = "",
     dataViewModel : MainViewModel,
-    password: Boolean = false
+    password: Boolean = false,
+    referral: Boolean = false
 ){
 
     val color = MaterialTheme.colorScheme
@@ -42,16 +43,18 @@ fun InputField (
         mutableStateOf (if (password) true else false)
     }
 
-    OutlinedTextField(
+    OutlinedTextField (
         modifier = modifier,
         value = valueStr,
         onValueChange = {
             dataViewModel.checkUser(user.value.username)
             valueStr = it
-            if (!password) {
-                user.value.username = valueStr
-            } else {
+            if (password) {
                 user.value.password = valueStr
+            } else if (referral) {
+                referralCode.value = valueStr
+            } else {
+                user.value.username = valueStr
             }
         },
         label = {
@@ -92,4 +95,8 @@ fun InputField (
             }
         }
     )
+
+    LaunchedEffect(valueStr) {
+        dataViewModel.checkUser(username = valueStr)
+    }
 }
