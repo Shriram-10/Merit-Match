@@ -39,6 +39,15 @@ class PostBase(BaseModel):
     active: bool = True
 
 
+class Review(BaseModel):
+    poster_id : int
+    subject_id : int
+    description : str
+    rating : float
+    task_id : int
+    post_time : str
+
+
 class User(BaseModel):
     username: str
     password: str
@@ -289,3 +298,11 @@ async def get_balance(user_id: int, db: db_dependency):
         return {"balance" : user.karma_points, "code" : 1}
     else:
         return {"balance" : -1, "code" : -1}
+    
+@app.post("/reviews/post_review")
+async def post_review(db: db_dependency, review: Review):
+    user_review = models.Review(**review.model_dump())
+    db.add(user_review)
+    db.commit()
+
+    return {"code" : 1}

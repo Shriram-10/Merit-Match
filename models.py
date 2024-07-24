@@ -27,3 +27,14 @@ class Post(Base):
     completed = Column(Boolean)
     payment = Column(Boolean)
     active = Column(Boolean)
+
+class Review(Base):
+    __tablename__ = 'reviews'
+
+    id = Column(Integer, primary_key=True, index=True)
+    poster_id = Column(Integer)
+    subject_id = Column(Integer)
+    description = Column(String(500))
+    rating = Column(Double)
+    task_id = Column(Integer)
+    post_time = Column(String(20))
