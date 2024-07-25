@@ -37,13 +37,14 @@ class PostBase(BaseModel):
     completed: bool = False
     payment: bool = False
     active: bool = True
+    reviewed: bool = False
 
 
 class Review(BaseModel):
     poster_id : int
     subject_id : int
     description : str
-    rating : float
+    rating : int
     task_id : int
     post_time : str
 
@@ -250,7 +251,7 @@ async def refuse_submission(task_id: int, user_id: int, db: db_dependency):
         return {"code" : -1}
     
 @app.post("/users/logout/{username}")
-async def logout_user(username : str, db : db_dependency):
+async def logout_user(username: str, db : db_dependency):
     user = db.query(models.User).filter(username == models.User.username).first()
 
     if user:
@@ -303,6 +304,25 @@ async def get_balance(user_id: int, db: db_dependency):
 async def post_review(db: db_dependency, review: Review):
     user_review = models.Review(**review.model_dump())
     db.add(user_review)
-    db.commit()
 
-    return {"code" : 1}
+    reviewed_task = db.query(models.Post).filter(models.Post.id == user_review.task_id).first()
+    if reviewed_task:
+        setattr(reviewed_task, 'reviewed', True)
+        setattr(reviewed_task, 'post_time', datetime.now().__format__('%Y-%m-%d %H:%M:%S'))
+        db.commit()
+        return {"code" : 1}
+    else:
+        return {"code" : -1}
+
+@app.get("/review/get_reviews/{user_id}")
+async def get_reviews(user_id : int, db: db_dependency):
+    reviews = db.query(models.Review).filter((models.Post.reviewed == True) & (models.Post.user_id == user_id)).all()
+
+    if reviews:
+        i = 0
+        list_task_review = []
+        for review in reviews:
+            list_task_review.add(review.task_id)
+        return {"task_list" : list_task_review, "code" : 1}
+    else:
+        return {"task_list" : [], "code" : 1}
