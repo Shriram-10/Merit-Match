@@ -75,6 +75,12 @@ class MainViewModel : ViewModel() {
         var error : String? = null
     )
 
+    data class StateOfLogout (
+        val loading : Boolean = false,
+        var status : Int = 0,
+        var error : String? = null
+    )
+
     fun createNewUser (username : String, password : String, login: Boolean, referralCode: String) {
         viewModelScope.launch {
             try {
@@ -130,6 +136,39 @@ class MainViewModel : ViewModel() {
                 karma_points.value = response.karma_points
                 user_id.value = response.id
                 referralCode.value = response.referral_code
+            } catch (e : Exception) {
+                _stateOfCheckUsername.value = _stateOfCheckUsername.value.copy (
+                    error = e.message,
+                    loading = false
+                )
+            }
+        }
+    }
+
+    fun logOut (username: String) {
+        viewModelScope.launch {
+            try {
+                val response = dataService.loginUser(
+                    "$baseUrl/users/login/$username",
+                    User (
+                        username = localUsername.value,
+                        password = user.value.password,
+                        karma_points = 0.0,
+                        login = false,
+                        referral_code = ""
+                    )
+                )
+                _stateOfLogin.value = _stateOfLogin.value.copy (
+                    status = response,
+                    loading = false
+                )
+                localUsername.value = ""
+                user.value.username = ""
+                user.value.password = ""
+                user.value.karma_points = 0.0
+                karma_points.value = 0.0
+                user_id.value = 0
+                referralCode.value = ""
             } catch (e : Exception) {
                 _stateOfCheckUsername.value = _stateOfCheckUsername.value.copy (
                     error = e.message,
@@ -487,4 +526,7 @@ class MainViewModel : ViewModel() {
 
     private val _stateOfPostingReview = mutableStateOf(StateOfPostingReview())
     val stateOfPostingReview : State<StateOfPostingReview> = _stateOfPostingReview
+
+    private val _stateOfLogout = mutableStateOf(StateOfLogout())
+    val stateOfLogout : State<StateOfLogout> = _stateOfLogout
 }

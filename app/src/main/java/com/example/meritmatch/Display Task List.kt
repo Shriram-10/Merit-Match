@@ -580,7 +580,7 @@ fun TaskListItem (
                 }
             }
 
-            if (label == "completed" && reviewedList.value.contains(task.id)) {
+            if (label == "completed" && !task.reviewed) {
                 Button (
                     onClick = {
                         reviewTask.value = task

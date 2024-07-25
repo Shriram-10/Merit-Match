@@ -18,7 +18,6 @@ var postedTasks = mutableStateOf(listOf<Task>())
 var submittedTasks = mutableStateOf(listOf<Task>())
 var waitingTasks = mutableStateOf(listOf<Task>())
 var historyTasks = mutableStateOf(listOf<Task>())
-var reviewedList = mutableStateOf(listOf<Int>())
 
 @Composable
 fun Navigation (modifier : Modifier) {
@@ -42,9 +41,9 @@ fun Navigation (modifier : Modifier) {
                     viewModel.getWaitingTasks(user_id.value)
                     viewModel.getBalance(user_id.value)
                     viewModel.getHistoryTasks(user_id.value)
-                    navController.navigate(Screen.Home.route) {
-                        popUpTo(Screen.Login.route) { inclusive = true }
-                    }
+                    navController.navigate(Screen.Home.route) /*{
+                        popUpTo(Screen.Login.route) { inclusive = false }
+                    }*/
                 },
                 goToSignUp = {
                     navController.navigate(Screen.SignUp.route) {
@@ -131,10 +130,12 @@ fun Navigation (modifier : Modifier) {
         ) {
             SettingsPage (
                 modifier = modifier,
-                navController = navController
-            ) {
-                navController.navigate(Screen.Login.route)
-            }
+                navController = navController,
+                onLogout = {
+                    viewModel.logOut(localUsername.value)
+                    navController.navigate(Screen.SignUp.route)
+                }
+            )
         }
 
         composable (

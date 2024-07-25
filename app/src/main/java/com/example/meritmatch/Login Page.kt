@@ -1,6 +1,7 @@
 package com.example.meritmatch
 
 import android.widget.Toast
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
@@ -38,6 +39,10 @@ fun LoginPage (
     goToSignUp: () -> Unit,
     dataViewModel: MainViewModel,
 ){
+    BackHandler {
+        android.os.Process.killProcess(android.os.Process.myPid())
+    }
+
     val color = MaterialTheme.colorScheme
     val displayLoading = remember {
         mutableStateOf(false)

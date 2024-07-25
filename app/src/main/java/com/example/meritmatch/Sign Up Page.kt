@@ -1,5 +1,6 @@
 package com.example.meritmatch
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
@@ -40,6 +41,10 @@ fun SignUpPage (
     dataViewModel: MainViewModel
 ) {
     val color = MaterialTheme.colorScheme
+
+    BackHandler {
+        android.os.Process.killProcess(android.os.Process.myPid())
+    }
 
     Box (
         modifier = modifier.fillMaxSize(),
