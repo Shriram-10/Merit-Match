@@ -435,7 +435,7 @@ fun TaskListItem (
         ) {
             Text (
                 text = task.title.uppercase(),
-                modifier = if (!isPosted) Modifier.padding(top = 24.dp, start = 24.dp, bottom = 8.dp, end = 16.dp) else Modifier,
+                modifier = Modifier.padding(top = 24.dp, start = 24.dp, bottom = 8.dp, end = 16.dp),
                 fontSize = 22.sp,
                 fontWeight = FontWeight.ExtraBold
             )
