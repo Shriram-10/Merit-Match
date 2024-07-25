@@ -24,6 +24,15 @@ data class LoginCode (
     val referral_code: String
 )
 
+data class Review (
+    var description : String,
+    var rating : Int,
+    var poster_id : Int,
+    var subject_id : Int,
+    var task_id : Int,
+    var post_time : String
+)
+
 data class Task (
     val id : Int,
     val title : String,
@@ -36,12 +45,18 @@ data class Task (
     val reserved : Int,
     val completed : Boolean = false,
     val active : Boolean = true,
-    val payment : Boolean = false
+    val payment : Boolean = false,
+    val reviewed : Boolean = false
 )
 
 data class Tasks (
     val code: Int,
     val tasks : List<Task>
+)
+
+data class TaskIds (
+    var code : Int,
+    val task_list : List<Int>
 )
 
 data class Balance (

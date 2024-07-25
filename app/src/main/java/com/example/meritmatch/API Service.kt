@@ -7,7 +7,7 @@ import retrofit2.http.GET
 import retrofit2.http.POST
 import retrofit2.http.Url
 
-private val retrofit = Retrofit.Builder().baseUrl("http://192.168.80.89:8000/")
+private val retrofit = Retrofit.Builder().baseUrl("http://192.168.246.89:8000/")
     .addConverterFactory(GsonConverterFactory.create())
     .build()
 
@@ -16,6 +16,9 @@ val dataService = retrofit.create(ApiService::class.java)
 interface ApiService {
     @POST("/users")
     suspend fun createUser(@Body request: User) : Code
+
+    @POST("/reviews/post_review")
+    suspend fun postReview(@Body request: Review) : Code
 
     @GET
     suspend fun checkUser(@Url fullUrl : String) : Message

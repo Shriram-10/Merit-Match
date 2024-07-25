@@ -14,4 +14,5 @@ sealed class Screen (val route : String) {
     data object ReservedTasks : Screen("reserved_tasks")
     data object PostedTasks : Screen("posted_tasks")
     data object HistoryTasks : Screen("history_tasks")
+    data object PostReview : Screen("post_review")
 }

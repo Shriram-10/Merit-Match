@@ -58,13 +58,17 @@ var displayLoading = mutableStateOf(false)
 var refreshing1 = mutableStateOf(false)
 var refreshing2 = mutableStateOf(false)
 
+var showPostReview = mutableStateOf(false)
+var reviewTask = mutableStateOf(Task(id = 0, description = "", title = "", kp_value = 0.0, user_id = 0, post_time = "", deadline = "0 0", completed = false, active = false, reserved = 0, username = ""))
+
 @Composable
 fun TaskListPage (
     modifier: Modifier,
     navController: NavController,
     label: String,
     dataViewModel: MainViewModel,
-    toModify: () -> Unit
+    toModify: () -> Unit,
+    toPostReview: () -> Unit
 ) {
     val color = MaterialTheme.colorScheme
     val navBackStackEntry by navController.currentBackStackEntryAsState()
@@ -171,7 +175,8 @@ fun TaskListPage (
                                     isPending = label == "Pending Approvals",
                                     dataViewModel = dataViewModel,
                                     toModify = toModify,
-                                    label = "label"
+                                    label = "label",
+                                    toPostReview = toPostReview
                                 )
                             } else if (label == "Posted Tasks" && postedTasks.value.isNotEmpty()) {
                                 TaskListItem (
@@ -182,7 +187,8 @@ fun TaskListPage (
                                     isPending = label == "Pending Approvals",
                                     dataViewModel = dataViewModel,
                                     toModify = toModify,
-                                    label = "label"
+                                    label = "label",
+                                    toPostReview = toPostReview
                                 )
                             } else if (label == "Reserved Tasks" && reservedTasks.value.isNotEmpty()) {
                                 TaskListItem (
@@ -193,7 +199,8 @@ fun TaskListPage (
                                     isPending = label == "Pending Approvals",
                                     dataViewModel = dataViewModel,
                                     toModify = toModify,
-                                    label = "label"
+                                    label = "label",
+                                    toPostReview = toPostReview
                                 )
                             } else if (label == "Submitted Tasks" && submittedTasks.value.isNotEmpty()) {
                                 TaskListItem (
@@ -204,7 +211,8 @@ fun TaskListPage (
                                     isPending = label == "Pending Approvals",
                                     dataViewModel = dataViewModel,
                                     toModify = toModify,
-                                    label = "label"
+                                    label = "label",
+                                    toPostReview = toPostReview
                                 )
                             } else if (label == "Pending Approvals" && waitingTasks.value.isNotEmpty()) {
                                 TaskListItem (
@@ -215,7 +223,8 @@ fun TaskListPage (
                                     isPending = label == "Pending Approvals",
                                     dataViewModel = dataViewModel,
                                     toModify = toModify,
-                                    label = "label"
+                                    label = "label",
+                                    toPostReview = toPostReview
                                 )
                             } else if (label == "Tasks History" && historyTasks.value.isNotEmpty()) {
                                 TaskListItem (
@@ -232,7 +241,8 @@ fun TaskListPage (
                                         else if (!historyTasks.value[item].active && historyTasks.value[item].reserved == 0) "deleted"
                                         else if (!historyTasks.value[item].active && historyTasks.value[item].reserved == user_id.value) "declined"
                                         else "posted",
-                                    isHistory = true
+                                    isHistory = true,
+                                    toPostReview = toPostReview
                                 )
                             } else {
                                 Column (
@@ -281,7 +291,7 @@ fun TaskListPage (
     }
 
     if (newTaskList) {
-        TaskListPage(dataViewModel = dataViewModel, navController = navController, label = label, modifier = modifier, toModify = toModify)
+        TaskListPage(dataViewModel = dataViewModel, navController = navController, label = label, modifier = modifier, toModify = toModify, toPostReview = toPostReview)
     }
 
     if (displayLoading.value) {
@@ -300,7 +310,8 @@ fun TaskListItem (
     isPending : Boolean,
     dataViewModel: MainViewModel,
     isHistory: Boolean = false,
-    toModify: () -> Unit
+    toModify: () -> Unit,
+    toPostReview: () -> Unit
 ) {
     val color = MaterialTheme.colorScheme
     var message by remember { mutableStateOf("") }
@@ -435,17 +446,17 @@ fun TaskListItem (
         ) {
             Text (
                 text = task.title.uppercase(),
-                modifier = Modifier.padding(top = 24.dp, start = 24.dp, bottom = 8.dp, end = 16.dp),
+                modifier = if (!(label == "posted" && isPosted)) Modifier.padding(top = 24.dp, start = 24.dp, bottom = 8.dp, end = 16.dp) else Modifier,
                 fontSize = 22.sp,
                 fontWeight = FontWeight.ExtraBold
             )
+        }
 
-            if (!isPosted) {
-                Text(
-                    text = "by ${task.username}",
-                    modifier = Modifier.padding(bottom = 8.dp, end = 24.dp)
-                )
-            }
+        if (!isPosted) {
+            Text(
+                text = "by ${if (task.username != localUsername.value) task.username else "you"}",
+                modifier = Modifier.padding(bottom = 8.dp, end = 24.dp, start = 24.dp)
+            )
         }
 
         Row (
@@ -454,7 +465,7 @@ fun TaskListItem (
                 .fillMaxWidth()
                 .padding(top = 6.dp, end = 6.dp, start = 16.dp)
         ) {
-            Box(
+            Box (
                 modifier = Modifier
                     .clip(RoundedCornerShape(30))
                     .background(
@@ -564,6 +575,33 @@ fun TaskListItem (
                 ) {
                     Text (
                         text = if (isReserved) "Submit Task" else "Decline\nSubmission",
+                        textAlign = TextAlign.Center
+                    )
+                }
+            }
+
+            if (label == "completed" && reviewedList.value.contains(task.id)) {
+                Button (
+                    onClick = {
+                        reviewTask.value = task
+                        toPostReview()
+                    },
+                    modifier = Modifier.padding (
+                        end = 20.dp,
+                        top = 10.dp,
+                        bottom = 6.dp
+                    ),
+                    shape = RoundedCornerShape(20),
+                    elevation = ButtonDefaults.buttonElevation (
+                        defaultElevation = 8.dp,
+                        pressedElevation = 0.dp
+                    ),
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = color.onErrorContainer
+                    )
+                ) {
+                    Text (
+                        text = "Post Review",
                         textAlign = TextAlign.Center
                     )
                 }

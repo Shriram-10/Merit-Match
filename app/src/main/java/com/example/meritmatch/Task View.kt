@@ -1,5 +1,6 @@
 package com.example.meritmatch
 
+import android.widget.Toast
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -25,6 +26,11 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -32,19 +38,25 @@ import androidx.compose.ui.draw.scale
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import kotlinx.coroutines.delay
 
 
 @Composable
 fun TaskView (
     modifier: Modifier,
     onViewMore: () -> Unit,
-    label: String
+    label: String,
+    dataViewModel : MainViewModel
 ) {
     val color = MaterialTheme.colorScheme
+    var displayToast by remember { mutableStateOf(false) }
+    var message by remember { mutableStateOf("") }
+    val context = LocalContext.current
 
     val fadeOutColors = listOf (
         Color.Black.copy(alpha = 0f),
@@ -154,7 +166,13 @@ fun TaskView (
                 .shadow(elevation = 8.dp, clip = false, shape = RoundedCornerShape(100))
         ) {
             Button (
-                onClick = { onViewMore() },
+                onClick = {
+                    if (label == "Tasks History") {
+                        dataViewModel.getHistoryTasks(user_id.value)
+                        displayLoading.value = true
+                    }
+                    onViewMore()
+                },
                 modifier = Modifier
                     .fillMaxSize()
                     .align(Alignment.Center)
@@ -184,13 +202,26 @@ fun TaskView (
             )
         }
     }
+
+    LaunchedEffect (displayLoading.value) {
+        if (displayLoading.value) {
+            delay(200)
+            displayLoading.value = false
+        }
+    }
+
+    if (displayToast) {
+        Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
+        displayToast = false
+    }
 }
 
 @Composable
 fun LabeledTaskView (
     modifier: Modifier,
     onViewMore: () -> Unit,
-    label: String
+    label: String,
+    dataViewModel: MainViewModel
 ) {
     Column {
         Text (
@@ -205,7 +236,8 @@ fun LabeledTaskView (
         TaskView (
             modifier = modifier,
             onViewMore = onViewMore,
-            label = label
+            label = label,
+            dataViewModel = dataViewModel
         )
     }
 }
@@ -215,20 +247,22 @@ fun TaskViewItem (
     taskItem : Task
 ) {
     val color = MaterialTheme.colorScheme
-    Row (
-        verticalAlignment = Alignment.CenterVertically
+    Column (
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(start = 16.dp)
     ) {
         Text (
             text = taskItem.title.uppercase(),
-            modifier = Modifier.padding(start = 16.dp, top = 16.dp, bottom = 16.dp),
+            modifier = Modifier.padding(top = 16.dp, bottom = 8.dp),
             fontSize = 18.sp,
             color = color.error,
             fontWeight = FontWeight.Bold
         )
 
         Text (
-            text = "by ${taskItem.username}",
-            modifier = Modifier.padding(start = 16.dp, top = 16.dp, bottom = 16.dp),
+            text = "by ${if (taskItem.username != localUsername.value) taskItem.username else "you"}",
+            modifier = Modifier.padding(bottom = 16.dp),
             fontSize = 13.sp,
             fontWeight = FontWeight.Light
         )

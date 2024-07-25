@@ -166,7 +166,8 @@ fun HomePage (
                                 .fillMaxWidth(0.95f)
                                 .height(225.dp),
                             label = "Submitted Tasks",
-                            onViewMore = toSubmittedTasks
+                            onViewMore = toSubmittedTasks,
+                            dataViewModel = dataViewModel
                         )
 
                         LabeledTaskView (
@@ -175,7 +176,8 @@ fun HomePage (
                                 .fillMaxWidth(0.95f)
                                 .height(225.dp),
                             label = "Pending Approvals",
-                            onViewMore = toWaitingTasks
+                            onViewMore = toWaitingTasks,
+                            dataViewModel = dataViewModel
                         )
 
                         LabeledTaskView (
@@ -184,7 +186,8 @@ fun HomePage (
                                 .fillMaxWidth(0.95f)
                                 .height(225.dp),
                             label = "Tasks History",
-                            onViewMore = toHistoryTasks
+                            onViewMore = toHistoryTasks,
+                            dataViewModel = dataViewModel
                         )
                     }
                 }

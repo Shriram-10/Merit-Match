@@ -13,7 +13,7 @@ import kotlinx.coroutines.launch
 
 class MainViewModel : ViewModel() {
 
-    private val baseUrl = "http://192.168.80.89:8000"
+    private val baseUrl = "http://192.168.246.89:8000"
 
     data class StateOfUser (
         val loading : Boolean = false,
@@ -67,6 +67,12 @@ class MainViewModel : ViewModel() {
         val loading : Boolean = false,
         var status : Int = 0,
         val error : String? = null
+    )
+
+    data class StateOfPostingReview (
+        val loading : Boolean = false,
+        var status : Int = 0,
+        var error : String? = null
     )
 
     fun createNewUser (username : String, password : String, login: Boolean, referralCode: String) {
@@ -405,6 +411,23 @@ class MainViewModel : ViewModel() {
         }
     }
 
+    fun postingReview (review : Review) {
+        viewModelScope.launch {
+            try {
+                val response = dataService.postReview(review)
+                _stateOfPostingReview.value = _stateOfPostingReview.value.copy (
+                    status = response.code,
+                    loading = false
+                )
+            } catch (e : Exception) {
+                _stateOfPostingReview.value = _stateOfPostingReview.value.copy (
+                    error = e.message,
+                    loading = false
+                )
+            }
+        }
+    }
+
     private val _stateOfUserRetrieval = mutableStateOf(StateOfUser())
     val stateOfUserRetrieval : State<StateOfUser> = _stateOfUserRetrieval
 
@@ -461,4 +484,7 @@ class MainViewModel : ViewModel() {
 
     private val _stateOfModifyingPost = mutableStateOf(StateOfModifyingPost())
     val stateOfModifyingPost : State<StateOfModifyingPost> = _stateOfModifyingPost
+
+    private val _stateOfPostingReview = mutableStateOf(StateOfPostingReview())
+    val stateOfPostingReview : State<StateOfPostingReview> = _stateOfPostingReview
 }

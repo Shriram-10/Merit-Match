@@ -18,6 +18,7 @@ var postedTasks = mutableStateOf(listOf<Task>())
 var submittedTasks = mutableStateOf(listOf<Task>())
 var waitingTasks = mutableStateOf(listOf<Task>())
 var historyTasks = mutableStateOf(listOf<Task>())
+var reviewedList = mutableStateOf(listOf<Int>())
 
 @Composable
 fun Navigation (modifier : Modifier) {
@@ -144,7 +145,10 @@ fun Navigation (modifier : Modifier) {
                 navController = navController,
                 label = "Available Tasks",
                 dataViewModel = viewModel,
-                toModify = {}
+                toModify = {},
+                toPostReview = {
+                    navController.navigate(Screen.PostReview.route)
+                }
             )
         }
 
@@ -156,7 +160,10 @@ fun Navigation (modifier : Modifier) {
                 navController = navController,
                 label = "Reserved Tasks",
                 dataViewModel = viewModel,
-                toModify = {}
+                toModify = {},
+                toPostReview = {
+                    navController.navigate(Screen.PostReview.route)
+                }
             )
         }
 
@@ -170,6 +177,9 @@ fun Navigation (modifier : Modifier) {
                 dataViewModel = viewModel,
                 toModify = {
                     navController.navigate(Screen.ModifyTasks.route)
+                },
+                toPostReview = {
+                    navController.navigate(Screen.PostReview.route)
                 }
             )
         }
@@ -182,7 +192,10 @@ fun Navigation (modifier : Modifier) {
                 navController = navController,
                 label = "Submitted Tasks",
                 dataViewModel = viewModel,
-                toModify = {}
+                toModify = {},
+                toPostReview = {
+                    navController.navigate(Screen.PostReview.route)
+                }
             )
         }
 
@@ -194,7 +207,10 @@ fun Navigation (modifier : Modifier) {
                 navController = navController,
                 label = "Pending Approvals",
                 dataViewModel = viewModel,
-                toModify = {}
+                toModify = {},
+                toPostReview = {
+                    navController.navigate(Screen.PostReview.route)
+                }
             )
         }
 
@@ -206,7 +222,10 @@ fun Navigation (modifier : Modifier) {
                 navController = navController,
                 label = "Tasks History",
                 dataViewModel = viewModel,
-                toModify = {}
+                toModify = {},
+                toPostReview = {
+                    navController.navigate(Screen.PostReview.route)
+                }
             )
         }
 
@@ -237,6 +256,20 @@ fun Navigation (modifier : Modifier) {
                         popUpTo(Screen.ModifyTasks.route) { inclusive = true }
                     }
                 }
+            )
+        }
+
+        composable (
+            route = Screen.PostReview.route
+        ) {
+            PostReviewPage (
+                dataViewModel = viewModel,
+                goToHome = {
+                    navController.navigate(Screen.HistoryTasks.route) {
+                        popUpTo(Screen.PostReview.route) { inclusive = true }
+                    }
+                },
+                task = reviewTask.value
             )
         }
     }
