@@ -208,7 +208,7 @@ fun HomePage (
                                 .fillMaxWidth(0.95f)
                                 .height(225.dp),
                             label = "Tasks History",
-                            onViewMore = toHistoryTasks,
+                            onViewMore = {toHistoryTasks()},
                             dataViewModel = dataViewModel
                         )
                     }

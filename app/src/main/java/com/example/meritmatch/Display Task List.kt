@@ -3,6 +3,7 @@ package com.example.meritmatch
 import android.widget.Toast
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -68,7 +69,8 @@ fun TaskListPage (
     label: String,
     dataViewModel: MainViewModel,
     toModify: () -> Unit,
-    toPostReview: () -> Unit
+    toPostReview: () -> Unit,
+    toViewUser: () -> Unit
 ) {
     val color = MaterialTheme.colorScheme
     val navBackStackEntry by navController.currentBackStackEntryAsState()
@@ -176,7 +178,8 @@ fun TaskListPage (
                                     dataViewModel = dataViewModel,
                                     toModify = toModify,
                                     label = "label",
-                                    toPostReview = toPostReview
+                                    toPostReview = toPostReview,
+                                    toViewUser = toViewUser
                                 )
                             } else if (label == "Posted Tasks" && postedTasks.value.isNotEmpty()) {
                                 TaskListItem (
@@ -188,7 +191,8 @@ fun TaskListPage (
                                     dataViewModel = dataViewModel,
                                     toModify = toModify,
                                     label = "label",
-                                    toPostReview = toPostReview
+                                    toPostReview = toPostReview,
+                                    toViewUser = toViewUser
                                 )
                             } else if (label == "Reserved Tasks" && reservedTasks.value.isNotEmpty()) {
                                 TaskListItem (
@@ -200,7 +204,8 @@ fun TaskListPage (
                                     dataViewModel = dataViewModel,
                                     toModify = toModify,
                                     label = "label",
-                                    toPostReview = toPostReview
+                                    toPostReview = toPostReview,
+                                    toViewUser = toViewUser
                                 )
                             } else if (label == "Submitted Tasks" && submittedTasks.value.isNotEmpty()) {
                                 TaskListItem (
@@ -212,7 +217,8 @@ fun TaskListPage (
                                     dataViewModel = dataViewModel,
                                     toModify = toModify,
                                     label = "label",
-                                    toPostReview = toPostReview
+                                    toPostReview = toPostReview,
+                                    toViewUser = toViewUser
                                 )
                             } else if (label == "Pending Approvals" && waitingTasks.value.isNotEmpty()) {
                                 TaskListItem (
@@ -224,7 +230,8 @@ fun TaskListPage (
                                     dataViewModel = dataViewModel,
                                     toModify = toModify,
                                     label = "label",
-                                    toPostReview = toPostReview
+                                    toPostReview = toPostReview,
+                                    toViewUser = toViewUser
                                 )
                             } else if (label == "Tasks History" && historyTasks.value.isNotEmpty()) {
                                 TaskListItem (
@@ -242,7 +249,8 @@ fun TaskListPage (
                                         else if (!historyTasks.value[item].active && historyTasks.value[item].reserved == user_id.value) "declined"
                                         else "posted",
                                     isHistory = true,
-                                    toPostReview = toPostReview
+                                    toPostReview = toPostReview,
+                                    toViewUser = toViewUser
                                 )
                             } else {
                                 Column (
@@ -291,7 +299,7 @@ fun TaskListPage (
     }
 
     if (newTaskList) {
-        TaskListPage(dataViewModel = dataViewModel, navController = navController, label = label, modifier = modifier, toModify = toModify, toPostReview = toPostReview)
+        TaskListPage(dataViewModel = dataViewModel, navController = navController, label = label, modifier = modifier, toModify = toModify, toPostReview = toPostReview, toViewUser = toViewUser)
     }
 
     if (displayLoading.value) {
@@ -311,7 +319,8 @@ fun TaskListItem (
     dataViewModel: MainViewModel,
     isHistory: Boolean = false,
     toModify: () -> Unit,
-    toPostReview: () -> Unit
+    toPostReview: () -> Unit,
+    toViewUser: () -> Unit
 ) {
     val color = MaterialTheme.colorScheme
     var message by remember { mutableStateOf("") }
@@ -453,10 +462,21 @@ fun TaskListItem (
         }
 
         if (!isPosted) {
-            Text(
-                text = "by ${if (task.username != localUsername.value) task.username else "you"}",
-                modifier = Modifier.padding(bottom = 8.dp, end = 24.dp, start = 24.dp)
-            )
+            Row {
+                Text(
+                    text = "by ",
+                    modifier = Modifier.padding(bottom = 8.dp, start = 24.dp)
+                )
+                Text (
+                    text = if (task.username != localUsername.value) task.username else "you",
+                    modifier = Modifier
+                        .padding(bottom = 8.dp)
+                        .clickable {
+                            dataViewModel.getUser(task.username)
+                            displayLoading.value = true
+                        }
+                )
+            }
         }
 
         Row (
@@ -722,6 +742,51 @@ fun TaskListItem (
         displayToast = true
         dataViewModel.stateOfDeclinePayment.value.status = 0
         displayLoading.value = false
+    }
+
+    if (displayLoading.value && dataViewModel.stateOfGettingUser.value.status.code == 1) {
+        refreshing2.value = true
+        message = "Retrieved user details successfully"
+        displayToast = true
+        dataViewModel.stateOfGettingUser.value.status = UserDetails (
+            user = User("", "", false, 0.0, "", "", 0.0, 0),
+            history_tasks = listOf(Task(id = 0, description = "", title = "", kp_value = 0.0, user_id = 0, post_time = "", deadline = "0 0", completed = false, active = false, reserved = 0, username = "")),
+            reviews = listOf(Review("", 0, 0, "", 0, 0, "")),
+            code = 1
+        )
+        displayLoading.value = false
+        toViewUser()
+    }
+
+    if (displayLoading.value && dataViewModel.stateOfGettingUser.value.status.code == -1) {
+        message = "Could not get user details. Try again later."
+        displayToast = true
+        dataViewModel.stateOfGettingUser.value.status = UserDetails (
+            user = User("", "", false, 0.0, "", "", 0.0, 0),
+            history_tasks = listOf(Task(id = 0, description = "", title = "", kp_value = 0.0, user_id = 0, post_time = "", deadline = "0 0", completed = false, active = false, reserved = 0, username = "")),
+            reviews = listOf(Review("", 0, 0, "", 0, 0, "")),
+            code = 1
+        )
+        displayLoading.value = false
+    }
+
+    LaunchedEffect(refreshing2.value || refreshing1.value) {
+        if (refreshing2.value || refreshing1.value) {
+            dataViewModel.getPostedTasks(user_id.value)
+            dataViewModel.getReservedTasks(user_id.value)
+            dataViewModel.getAvailableTasks(user_id.value)
+            dataViewModel.getSubmittedTasks(user_id.value)
+            dataViewModel.getWaitingTasks(user_id.value)
+            dataViewModel.getHistoryTasks(user_id.value)
+            dataViewModel.getUser(task.username)
+            delay(400)
+            setValues.value = true
+            if (refreshing2.value) {
+                refreshing2.value = false
+            } else if (refreshing1.value) {
+                refreshing1.value = false
+            }
+        }
     }
 
     if (displayToast) {

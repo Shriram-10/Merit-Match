@@ -22,7 +22,12 @@ var submittedTasks = mutableStateOf(listOf<Task>())
 var waitingTasks = mutableStateOf(listOf<Task>())
 var historyTasks = mutableStateOf(listOf<Task>())
 var reviewList = mutableStateOf(listOf<Review>())
-var queryUser = mutableStateOf(User("", "", false, 0.0, "", "", 0.0, 0))
+var queryUser = mutableStateOf(UserDetails (
+    user = User("", "", false, 0.0, "", "", 0.0, 0),
+    history_tasks = listOf(Task(id = 0, description = "", title = "", kp_value = 0.0, user_id = 0, post_time = "", deadline = "0 0", completed = false, active = false, reserved = 0, username = "")),
+    reviews = listOf(Review("", 0, 0, "", 0, 0, "")),
+    code = 1
+))
 
 @Composable
 fun Navigation (modifier : Modifier) {
@@ -167,6 +172,9 @@ fun Navigation (modifier : Modifier) {
                 toModify = {},
                 toPostReview = {
                     navController.navigate(Screen.PostReview.route)
+                },
+                toViewUser = {
+                    navController.navigate(Screen.UserProfile.route)
                 }
             )
         }
@@ -182,6 +190,9 @@ fun Navigation (modifier : Modifier) {
                 toModify = {},
                 toPostReview = {
                     navController.navigate(Screen.PostReview.route)
+                },
+                toViewUser = {
+                    navController.navigate(Screen.UserProfile.route)
                 }
             )
         }
@@ -199,6 +210,9 @@ fun Navigation (modifier : Modifier) {
                 },
                 toPostReview = {
                     navController.navigate(Screen.PostReview.route)
+                },
+                toViewUser = {
+                    navController.navigate(Screen.UserProfile.route)
                 }
             )
         }
@@ -214,6 +228,9 @@ fun Navigation (modifier : Modifier) {
                 toModify = {},
                 toPostReview = {
                     navController.navigate(Screen.PostReview.route)
+                },
+                toViewUser = {
+                    navController.navigate(Screen.UserProfile.route)
                 }
             )
         }
@@ -229,6 +246,9 @@ fun Navigation (modifier : Modifier) {
                 toModify = {},
                 toPostReview = {
                     navController.navigate(Screen.PostReview.route)
+                },
+                toViewUser = {
+                    navController.navigate(Screen.UserProfile.route)
                 }
             )
         }
@@ -244,6 +264,9 @@ fun Navigation (modifier : Modifier) {
                 toModify = {},
                 toPostReview = {
                     navController.navigate(Screen.PostReview.route)
+                },
+                toViewUser = {
+                    navController.navigate(Screen.UserProfile.route)
                 }
             )
         }
@@ -293,7 +316,7 @@ fun Navigation (modifier : Modifier) {
         }
 
         composable (
-            route = Screen.UserProfile.route
+            route = Screen.HistoryTasks.route
         ) {
             UserProfile (
                 user = queryUser.value,
@@ -314,9 +337,12 @@ fun Navigation (modifier : Modifier) {
                 dataViewModel = viewModel,
                 modifier = Modifier,
                 navController = navController,
-                label = "Tasks History",
+                label = "Tasks History of ${queryUser.value.user.username}",
                 toModify = {},
-                toPostReview = {}
+                toPostReview = {},
+                toViewUser = {
+                    navController.navigate(Screen.UserProfile.route)
+                }
             )
         }
 
@@ -326,7 +352,7 @@ fun Navigation (modifier : Modifier) {
             ReviewView (
                 modifier = Modifier,
                 onViewMore = {},
-                label = "Reviews",
+                label = "Reviews on ${queryUser.value.user.username}",
                 dataViewModel = viewModel
             )
         }
@@ -342,5 +368,6 @@ fun setValues (
     submittedTasks = dataViewModel.stateOfSubmittedTasks.value.status
     waitingTasks = dataViewModel.stateOfWaitingTasks.value.status
     historyTasks = dataViewModel.stateOfHistoryTasks.value.status
+    queryUser.value = dataViewModel.stateOfGettingUser.value.status
     karma_points.value = dataViewModel.stateOfGettingBalance.value.status.balance
 }

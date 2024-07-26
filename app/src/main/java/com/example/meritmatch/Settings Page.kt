@@ -184,7 +184,12 @@ fun SettingsPage (
         waitingTasks.value = listOf()
         reviewList.value = listOf()
         rating.value = 0.0f
-        queryUser.value = User("", "", false, 0.0, "", "", 0.0, 0)
+        queryUser.value = UserDetails (
+            user = User("", "", false, 0.0, "", "", 0.0, 0),
+            history_tasks = listOf(Task(id = 0, description = "", title = "", kp_value = 0.0, user_id = 0, post_time = "", deadline = "0 0", completed = false, active = false, reserved = 0, username = "")),
+            reviews = listOf(Review("", 0, 0, "", 0, 0, "")),
+            code = 1
+        )
     } else if (displayLoading.value && dataViewModel.stateOfLogout.value.status == -1) {
         message = "Failed to logout. Please try again."
         displayToast = true
