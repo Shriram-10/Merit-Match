@@ -166,8 +166,8 @@ fun TaskListPage (
                                 else if (label == "Reserved Tasks" && reservedTasks.value.isNotEmpty()) reservedTasks.value.size
                                 else if (label == "Submitted Tasks" && submittedTasks.value.isNotEmpty()) submittedTasks.value.size
                                 else if (label == "Pending Approvals" && waitingTasks.value.isNotEmpty()) waitingTasks.value.size
-                                else if (label == "Tasks History" && historyTasks.value.isNotEmpty() && isUser) historyTasks.value.size
-                                else if (label == "Tasks History" && historyTasks.value.isNotEmpty() && !isUser) queryUser.value.history_tasks.size
+                                else if (label == "Tasks History" && historyTasks.value.isNotEmpty()) historyTasks.value.size
+                                else if (label == "Tasks History of ${queryUser.value.user.username}" && queryUser.value.history_tasks.isNotEmpty()) queryUser.value.history_tasks.size
                                 else 1
                         ) { item ->
                             if (label == "Available Tasks" && allTasks.value.isNotEmpty()) {
@@ -254,7 +254,7 @@ fun TaskListPage (
                                     toPostReview = toPostReview,
                                     toViewUser = toViewUser
                                 )
-                            } else if (label == "Tasks History" && !isUser && queryUser.value.history_tasks.isNotEmpty()) {
+                            } else if (label == "Tasks History of ${queryUser.value.user.username}" && !isUser && queryUser.value.history_tasks.isNotEmpty()) {
                                 TaskListItem (
                                     task = queryUser.value.history_tasks[item],
                                     isPosted = label == "Posted Tasks",
