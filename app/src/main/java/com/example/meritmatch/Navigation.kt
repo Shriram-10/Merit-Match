@@ -22,7 +22,7 @@ var submittedTasks = mutableStateOf(listOf<Task>())
 var waitingTasks = mutableStateOf(listOf<Task>())
 var historyTasks = mutableStateOf(listOf<Task>())
 var reviewList = mutableStateOf(listOf<Review>())
-var queryUser = mutableStateOf(User("", "", false, 0.0, "", "", 0.0))
+var queryUser = mutableStateOf(User("", "", false, 0.0, "", "", 0.0, 0))
 
 @Composable
 fun Navigation (modifier : Modifier) {

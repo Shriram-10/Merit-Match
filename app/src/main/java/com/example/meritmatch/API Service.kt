@@ -28,6 +28,9 @@ interface ApiService {
     @GET("health")
     suspend fun checkHealth(): Response<HealthStatus>
 
+    @GET
+    suspend fun getUserDetails(@Url fullUrl : String) : UserDetails
+
     @POST("/users")
     suspend fun createUser(@Body request: User) : Code
 

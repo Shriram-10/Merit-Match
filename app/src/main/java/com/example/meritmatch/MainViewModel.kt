@@ -81,6 +81,17 @@ class MainViewModel : ViewModel() {
         var error : String? = null
     )
 
+    data class StateOfUserDetails (
+        val loading : Boolean = false,
+        var status : UserDetails = UserDetails (
+            user = User("", "", false, 0.0, "", "", 0.0, 0),
+            history_tasks = listOf(Task(id = 0, description = "", title = "", kp_value = 0.0, user_id = 0, post_time = "", deadline = "0 0", completed = false, active = false, reserved = 0, username = "")),
+            reviews = listOf(Review("", 0, 0, "", 0, 0, "")),
+            code = 1
+        ),
+        var error : String? = null
+    )
+
     suspend fun isApiConnected(): Boolean {
         return try {
             val response = dataService.checkHealth()
@@ -90,10 +101,27 @@ class MainViewModel : ViewModel() {
         }
     }
 
+    fun getUser (username : String) {
+        viewModelScope.launch {
+            try {
+                val response = dataService.getUserDetails("$baseUrl/users/get_user_details/$username")
+                _stateOfGettingUser.value = _stateOfGettingUser.value.copy (
+                    status = response,
+                    loading = false
+                )
+            } catch (e : Exception) {
+                _stateOfGettingUser.value = _stateOfGettingUser.value.copy (
+                    error = e.message,
+                    loading = false
+                )
+            }
+        }
+    }
+
     fun createNewUser (username : String, password : String, login: Boolean, referralCode: String) {
         viewModelScope.launch {
             try {
-                val response = dataService.createUser(User(username = username, password = password, login = login, karma_points = karma_points.value, referral_code = referralCode, date = "", avg_rating = 0.0))
+                val response = dataService.createUser(User(username = username, password = password, login = login, karma_points = karma_points.value, referral_code = referralCode, date = "", avg_rating = 0.0, rating_count =  0))
                 _stateOfUserRetrieval.value = StateOfUser (
                     value = response.code,
                     loading = false
@@ -136,7 +164,8 @@ class MainViewModel : ViewModel() {
                         login = true,
                         referral_code = "",
                         date = "",
-                        avg_rating = 0.0
+                        avg_rating = 0.0,
+                        rating_count = 0
                     )
                 )
                 _stateOfLogin.value = _stateOfLogin.value.copy (
@@ -526,4 +555,7 @@ class MainViewModel : ViewModel() {
 
     private val _stateOfLogout = mutableStateOf(StateOfLogout())
     val stateOfLogout : State<StateOfLogout> = _stateOfLogout
+
+    private val _stateOfGettingUser = mutableStateOf(StateOfUserDetails())
+    val stateOfGettingUser : State<StateOfUserDetails> = _stateOfGettingUser
 }

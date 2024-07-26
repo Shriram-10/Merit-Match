@@ -7,7 +7,15 @@ data class User (
     var karma_points : Double,
     val referral_code: String,
     val date : String,
-    val avg_rating : Double
+    val avg_rating : Double,
+    var rating_count : Int
+)
+
+data class UserDetails (
+    val user : User,
+    val reviews : List<Review>,
+    val history_tasks : List<Task>,
+    var code : Int
 )
 
 data class Code (

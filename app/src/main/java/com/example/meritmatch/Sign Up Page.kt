@@ -37,7 +37,7 @@ import androidx.compose.ui.unit.sp
 import kotlinx.coroutines.delay
 
 val karma_points = mutableStateOf(350.00)
-val user = mutableStateOf(User("", "", false, karma_points.value, "", "", 0.0))
+val user = mutableStateOf(User("", "", false, karma_points.value, "", "", 0.0, 0))
 val referralCode = mutableStateOf("#")
 
 @Composable
