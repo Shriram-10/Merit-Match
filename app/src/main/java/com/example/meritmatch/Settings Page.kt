@@ -2,6 +2,8 @@ package com.example.meritmatch
 
 import android.widget.Toast
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -63,6 +65,7 @@ fun SettingsPage (
             contentAlignment = Alignment.Center
         ){
             Column {
+                Text(queryUser.value.history_tasks.toString())
                 Headline (
                     text = "Settings",
                     modifier = Modifier.padding(top = 24.dp, bottom = 16.dp)
@@ -157,6 +160,24 @@ fun SettingsPage (
                         }
                     }
                 }
+                Row (
+                    modifier = Modifier
+                        .padding(16.dp)
+                        .clip(RoundedCornerShape(15))
+                        .fillMaxWidth(),
+                    horizontalArrangement = Arrangement.Center
+                ) {
+                    Text (
+                        text = "View Account details",
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 24.sp,
+                        color = colors.error,
+                        modifier = Modifier.clickable {
+                            dataViewModel.getUser(localUsername.value)
+                            displayLoading.value = true
+                        }
+                    )
+                }
             }
         }
     }
@@ -184,17 +205,26 @@ fun SettingsPage (
         waitingTasks.value = listOf()
         reviewList.value = listOf()
         rating.value = 0.0f
-        queryUser.value = UserDetails (
+        queryUser.value = UserDetails(
             user = User("", "", false, 0.0, "", "", 0.0, 0),
-            history_tasks = listOf(Task(id = 0, description = "", title = "", kp_value = 0.0, user_id = 0, post_time = "", deadline = "0 0", completed = false, active = false, reserved = 0, username = "")),
+            history_tasks = listOf(
+                Task(
+                    id = 0,
+                    description = "",
+                    title = "",
+                    kp_value = 0.0,
+                    user_id = 0,
+                    post_time = "",
+                    deadline = "0 0",
+                    completed = false,
+                    active = false,
+                    reserved = 0,
+                    username = ""
+                )
+            ),
             reviews = listOf(Review("", 0, 0, "", 0, 0, "")),
-            code = 1
+            code = 0
         )
-    } else if (displayLoading.value && dataViewModel.stateOfLogout.value.status == -1) {
-        message = "Failed to logout. Please try again."
-        displayToast = true
-        displayLoading.value = false
-        dataViewModel.stateOfLogout.value.status = 0
     }
 
     if (displayToast) {
