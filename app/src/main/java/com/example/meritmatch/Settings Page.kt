@@ -1,5 +1,6 @@
 package com.example.meritmatch
 
+import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -26,6 +27,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -42,6 +44,7 @@ fun SettingsPage (
     val colors = MaterialTheme.colorScheme
     var displayToast by remember { mutableStateOf(false) }
     var message by remember { mutableStateOf("") }
+    val context = LocalContext.current
 
     Scaffold { innerPadding ->
         Box(
@@ -168,5 +171,9 @@ fun SettingsPage (
         displayToast = true
         displayLoading.value = false
         dataViewModel.stateOfLogout.value.status = 0
+    }
+
+    if (displayToast) {
+        Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
     }
 }

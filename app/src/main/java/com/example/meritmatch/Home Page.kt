@@ -1,5 +1,6 @@
 package com.example.meritmatch
 
+import android.widget.Toast
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -36,6 +37,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
@@ -71,13 +73,33 @@ fun HomePage (
         color.tertiaryContainer,
         color.background
     )
+    val context = LocalContext.current
+    var message by remember { mutableStateOf("") }
+    var displayToast by remember { mutableStateOf(false ) }
     var newHomePage by remember { mutableStateOf(false) }
 
     setValues(dataViewModel)
 
     BackHandler {
-        android.os.Process.killProcess(android.os.Process.myPid())
+        dataViewModel.logOut(localUsername.value)
+        displayLoading.value = true
     }
+
+    if (displayLoading.value) {
+        LoadingPage()
+    }
+    if (displayLoading.value && dataViewModel.stateOfLogout.value.status == 1) {
+        displayLoading.value = false
+        android.os.Process.killProcess(android.os.Process.myPid())
+    } else if (displayLoading.value && dataViewModel.stateOfLogout.value.status == -1) {
+        message = "Failed to exit app. Try again."
+        displayLoading.value = false
+        dataViewModel.stateOfLogout.value.status = 0
+    }
+    if (displayToast) {
+        Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
+    }
+
 
     Scaffold (
         topBar = @Composable {
