@@ -70,7 +70,8 @@ fun TaskListPage (
     dataViewModel: MainViewModel,
     toModify: () -> Unit,
     toPostReview: () -> Unit,
-    toViewUser: () -> Unit
+    toViewUser: () -> Unit,
+    isUser: Boolean = true
 ) {
     val color = MaterialTheme.colorScheme
     val navBackStackEntry by navController.currentBackStackEntryAsState()
@@ -165,7 +166,8 @@ fun TaskListPage (
                                 else if (label == "Reserved Tasks" && reservedTasks.value.isNotEmpty()) reservedTasks.value.size
                                 else if (label == "Submitted Tasks" && submittedTasks.value.isNotEmpty()) submittedTasks.value.size
                                 else if (label == "Pending Approvals" && waitingTasks.value.isNotEmpty()) waitingTasks.value.size
-                                else if (label == "Tasks History" && historyTasks.value.isNotEmpty()) historyTasks.value.size
+                                else if (label == "Tasks History" && historyTasks.value.isNotEmpty() && isUser) historyTasks.value.size
+                                else if (label == "Tasks History" && historyTasks.value.isNotEmpty() && !isUser) queryUser.value.history_tasks.size
                                 else 1
                         ) { item ->
                             if (label == "Available Tasks" && allTasks.value.isNotEmpty()) {
@@ -233,7 +235,7 @@ fun TaskListPage (
                                     toPostReview = toPostReview,
                                     toViewUser = toViewUser
                                 )
-                            } else if (label == "Tasks History" && historyTasks.value.isNotEmpty()) {
+                            } else if (label == "Tasks History" && isUser && historyTasks.value.isNotEmpty()) {
                                 TaskListItem (
                                     task = historyTasks.value[item],
                                     isPosted = label == "Posted Tasks",
@@ -248,6 +250,25 @@ fun TaskListPage (
                                         else if (!historyTasks.value[item].active && historyTasks.value[item].reserved == 0) "deleted"
                                         else if (!historyTasks.value[item].active && historyTasks.value[item].reserved == user_id.value) "declined"
                                         else "posted",
+                                    isHistory = true,
+                                    toPostReview = toPostReview,
+                                    toViewUser = toViewUser
+                                )
+                            } else if (label == "Tasks History" && !isUser && queryUser.value.history_tasks.isNotEmpty()) {
+                                TaskListItem (
+                                    task = queryUser.value.history_tasks[item],
+                                    isPosted = label == "Posted Tasks",
+                                    isReserved = label == "Reserved Tasks",
+                                    isSubmitted = label == "Submitted Tasks",
+                                    isPending = label == "Pending Approvals",
+                                    dataViewModel = dataViewModel,
+                                    toModify = toModify,
+                                    label = if (queryUser.value.history_tasks[item].payment) "completed"
+                                    else if (queryUser.value.history_tasks[item].completed) "submitted"
+                                    else if (queryUser.value.history_tasks[item].reserved == user_id.value && queryUser.value.history_tasks[item].active) "reserved"
+                                    else if (!queryUser.value.history_tasks[item].active && queryUser.value.history_tasks[item].reserved == 0) "deleted"
+                                    else if (!queryUser.value.history_tasks[item].active && queryUser.value.history_tasks[item].reserved == user_id.value) "declined"
+                                    else "posted",
                                     isHistory = true,
                                     toPostReview = toPostReview,
                                     toViewUser = toViewUser
@@ -275,7 +296,7 @@ fun TaskListPage (
     }
 
     LaunchedEffect(refreshing2.value || refreshing1.value) {
-        if (refreshing2.value || refreshing1.value) {
+        if (refreshing2.value || refreshing1.value && !isUser) {
             dataViewModel.getPostedTasks(user_id.value)
             dataViewModel.getReservedTasks(user_id.value)
             dataViewModel.getAvailableTasks(user_id.value)
@@ -299,7 +320,7 @@ fun TaskListPage (
     }
 
     if (newTaskList) {
-        TaskListPage(dataViewModel = dataViewModel, navController = navController, label = label, modifier = modifier, toModify = toModify, toPostReview = toPostReview, toViewUser = toViewUser)
+        TaskListPage(dataViewModel = dataViewModel, navController = navController, label = label, modifier = modifier, toModify = toModify, toPostReview = toPostReview, toViewUser = toViewUser, isUser = isUser)
     }
 
     if (displayLoading.value) {
@@ -440,7 +461,7 @@ fun TaskListItem (
                 horizontalArrangement = Arrangement.End
             ) {
                 Text(
-                    text = "STATUS : ${label}",
+                    text = "STATUS : ${label.uppercase()}",
                     modifier = Modifier.padding(top = 8.dp, end = 16.dp),
                     color = color.error,
                     fontSize = 16.sp,
@@ -778,7 +799,6 @@ fun TaskListItem (
             dataViewModel.getSubmittedTasks(user_id.value)
             dataViewModel.getWaitingTasks(user_id.value)
             dataViewModel.getHistoryTasks(user_id.value)
-            dataViewModel.getUser(task.username)
             delay(400)
             setValues.value = true
             if (refreshing2.value) {

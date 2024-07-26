@@ -13,6 +13,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
@@ -21,7 +22,6 @@ fun UserProfile (
     user: UserDetails,
     dataViewModel: MainViewModel,
     toUserHistory: () -> Unit,
-    toReviewsUser: () -> Unit
 ) {
     val color = MaterialTheme.colorScheme
 
@@ -36,44 +36,45 @@ fun UserProfile (
 
         LazyColumn {
             item {
-                Text(
-                    queryUser.value.toString()
-                )
                 Row (
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(16.dp, bottom = 8.dp),
+                        .padding(start = 16.dp, end = 16.dp, bottom = 8.dp),
                     horizontalArrangement = Arrangement.SpaceBetween
                 ) {
                     Text (
                         text = "USERNAME",
                         fontSize = 18.sp,
-                        color = color.primary
+                        color = color.error,
+                        fontWeight = FontWeight.Bold
                     )
 
                     Text(
                         text = user.user.username,
                         fontSize = 18.sp,
-                        color = color.primary
+                        color = color.outline,
+                        fontWeight = FontWeight.Bold
                     )
                 }
 
                 Row (
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(16.dp, bottom = 8.dp),
+                        .padding(start = 16.dp, end = 16.dp, bottom = 8.dp),
                     horizontalArrangement = Arrangement.SpaceBetween
                 ) {
                     Text (
                         text = "DATE JOINED",
                         fontSize = 18.sp,
-                        color = color.primary
+                        color = color.error,
+                        fontWeight = FontWeight.Bold
                     )
 
                     Text (
                         text = user.user.date,
                         fontSize = 18.sp,
-                        color = color.primary
+                        color = color.onBackground,
+                        fontWeight = FontWeight.Bold
                     )
                 }
 
@@ -86,13 +87,15 @@ fun UserProfile (
                     Text (
                         text = "AVERAGE RATING",
                         fontSize = 18.sp,
-                        color = color.primary
+                        color = color.error,
+                        fontWeight = FontWeight.Bold
                     )
 
                     Text (
                         text = if (user.user.avg_rating != 0.0) "%.2f".format(user.user.avg_rating) else "No reviews yet",
                         fontSize = 18.sp,
-                        color = color.primary
+                        color = color.onBackground,
+                        fontWeight = FontWeight.Bold
                     )
                 }
 
@@ -103,7 +106,8 @@ fun UserProfile (
                         .height(225.dp),
                     label = "Tasks History",
                     onViewMore = toUserHistory,
-                    dataViewModel = dataViewModel
+                    dataViewModel = dataViewModel,
+                    isUser = false
                 )
 
                 LabelledReviewView (
@@ -111,9 +115,7 @@ fun UserProfile (
                         .padding(start = 16.dp)
                         .fillMaxWidth(0.95f)
                         .height(225.dp),
-                    label = "Reviews",
-                    dataViewModel = dataViewModel,
-                    onViewMore = toReviewsUser
+                    label = "Reviews"
                 )
 
                 Spacer(modifier = Modifier.height(100.dp))

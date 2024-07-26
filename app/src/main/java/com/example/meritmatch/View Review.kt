@@ -32,8 +32,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.scale
-import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
@@ -45,10 +43,7 @@ import kotlinx.coroutines.delay
 
 @Composable
 fun ReviewView (
-    modifier: Modifier,
-    onViewMore: () -> Unit,
-    label: String,
-    dataViewModel : MainViewModel
+    modifier: Modifier
 ) {
     val color = MaterialTheme.colorScheme
     var displayToast by remember { mutableStateOf(false) }
@@ -85,7 +80,7 @@ fun ReviewView (
                     contentPadding = PaddingValues(16.dp)
                 ) {
                     items (
-                        reviewList.value.size
+                        queryUser.value.reviews.size
                     ) { item ->
                         Box (
                             modifier = Modifier
@@ -93,8 +88,8 @@ fun ReviewView (
                                 .background(color.primaryContainer),
                             contentAlignment = Alignment.TopCenter
                         ) {
-                            if (reviewList.value.isNotEmpty()) {
-                                ReviewViewItem(review = reviewList.value[item])
+                            if (queryUser.value.reviews.isNotEmpty()) {
+                                ReviewViewItem(review = queryUser.value.reviews[item])
                             } else {
                                 Text (
                                     text = "This user has no reviews yet.",
@@ -118,47 +113,6 @@ fun ReviewView (
 
             }
         }
-
-        Box (
-            modifier = Modifier
-                .clip(RoundedCornerShape(100))
-                .size(40.dp)
-                .background(color.primaryContainer)
-                .align(Alignment.BottomCenter)
-                .shadow(elevation = 8.dp, clip = false, shape = RoundedCornerShape(100))
-        ) {
-            Button (
-                onClick = {
-                    onViewMore()
-                },
-                modifier = Modifier
-                    .fillMaxSize()
-                    .align(Alignment.Center)
-                    .border(
-                        BorderStroke(width = 6.dp, color = color.primaryContainer),
-                        shape = RoundedCornerShape(100)
-                    ),
-                colors = ButtonDefaults.buttonColors (
-                    containerColor = color.onPrimary
-                ),
-                elevation = ButtonDefaults.buttonElevation(
-                    defaultElevation = 8.dp,
-                    pressedElevation = 0.dp,
-                    disabledElevation = 0.dp
-                )
-            ) {
-
-            }
-
-            Icon (
-                imageVector = Icons.Default.ArrowDropDown,
-                contentDescription = null,
-                tint = color.primary,
-                modifier = Modifier
-                    .align(Alignment.Center)
-                    .scale(1.5f)
-            )
-        }
     }
 
     LaunchedEffect (displayLoading.value) {
@@ -177,9 +131,7 @@ fun ReviewView (
 @Composable
 fun LabelledReviewView (
     modifier: Modifier,
-    onViewMore: () -> Unit,
     label: String,
-    dataViewModel: MainViewModel
 ) {
     Column {
         Text (
@@ -192,10 +144,7 @@ fun LabelledReviewView (
         )
 
         ReviewView (
-            modifier = modifier,
-            onViewMore = onViewMore,
-            label = label,
-            dataViewModel = dataViewModel
+            modifier = modifier
         )
     }
 }

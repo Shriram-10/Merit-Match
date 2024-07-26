@@ -316,16 +316,13 @@ fun Navigation (modifier : Modifier) {
         }
 
         composable (
-            route = Screen.HistoryTasks.route
+            route = Screen.UserProfile.route
         ) {
             UserProfile (
                 user = queryUser.value,
                 dataViewModel = viewModel,
                 toUserHistory = {
                     navController.navigate(Screen.UserHistory.route)
-                },
-                toReviewsUser = {
-                    navController.navigate(Screen.UserReviews.route)
                 }
             )
         }
@@ -335,25 +332,15 @@ fun Navigation (modifier : Modifier) {
         ) {
             TaskListPage (
                 dataViewModel = viewModel,
-                modifier = Modifier,
+                modifier = modifier,
                 navController = navController,
                 label = "Tasks History of ${queryUser.value.user.username}",
                 toModify = {},
                 toPostReview = {},
                 toViewUser = {
                     navController.navigate(Screen.UserProfile.route)
-                }
-            )
-        }
-
-        composable (
-            route = Screen.UserReviews.route
-        ) {
-            ReviewView (
-                modifier = Modifier,
-                onViewMore = {},
-                label = "Reviews on ${queryUser.value.user.username}",
-                dataViewModel = viewModel
+                },
+                isUser = false
             )
         }
     }

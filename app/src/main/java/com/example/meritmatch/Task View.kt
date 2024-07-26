@@ -51,9 +51,11 @@ fun TaskView (
     modifier: Modifier,
     onViewMore: () -> Unit,
     label: String,
+    isUser: Boolean = true,
     dataViewModel : MainViewModel
 ) {
     val color = MaterialTheme.colorScheme
+    var displayLoading by remember { mutableStateOf(false) }
     var displayToast by remember { mutableStateOf(false) }
     var message by remember { mutableStateOf("") }
     val context = LocalContext.current
@@ -90,7 +92,8 @@ fun TaskView (
                     items (
                         if (label == "Submitted Tasks" && submittedTasks.value.isNotEmpty()) submittedTasks.value.size
                         else if (label == "Tasks awaiting approval" && waitingTasks.value.isNotEmpty()) waitingTasks.value.size
-                        else if (label == "Tasks History" && historyTasks.value.isNotEmpty()) historyTasks.value.size
+                        else if (label == "Tasks History" && historyTasks.value.isNotEmpty() && isUser) historyTasks.value.size
+                        else if (label == "Tasks History" && !isUser && queryUser.value.history_tasks.isNotEmpty()) queryUser.value.history_tasks.size
                         else 1
                     ) { item ->
                         Box (
@@ -129,12 +132,24 @@ fun TaskView (
                                         textAlign = TextAlign.Center
                                     )
                                 }
-                            } else if (label == "Tasks History") {
+                            } else if (label == "Tasks History" && isUser) {
                                 if (historyTasks.value.isNotEmpty()) {
                                     TaskViewItem(taskItem = historyTasks.value[item])
                                 } else {
                                     Text (
                                         text = "Create or do a task to get started.",
+                                        fontSize = 18.sp,
+                                        fontWeight = FontWeight.Bold,
+                                        modifier = Modifier.padding(20.dp),
+                                        textAlign = TextAlign.Center
+                                    )
+                                }
+                            } else if (label == "Tasks History" && !isUser) {
+                                if (historyTasks.value.isNotEmpty()) {
+                                    TaskViewItem(taskItem = queryUser.value.history_tasks[item])
+                                } else {
+                                    Text (
+                                        text = "No Task History as of yet.",
                                         fontSize = 18.sp,
                                         fontWeight = FontWeight.Bold,
                                         modifier = Modifier.padding(20.dp),
@@ -169,7 +184,7 @@ fun TaskView (
                 onClick = {
                     if (label == "Tasks History") {
                         dataViewModel.getHistoryTasks(user_id.value)
-                        displayLoading.value = true
+                        displayLoading = true
                     }
                     onViewMore()
                 },
@@ -203,10 +218,10 @@ fun TaskView (
         }
     }
 
-    LaunchedEffect (displayLoading.value) {
-        if (displayLoading.value) {
+    LaunchedEffect (displayLoading) {
+        if (displayLoading) {
             delay(200)
-            displayLoading.value = false
+            displayLoading = false
         }
     }
 
@@ -221,6 +236,7 @@ fun LabeledTaskView (
     modifier: Modifier,
     onViewMore: () -> Unit,
     label: String,
+    isUser: Boolean = true,
     dataViewModel: MainViewModel
 ) {
     Column {
@@ -237,6 +253,7 @@ fun LabeledTaskView (
             modifier = modifier,
             onViewMore = onViewMore,
             label = label,
+            isUser = isUser,
             dataViewModel = dataViewModel
         )
     }
