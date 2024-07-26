@@ -10,7 +10,10 @@ class User(Base):
     password = Column(String(255), nullable=False)
     karma_points = Column(Double)
     login = Column(Boolean)
+    date = Column(String(10))
     referral_code = Column(String(8))
+    rating_count = Column(Integer)
+    avg_rating = Column(Double)
 
 class Post(Base):
     __tablename__ = 'posted_tasks'
@@ -34,6 +37,7 @@ class Review(Base):
 
     id = Column(Integer, primary_key=True, index=True)
     poster_id = Column(Integer)
+    poster_name = Column(String(50))
     subject_id = Column(Integer)
     description = Column(String(500))
     rating = Column(Integer)

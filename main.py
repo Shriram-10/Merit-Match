@@ -42,6 +42,7 @@ class PostBase(BaseModel):
 
 class Review(BaseModel):
     poster_id : int
+    poster_name : str
     subject_id : int
     description : str
     rating : int
@@ -55,6 +56,9 @@ class User(BaseModel):
     karma_points: float
     login: bool = False
     referral_code: str
+    date: str
+    rating_count: int
+    avg_rating: float
 
 
 def get_db():
@@ -67,6 +71,9 @@ def get_db():
 
 db_dependency = Annotated[Session, Depends(get_db)]
 
+@app.get("/health")
+async def health_check():
+    return {status : "ok"}
 
 @app.post("/users", status_code=status.HTTP_201_CREATED)
 async def create_user(user: User, db: db_dependency):
@@ -77,6 +84,7 @@ async def create_user(user: User, db: db_dependency):
        existing_user.karma_points += 350
        new_user.karma_points += 100
 
+    new_user.date = datetime.now().__format__('%d-%m-%Y')
     new_user.password = password_hash(user.password)
     new_user.login = True
     new_user.referral_code = generate_referral_code()
@@ -307,6 +315,10 @@ async def post_review(db: db_dependency, review: Review):
 
     reviewed_task = db.query(models.Post).filter(models.Post.id == user_review.task_id).first()
     if reviewed_task:
+        reviewed_user = db.query(models.User).filter(models.User.id == user_review.subject_id).first()
+        new_rating = ( reviewed_user.avg_rating * reviewed_user.rating_count + user_review.rating ) / (reviewed_user.rating_count + 1)
+        setattr(reviewed_user, 'avg_rating', new_rating)
+        setattr(reviewed_user, 'rating_count', reviewed_user.rating_count + 1)
         setattr(reviewed_task, 'reviewed', True)
         setattr(reviewed_task, 'post_time', datetime.now().__format__('%Y-%m-%d %H:%M:%S'))
         db.commit()
@@ -326,3 +338,19 @@ async def get_reviews(user_id : int, db: db_dependency):
         return {"task_list" : list_task_review, "code" : 1}
     else:
         return {"task_list" : [], "code" : 1}
+
+@app.get("/users/get_user_details/{username}")
+async def get_user(username : int, db: db_dependency):
+    user = db.query(models.User).filter(models.User.username == username).first()
+
+    if user:
+        reviews = db.query(models.Review).filter(models.Review.subject_id == user.id).first()
+        history_tasks = db.query(models.Post).filter((models.Post.user_id == user.id) | (models.Post.reserved == user.id)).all()
+        return {
+            "user" : user,
+            "reviews" : reviews,
+            "history_tasks" : history_tasks,
+            "code" : 1
+        }
+    else:
+        return { "code" : -1 }
