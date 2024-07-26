@@ -1,5 +1,6 @@
 package com.example.meritmatch
 
+import android.widget.Toast
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.clickable
@@ -20,10 +21,14 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -41,6 +46,9 @@ fun SignUpPage (
     dataViewModel: MainViewModel
 ) {
     val color = MaterialTheme.colorScheme
+    val context = LocalContext.current
+    var displayToast by remember { mutableStateOf(false) }
+    var message by remember { mutableStateOf("") }
 
     BackHandler {
         android.os.Process.killProcess(android.os.Process.myPid())
@@ -117,9 +125,7 @@ fun SignUpPage (
             Button (
                 onClick = {
                     dataViewModel.createNewUser(username = user.value.username, password = user.value.password, login = user.value.login, referralCode = referralCode.value)
-                    if (!dataViewModel.stateOfCheckUsername.value.loading && dataViewModel.stateOfCheckUsername.value.error != null) {
-                        onSignUp()
-                    }
+                    displayLoading.value = true
                     user_id.value = 0
                 },
                 modifier = Modifier
@@ -199,5 +205,26 @@ fun SignUpPage (
                 color = MaterialTheme.colorScheme.primary
             )
         }
+    }
+
+    if (displayLoading.value) {
+        LoadingPage()
+    }
+
+    if (displayLoading.value && dataViewModel.stateOfUserRetrieval.value.value == 1) {
+        message = "Signed up successfully."
+        displayToast = true
+        displayLoading.value = false
+        dataViewModel.stateOfUserRetrieval.value.value = 0
+        onSignUp()
+    } else if (displayLoading.value && dataViewModel.stateOfUserRetrieval.value.value == -1) {
+        message = "Failed to sign up. Try again."
+        displayToast = true
+        displayLoading.value = false
+        dataViewModel.stateOfUserRetrieval.value.value = 0
+    }
+
+    if (displayToast) {
+        Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
     }
 }

@@ -17,7 +17,7 @@ class MainViewModel : ViewModel() {
 
     data class StateOfUser (
         val loading : Boolean = false,
-        val value : Int? = 0,
+        var value : Int? = 0,
         val error : String? = null
     )
 
