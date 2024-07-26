@@ -249,6 +249,7 @@ fun HomePage (
     }
 
     LaunchedEffect (displayLoading.value) {
+        delay(5500)
         if (displayLoading.value && !dataViewModel.isApiConnected()) {
             message = "Unable to access the API."
             displayToast = true

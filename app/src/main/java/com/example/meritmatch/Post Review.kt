@@ -146,6 +146,7 @@ fun PostReviewPage (
     }
 
     LaunchedEffect (displayLoading) {
+        delay(5500)
         if (displayLoading && !dataViewModel.isApiConnected()) {
             message = "Unable to access the API."
             displayToast = true

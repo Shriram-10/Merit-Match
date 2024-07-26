@@ -34,6 +34,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import kotlinx.coroutines.delay
 
 val karma_points = mutableStateOf(350.00)
 val user = mutableStateOf(User("", "", false, karma_points.value, ""))
@@ -209,6 +210,7 @@ fun SignUpPage (
     }
 
     LaunchedEffect (displayLoading.value) {
+        delay(5500)
         if (displayLoading.value && !dataViewModel.isApiConnected()) {
             message = "Unable to access the API."
             displayToast = true

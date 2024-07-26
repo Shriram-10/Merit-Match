@@ -23,6 +23,8 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.ViewModel
+import kotlinx.coroutines.delay
+
 @Composable
 fun InputField (
     modifier: Modifier,
@@ -37,13 +39,6 @@ fun InputField (
     }
     var displayToast by remember {
         mutableStateOf(false)
-    }
-    LaunchedEffect (displayLoading.value) {
-        if (displayLoading.value && !dataViewModel.isApiConnected()) {
-            message = "Unable to access the API."
-            displayToast = true
-            displayLoading.value = false
-        }
     }
 
     val color = MaterialTheme.colorScheme

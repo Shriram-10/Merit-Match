@@ -34,6 +34,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.compose.currentBackStackEntryAsState
+import kotlinx.coroutines.delay
 
 @Composable
 fun SettingsPage (
@@ -48,6 +49,7 @@ fun SettingsPage (
     val context = LocalContext.current
 
     LaunchedEffect (displayLoading.value) {
+        delay(5500)
         if (displayLoading.value && !dataViewModel.isApiConnected()) {
             message = "Unable to access the API."
             displayToast = true

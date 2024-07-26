@@ -413,7 +413,7 @@ fun TaskListItem (
         modifier = Modifier
             .fillMaxSize(0.95f)
             .padding(16.dp)
-            .clip(RoundedCornerShape(15))
+            .clip(RoundedCornerShape(10))
             .background (
                 if (label == "reserved" || label == "label") color.primaryContainer
                 else if (label == "completed") color.secondaryContainer
@@ -610,6 +610,7 @@ fun TaskListItem (
     }
 
     LaunchedEffect (displayLoading.value) {
+        delay(5500)
         if (displayLoading.value && !dataViewModel.isApiConnected()) {
             message = "Unable to access the API."
             displayToast = true

@@ -13,6 +13,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import kotlinx.coroutines.delay
 
 var allTasks = mutableStateOf(listOf<Task>())
 var reservedTasks = mutableStateOf(listOf<Task>())
@@ -30,6 +31,7 @@ fun Navigation (modifier : Modifier) {
     var message by remember { mutableStateOf("") }
 
     LaunchedEffect (displayLoading.value) {
+        delay(5500)
         if (displayLoading.value && !viewModel.isApiConnected()) {
             message = "Unable to access the API."
             displayToast = true
