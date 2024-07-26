@@ -73,7 +73,7 @@ db_dependency = Annotated[Session, Depends(get_db)]
 
 @app.get("/health")
 async def health_check():
-    return {status : "ok"}
+    return { "status" : "ok" }
 
 @app.post("/users", status_code=status.HTTP_201_CREATED)
 async def create_user(user: User, db: db_dependency):
@@ -340,11 +340,11 @@ async def get_reviews(user_id : int, db: db_dependency):
         return {"task_list" : [], "code" : 1}
 
 @app.get("/users/get_user_details/{username}")
-async def get_user(username : int, db: db_dependency):
+async def get_user(username : str, db: db_dependency):
     user = db.query(models.User).filter(models.User.username == username).first()
 
     if user:
-        reviews = db.query(models.Review).filter(models.Review.subject_id == user.id).first()
+        reviews = db.query(models.Review).filter(models.Review.subject_id == user.id).all()
         history_tasks = db.query(models.Post).filter((models.Post.user_id == user.id) | (models.Post.reserved == user.id)).all()
         return {
             "user" : user,
