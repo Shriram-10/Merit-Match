@@ -124,7 +124,8 @@ fun PostReviewPage (
                             task_id = task.id,
                             poster_id = user_id.value,
                             subject_id = task.reserved,
-                            post_time = ""
+                            post_time = "",
+                            poster_name = localUsername.value
                         )
                     )
                     if (dataViewModel.stateOfPostingReview.value.status == 0) {

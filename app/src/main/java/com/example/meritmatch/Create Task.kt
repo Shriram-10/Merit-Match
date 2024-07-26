@@ -397,6 +397,7 @@ fun CreateTask (
         displayToast = true
         setValues = true
         dataViewModel.stateOfPost.value.status = 0
+        refreshing2.value = true
         goHome()
     } else if (dataViewModel.stateOfPost.value.status == -1 && !modify) {
         message = "Failed to create task. Try again."
@@ -410,6 +411,7 @@ fun CreateTask (
         displayToast = true
         setValues = true
         dataViewModel.stateOfPost.value.status = 0
+        refreshing2.value
         goHome()
     } else if (dataViewModel.stateOfModifyingPost.value.status == -1 && modify) {
         message = "Failed to modify task. Try again."

@@ -177,6 +177,12 @@ fun SettingsPage (
         karma_points.value = 0.0
         user_id.value = 0
         referralCode.value = ""
+        postedTasks.value = listOf()
+        reservedTasks.value = listOf()
+        historyTasks.value = listOf()
+        allTasks.value = listOf()
+        waitingTasks.value = listOf()
+        reviewList.value = listOf()
     } else if (displayLoading.value && dataViewModel.stateOfLogout.value.status == -1) {
         message = "Failed to logout. Please try again."
         displayToast = true

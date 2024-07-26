@@ -5,7 +5,9 @@ data class User (
     var password : String,
     var login : Boolean,
     var karma_points : Double,
-    val referral_code: String
+    val referral_code: String,
+    val date : String,
+    val avg_rating : Double
 )
 
 data class Code (
@@ -28,6 +30,7 @@ data class Review (
     var description : String,
     var rating : Int,
     var poster_id : Int,
+    var poster_name : String,
     var subject_id : Int,
     var task_id : Int,
     var post_time : String

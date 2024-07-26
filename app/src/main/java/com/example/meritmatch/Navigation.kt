@@ -21,6 +21,8 @@ var postedTasks = mutableStateOf(listOf<Task>())
 var submittedTasks = mutableStateOf(listOf<Task>())
 var waitingTasks = mutableStateOf(listOf<Task>())
 var historyTasks = mutableStateOf(listOf<Task>())
+var reviewList = mutableStateOf(listOf<Review>())
+var queryUser = mutableStateOf(User("", "", false, 0.0, "", "", 0.0))
 
 @Composable
 fun Navigation (modifier : Modifier) {
@@ -287,6 +289,45 @@ fun Navigation (modifier : Modifier) {
                     }
                 },
                 task = reviewTask.value
+            )
+        }
+
+        composable (
+            route = Screen.UserProfile.route
+        ) {
+            UserProfile (
+                user = queryUser.value,
+                dataViewModel = viewModel,
+                toUserHistory = {
+                    navController.navigate(Screen.UserHistory.route)
+                },
+                toReviewsUser = {
+                    navController.navigate(Screen.UserReviews.route)
+                }
+            )
+        }
+
+        composable (
+            route = Screen.UserHistory.route
+        ) {
+            TaskListPage (
+                dataViewModel = viewModel,
+                modifier = Modifier,
+                navController = navController,
+                label = "Tasks History",
+                toModify = {},
+                toPostReview = {}
+            )
+        }
+
+        composable (
+            route = Screen.UserReviews.route
+        ) {
+            ReviewView (
+                modifier = Modifier,
+                onViewMore = {},
+                label = "Reviews",
+                dataViewModel = viewModel
             )
         }
     }
