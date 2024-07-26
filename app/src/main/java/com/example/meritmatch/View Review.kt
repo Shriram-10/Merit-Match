@@ -50,22 +50,13 @@ fun ReviewView (
     var message by remember { mutableStateOf("") }
     val context = LocalContext.current
 
-    val fadeOutColors = listOf (
-        Color.Black.copy(alpha = 0f),
-        Color.Black.copy(alpha = 0.1f),
-        Color.Black.copy(alpha = 0.2f),
-        Color.Black.copy(alpha = 0.55f),
-    )
-
     Box (
         modifier = Modifier
-            .fillMaxWidth()
-            .height(245.dp),
+            .fillMaxWidth(),
     ) {
         Box {
             Column (
                 modifier = modifier
-                    .height(225.dp)
                     .clip(RoundedCornerShape(10)),
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.Center
@@ -74,7 +65,7 @@ fun ReviewView (
                     columns = GridCells.Fixed(1),
                     modifier = Modifier
                         .fillMaxSize()
-                        .background(color.inversePrimary),
+                        .background(color.errorContainer),
                     horizontalArrangement = Arrangement.spacedBy(16.dp),
                     verticalArrangement = Arrangement.spacedBy(16.dp),
                     contentPadding = PaddingValues(16.dp)
@@ -85,7 +76,7 @@ fun ReviewView (
                         Box (
                             modifier = Modifier
                                 .clip(RoundedCornerShape(20))
-                                .background(color.primaryContainer),
+                                .background(color.onErrorContainer.copy(0.5f)),
                             contentAlignment = Alignment.TopCenter
                         ) {
                             if (queryUser.value.reviews.isNotEmpty()) {
@@ -94,6 +85,7 @@ fun ReviewView (
                                 Text (
                                     text = "This user has no reviews yet.",
                                     fontSize = 18.sp,
+                                    color = color.error,
                                     fontWeight = FontWeight.Bold,
                                     modifier = Modifier.padding(20.dp),
                                     textAlign = TextAlign.Center
@@ -102,15 +94,6 @@ fun ReviewView (
                         }
                     }
                 }
-            }
-
-            Box (
-                modifier = modifier
-                    .clip(RoundedCornerShape(10))
-                    .fillMaxSize()
-                    .background(brush = Brush.verticalGradient(fadeOutColors))
-            ) {
-
             }
         }
     }
@@ -140,8 +123,8 @@ fun LabelledReviewView (
             fontSize = 18.sp,
             fontWeight = FontWeight.Bold,
             modifier = Modifier.padding(top = 16.dp, start = 24.dp, bottom = 8.dp),
-            color = MaterialTheme.colorScheme.primary
-        )
+            color = MaterialTheme.colorScheme.onErrorContainer,
+            )
 
         ReviewView (
             modifier = modifier
@@ -159,19 +142,28 @@ fun ReviewViewItem (
             .fillMaxWidth()
             .padding(start = 16.dp)
     ) {
-        Text (
-            text = review.description,
-            modifier = Modifier.padding(top = 16.dp, bottom = 8.dp),
-            fontSize = 18.sp,
-            color = color.error,
-            fontWeight = FontWeight.Bold
+        Text(
+            text = "${review.rating} ⭐\uFE0F",
+            modifier = Modifier.padding(top = 8.dp),
+            fontSize = 20.sp,
+            fontWeight = FontWeight.ExtraBold,
+            color = color.primaryContainer,
         )
+        if (review.description != "") {
+            Text(
+                text = review.description,
+                modifier = Modifier.padding(top = 8.dp),
+                fontSize = 18.sp,
+                color = color.onPrimary,
+                fontWeight = FontWeight.Bold
+            )
+        }
 
         Text (
             text = "by ${if (review.poster_name != localUsername.value) review.poster_name else "you"}",
-            modifier = Modifier.padding(bottom = 16.dp),
+            modifier = Modifier.padding(top = 8.dp, bottom = 16.dp),
             fontSize = 13.sp,
-            fontWeight = FontWeight.Light
+            color = color.onTertiary,
         )
     }
 }
