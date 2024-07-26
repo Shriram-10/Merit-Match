@@ -65,7 +65,6 @@ fun SettingsPage (
             contentAlignment = Alignment.Center
         ){
             Column {
-                Text(queryUser.value.history_tasks.toString())
                 Headline (
                     text = "Settings",
                     modifier = Modifier.padding(top = 24.dp, bottom = 16.dp)
@@ -160,24 +159,6 @@ fun SettingsPage (
                         }
                     }
                 }
-                Row (
-                    modifier = Modifier
-                        .padding(16.dp)
-                        .clip(RoundedCornerShape(15))
-                        .fillMaxWidth(),
-                    horizontalArrangement = Arrangement.Center
-                ) {
-                    Text (
-                        text = "View Account details",
-                        fontWeight = FontWeight.Bold,
-                        fontSize = 24.sp,
-                        color = colors.error,
-                        modifier = Modifier.clickable {
-                            dataViewModel.getUser(localUsername.value)
-                            displayLoading.value = true
-                        }
-                    )
-                }
             }
         }
     }
@@ -223,7 +204,7 @@ fun SettingsPage (
                 )
             ),
             reviews = listOf(Review("", 0, 0, "", 0, 0, "")),
-            code = 0
+            code = 1
         )
     }
 

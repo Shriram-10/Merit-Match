@@ -773,7 +773,7 @@ fun TaskListItem (
             user = User("", "", false, 0.0, "", "", 0.0, 0),
             history_tasks = listOf(Task(id = 0, description = "", title = "", kp_value = 0.0, user_id = 0, post_time = "", deadline = "0 0", completed = false, active = false, reserved = 0, username = "")),
             reviews = listOf(Review("", 0, 0, "", 0, 0, "")),
-            code = 0
+            code = 1
         )
         displayLoading.value = false
         toViewUser()
@@ -786,7 +786,7 @@ fun TaskListItem (
             user = User("", "", false, 0.0, "", "", 0.0, 0),
             history_tasks = listOf(Task(id = 0, description = "", title = "", kp_value = 0.0, user_id = 0, post_time = "", deadline = "0 0", completed = false, active = false, reserved = 0, username = "")),
             reviews = listOf(Review("", 0, 0, "", 0, 0, "")),
-            code = 0
+            code = 1
         )
         displayLoading.value = false
     }
