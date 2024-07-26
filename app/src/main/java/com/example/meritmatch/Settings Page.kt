@@ -20,6 +20,9 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -33,9 +36,13 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 fun SettingsPage (
     modifier: Modifier,
     navController: NavController,
+    dataViewModel : MainViewModel,
     onLogout: () -> Unit
 ) {
     val colors = MaterialTheme.colorScheme
+    var displayToast by remember { mutableStateOf(false) }
+    var message by remember { mutableStateOf("") }
+
     Scaffold { innerPadding ->
         Box(
             modifier = modifier.padding(bottom = innerPadding.calculateBottomPadding()),
@@ -61,7 +68,7 @@ fun SettingsPage (
                     Spacer(modifier = Modifier.weight(1f))
 
                     Button(
-                        onClick = onLogout,
+                        onClick = { onLogout() },
                         shape = RoundedCornerShape(20),
                         modifier = Modifier
                             .padding(top = 8.dp),
@@ -138,5 +145,28 @@ fun SettingsPage (
                 }
             }
         }
+    }
+
+    if (displayLoading.value) {
+        LoadingPage()
+    }
+    if (displayLoading.value && dataViewModel.stateOfLogout.value.status == 1) {
+        message = "Logged out successfully."
+        displayToast = true
+        dataViewModel.stateOfLogout.value.status = 0
+        displayLoading.value = false
+        navController.navigate(Screen.SignUp.route)
+        localUsername.value = ""
+        user.value.username = ""
+        user.value.password = ""
+        user.value.karma_points = 0.0
+        karma_points.value = 0.0
+        user_id.value = 0
+        referralCode.value = ""
+    } else if (displayLoading.value && dataViewModel.stateOfLogout.value.status == -1) {
+        message = "Failed to logout. Please try again."
+        displayToast = true
+        displayLoading.value = false
+        dataViewModel.stateOfLogout.value.status = 0
     }
 }

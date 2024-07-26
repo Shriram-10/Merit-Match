@@ -13,7 +13,7 @@ import kotlinx.coroutines.launch
 
 class MainViewModel : ViewModel() {
 
-    private val baseUrl = "http://192.168.246.89:8000"
+    private val baseUrl = "http://192.168.152.89:8000"
 
     data class StateOfUser (
         val loading : Boolean = false,
@@ -137,7 +137,7 @@ class MainViewModel : ViewModel() {
                 user_id.value = response.id
                 referralCode.value = response.referral_code
             } catch (e : Exception) {
-                _stateOfCheckUsername.value = _stateOfCheckUsername.value.copy (
+                _stateOfLogin.value = _stateOfLogin.value.copy (
                     error = e.message,
                     loading = false
                 )
@@ -148,29 +148,15 @@ class MainViewModel : ViewModel() {
     fun logOut (username: String) {
         viewModelScope.launch {
             try {
-                val response = dataService.loginUser(
-                    "$baseUrl/users/login/$username",
-                    User (
-                        username = localUsername.value,
-                        password = user.value.password,
-                        karma_points = 0.0,
-                        login = false,
-                        referral_code = ""
-                    )
+                val response = dataService.logoutUser(
+                    "$baseUrl/users/logout/$username"
                 )
-                _stateOfLogin.value = _stateOfLogin.value.copy (
-                    status = response,
+                _stateOfLogout.value = _stateOfLogout.value.copy (
+                    status = response.code,
                     loading = false
                 )
-                localUsername.value = ""
-                user.value.username = ""
-                user.value.password = ""
-                user.value.karma_points = 0.0
-                karma_points.value = 0.0
-                user_id.value = 0
-                referralCode.value = ""
             } catch (e : Exception) {
-                _stateOfCheckUsername.value = _stateOfCheckUsername.value.copy (
+                _stateOfLogout.value = _stateOfLogout.value.copy (
                     error = e.message,
                     loading = false
                 )

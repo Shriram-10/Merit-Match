@@ -133,8 +133,9 @@ fun Navigation (modifier : Modifier) {
                 navController = navController,
                 onLogout = {
                     viewModel.logOut(localUsername.value)
-                    navController.navigate(Screen.SignUp.route)
-                }
+                    displayLoading.value = true
+                },
+                dataViewModel = viewModel
             )
         }
 
