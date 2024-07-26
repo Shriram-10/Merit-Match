@@ -1,19 +1,33 @@
 package com.example.meritmatch
 
+import okhttp3.OkHttpClient
+import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.POST
 import retrofit2.http.Url
+import java.util.concurrent.TimeUnit
+
+val client = OkHttpClient.Builder()
+    .connectTimeout(5, TimeUnit.SECONDS)
+    .readTimeout(5, TimeUnit.SECONDS)
+    .writeTimeout(5, TimeUnit.SECONDS)
+    .build()
 
 private val retrofit = Retrofit.Builder().baseUrl("http://192.168.152.89:8000/")
+    .client(client)
     .addConverterFactory(GsonConverterFactory.create())
     .build()
 
 val dataService = retrofit.create(ApiService::class.java)
 
 interface ApiService {
+
+    @GET("health")
+    suspend fun checkHealth(): Response<HealthStatus>
+
     @POST("/users")
     suspend fun createUser(@Body request: User) : Code
 

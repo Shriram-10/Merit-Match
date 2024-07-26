@@ -32,6 +32,19 @@ fun InputField (
     password: Boolean = false,
     referral: Boolean = false
 ){
+    var message by remember {
+        mutableStateOf("")
+    }
+    var displayToast by remember {
+        mutableStateOf(false)
+    }
+    LaunchedEffect (displayLoading.value) {
+        if (displayLoading.value && !dataViewModel.isApiConnected()) {
+            message = "Unable to access the API."
+            displayToast = true
+            displayLoading.value = false
+        }
+    }
 
     val color = MaterialTheme.colorScheme
 

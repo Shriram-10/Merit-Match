@@ -248,6 +248,14 @@ fun HomePage (
         }
     }
 
+    LaunchedEffect (displayLoading.value) {
+        if (displayLoading.value && !dataViewModel.isApiConnected()) {
+            message = "Unable to access the API."
+            displayToast = true
+            displayLoading.value = false
+        }
+    }
+
     LaunchedEffect(refreshing2.value || refreshing1.value) {
         if (refreshing2.value || refreshing1.value) {
             dataViewModel.getPostedTasks(user_id.value)

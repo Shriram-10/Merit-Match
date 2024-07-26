@@ -2,9 +2,11 @@ package com.example.meritmatch
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -23,6 +25,17 @@ var historyTasks = mutableStateOf(listOf<Task>())
 fun Navigation (modifier : Modifier) {
     val navController = rememberNavController()
     val viewModel : MainViewModel = viewModel()
+
+    var displayToast by remember { mutableStateOf(false) }
+    var message by remember { mutableStateOf("") }
+
+    LaunchedEffect (displayLoading.value) {
+        if (displayLoading.value && !viewModel.isApiConnected()) {
+            message = "Unable to access the API."
+            displayToast = true
+            displayLoading.value = false
+        }
+    }
 
     NavHost (
         navController = navController,

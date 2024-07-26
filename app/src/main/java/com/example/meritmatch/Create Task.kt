@@ -62,6 +62,13 @@ fun CreateTask (
     var displayLoad by remember { mutableStateOf(false) }
     var setValues by remember { mutableStateOf(false) }
 
+    LaunchedEffect (displayLoading.value) {
+        if (displayLoading.value && !dataViewModel.isApiConnected()) {
+            message = "Unable to access the API."
+            displayToast = true
+            displayLoading.value = false
+        }
+    }
     BackHandler {
         draft.value = Task (
             title = title,

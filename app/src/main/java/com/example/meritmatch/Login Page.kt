@@ -18,6 +18,7 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -187,6 +188,14 @@ fun LoginPage (
                 style = MaterialTheme.typography.bodyLarge,
                 color = MaterialTheme.colorScheme.primary
             )
+        }
+    }
+
+    LaunchedEffect (displayLoading.value) {
+        if (displayLoading.value && !dataViewModel.isApiConnected()) {
+            message = "Unable to access the API."
+            displayToast = true
+            com.example.meritmatch.displayLoading.value = false
         }
     }
 

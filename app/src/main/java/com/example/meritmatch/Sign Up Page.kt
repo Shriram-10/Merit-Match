@@ -21,6 +21,7 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -207,8 +208,12 @@ fun SignUpPage (
         }
     }
 
-    if (displayLoading.value) {
-        LoadingPage()
+    LaunchedEffect (displayLoading.value) {
+        if (displayLoading.value && !dataViewModel.isApiConnected()) {
+            message = "Unable to access the API."
+            displayToast = true
+            displayLoading.value = false
+        }
     }
 
     if (displayLoading.value && dataViewModel.stateOfUserRetrieval.value.value == 1) {

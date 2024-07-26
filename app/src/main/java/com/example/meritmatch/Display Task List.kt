@@ -609,6 +609,14 @@ fun TaskListItem (
         }
     }
 
+    LaunchedEffect (displayLoading.value) {
+        if (displayLoading.value && !dataViewModel.isApiConnected()) {
+            message = "Unable to access the API."
+            displayToast = true
+            displayLoading.value = false
+        }
+    }
+
     if (displayLoading.value && dataViewModel.stateOfReservingTask.value.status == 1) {
         message = "Reserved Task successfully."
         displayToast = true

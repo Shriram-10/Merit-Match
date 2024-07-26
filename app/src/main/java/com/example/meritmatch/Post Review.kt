@@ -145,6 +145,14 @@ fun PostReviewPage (
         }
     }
 
+    LaunchedEffect (displayLoading) {
+        if (displayLoading && !dataViewModel.isApiConnected()) {
+            message = "Unable to access the API."
+            displayToast = true
+            displayLoading = false
+        }
+    }
+
     if (displayToast) {
         Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
         displayToast = false

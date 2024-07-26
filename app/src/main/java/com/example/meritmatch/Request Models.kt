@@ -49,6 +49,10 @@ data class Task (
     val reviewed : Boolean = false
 )
 
+data class HealthStatus (
+    val status : String
+)
+
 data class Tasks (
     val code: Int,
     val tasks : List<Task>

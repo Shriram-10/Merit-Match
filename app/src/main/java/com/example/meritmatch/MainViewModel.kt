@@ -81,6 +81,15 @@ class MainViewModel : ViewModel() {
         var error : String? = null
     )
 
+    suspend fun isApiConnected(): Boolean {
+        return try {
+            val response = dataService.checkHealth()
+            response.isSuccessful && response.body()?.status == "ok"
+        } catch (e: Exception) {
+            false
+        }
+    }
+
     fun createNewUser (username : String, password : String, login: Boolean, referralCode: String) {
         viewModelScope.launch {
             try {
